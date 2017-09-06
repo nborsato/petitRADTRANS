@@ -14,7 +14,7 @@ module constants_block
   DOUBLE PRECISION,parameter      :: sneep_ubachs_n = 25.47d18, L0 = 2.68676d19
 end module constants_block
 
-!!$ Subroutine to get length of frequency grid
+!!$ Subroutine to get length of frequency grid in correlated-k mode
 
 subroutine get_freq_len(path,freq_len,g_len)
 
@@ -72,20 +72,21 @@ end subroutine get_freq
 !!$ Subroutine to read in the corr-k opacities
 
 subroutine get_opas_ck(path,species_names_tot,freq_len,g_len,species_len,opa_TP_grid_len, &
-     opa_grid_kappas)
+     opa_grid_kappas, mode)
 
   implicit none
   ! I/O
   character*150, intent(in) :: path
   character*5000, intent(in) :: species_names_tot
   integer, intent(in) :: freq_len,g_len,species_len, opa_TP_grid_len
+  character*3, intent(in) :: mode
   double precision, intent(out) :: opa_grid_kappas(g_len,freq_len,species_len,opa_TP_grid_len)
   ! Internal
   character*2 :: species_id
   character*150 :: path_names(opa_TP_grid_len)
   !character*150 :: species_names(species_len)
   integer :: species_name_inds(2,species_len)
-  double precision :: molparam, read_val
+  double precision :: molparam, read_val, buffer
   integer :: i_spec, i_file, i_str, curr_spec_ind, &
        i_kg, curr_N_g_int, curr_cb_int
 
@@ -116,9 +117,15 @@ subroutine get_opas_ck(path,species_names_tot,freq_len,g_len,species_len,opa_TP_
   ! Read opas for every species...
   do i_spec = 1, species_len
      ! Get species file ID and molparam
-     open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
-          //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
-          species_name_inds(2,i_spec))))//'/molparam_id.txt')
+     if (mode .EQ. 'c-k') then
+        open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
+             //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+             species_name_inds(2,i_spec))))//'/molparam_id.txt')
+     else if (mode .EQ. 'lbl') then
+        open(unit=20,file=trim(adjustl(path))//'/opacities/lines/line_by_line/' &
+             //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+             species_name_inds(2,i_spec))))//'/molparam_id.txt')
+     end if
      write(*,*) ' Read line opacities of '//trim(adjustl(species_names_tot(species_name_inds(1, &
           i_spec):species_name_inds(2,i_spec))))//'...'
      read(20,*)
@@ -129,15 +136,26 @@ subroutine get_opas_ck(path,species_names_tot,freq_len,g_len,species_len,opa_TP_
      ! ...for every P-T grid point...
      do i_file = 1, opa_TP_grid_len
         ! Open opacity file
-        open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
-             //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
-             species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
-             adjustl(trim(path_names(i_file))), form='unformatted')
+        if (mode .EQ. 'c-k') then
+           open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
+                //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+                species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
+                adjustl(trim(path_names(i_file))), form='unformatted')
+        else if (mode .EQ. 'lbl') then
+           open(unit=20,file=trim(adjustl(path))//'/opacities/lines/line_by_line/' &
+                //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+                species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
+                adjustl(trim(path_names(i_file))), form='unformatted')
+        end if
         ! ...for every frequency point.
         do i_kg = 1, g_len*freq_len
            curr_cb_int = (i_kg-1)/g_len+1
            curr_N_g_int = i_kg - (curr_cb_int-1)*g_len
-           read(20) opa_grid_kappas(curr_N_g_int,curr_cb_int,i_spec,i_file)
+           if (mode .EQ. 'c-k') then
+              read(20) opa_grid_kappas(curr_N_g_int,curr_cb_int,i_spec,i_file)
+           else
+              read(20) buffer, opa_grid_kappas(curr_N_g_int,curr_cb_int,i_spec,i_file)
+           end if
         end do
 !!$        do i_kg = 1, (g_len+2)*freq_len ! for OLD 32 grid
 !!$           curr_cb_int = (i_kg-1)/(g_len+2)+1

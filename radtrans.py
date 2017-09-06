@@ -3,11 +3,16 @@ import fort_spec as fs
 import numpy as np
 import nat_cst as nc
 import copy as cp
+import read_bin as rb
 
 class radtrans:
     """ Class carrying out spectral calcs for a given set of opacities """
     
-    def __init__(self,line_species=[],rayleigh_species=[],H2H2CIA=False,H2HeCIA=False):
+    def __init__(self,line_species=[],rayleigh_species=[],H2H2CIA=False,H2HeCIA=False, \
+                     wlen_bords_micron=[0.05,300.], mode='c-k'):
+
+        # Line-by-line or corr-k
+        self.mode = mode
 
         # Line opacity species to be considered
         self.line_species = line_species
@@ -26,12 +31,21 @@ class radtrans:
         f.close()
 
         # Read in frequency grid
-        self.freq_len, self.g_len = fi.get_freq_len(self.path)
-        freq_len_full = cp.copy(self.freq_len)
-        self.freq = fi.get_freq(self.path,self.freq_len)
+        if self.mode == 'c-k':
+            self.freq_len, self.g_len = fi.get_freq_len(self.path)
+            freq_len_full = cp.copy(self.freq_len)
+            self.freq = fi.get_freq(self.path,self.freq_len)
+        elif self.mode == 'lbl':
+            x,y = rb.read_bin(self.path+'/opacities/lines/line_by_line/'+ \
+                                'CO_all_iso/sigma_05_110.K_0.000001bar.dat')
+            self.freq_len = int(len(x)+0.01)
+            self.g_len = 1
+            freq_len_full = cp.copy(self.freq_len)
+            self.freq = nc.c/x
         
-        index = (nc.c/self.freq > 0.10e-4) & (nc.c/self.freq < 250e-4)
-        #index = (nc.c/self.freq > 1e-4) & (nc.c/self.freq < 5e-4)
+        index = (nc.c/self.freq > wlen_bords_micron[0]*1e-4) & \
+          (nc.c/self.freq < wlen_bords_micron[1]*1e-4)
+
         self.freq = np.array(self.freq[index],dtype='d',order='Fortran')
         self.freq_len = len(self.freq)
         self.lambda_angstroem = np.array(nc.c/self.freq/1e-8,dtype='d',order='Fortran')
@@ -54,13 +68,17 @@ class radtrans:
         # line_grid_kappas has the shape g_len,freq_len,len(line_species),len(line_TP_grid[:,0])
         if len(self.line_species) > 0:
             self.line_grid_kappas = fi.get_opas_ck(self.path,tot_str,freq_len_full,self.g_len, \
-                                                       len(self.line_species),len(self.line_TP_grid[:,0]))
+                                                       len(self.line_species),len(self.line_TP_grid[:,0]),self.mode)
             self.line_grid_kappas = np.array(self.line_grid_kappas[:,index,:,:],dtype='d',order='Fortran')
 
         # Read in g grid
-        buffer = np.genfromtxt(self.path+'/opa_input_files/g_comb_grid.dat')
-        self.g_gauss, self.w_gauss = buffer[:,0], buffer[:,1]
-        self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d',order='Fortran'),np.array(self.w_gauss,dtype='d',order='Fortran')
+        if self.mode == 'c-k':
+            buffer = np.genfromtxt(self.path+'/opa_input_files/g_comb_grid.dat')
+            self.g_gauss, self.w_gauss = buffer[:,0], buffer[:,1]
+            self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d',order='Fortran'),np.array(self.w_gauss,dtype='d',order='Fortran')
+        elif self.mode == 'lbl':
+            self.g_gauss, self.w_gauss = np.ones(1), np.ones(1)
+            self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d',order='Fortran'),np.array(self.w_gauss,dtype='d',order='Fortran')
         
         # Read in RT mu grid
         buffer = np.genfromtxt(self.path+'/opa_input_files/mu_points.dat')
@@ -77,6 +95,10 @@ class radtrans:
         if H2H2CIA or H2HeCIA:
           print(' Done.')
           print()
+
+        # Define to not run into trouble later
+        self.Pcloud = None
+        self.haze_factor = None
         
     # Preparing structures
     def setup_opa_structure(self,P):
@@ -202,16 +224,16 @@ class radtrans:
 def box_car_conv(array,points):
 
     res = np.zeros_like(array)
-    len_arr = len(array)
+    len_arr = int(len(array) + 0.01)
     for i in range(len(array)):
-        if (i-points/2 >= 0) and (i+points/2 <= len_arr+1):
-            smooth_val = array[i-points/2:i+points/2]
+        if (i-int(points/2) >= 0) and (i+int(points/2) <= len_arr+1):
+            smooth_val = array[i-int(points/2):i+int(points/2)]
             res[i] = np.sum(smooth_val)/len(smooth_val)
-        elif (i+points/2 > len_arr+1):
+        elif (i+int(points/2) > len_arr+1):
             len_use = len_arr+1-i
             smooth_val = array[i-len_use:i+len_use]
             res[i] = np.sum(smooth_val)/len(smooth_val)
-        elif i-points/2 < 0:
+        elif i-int(points/2) < 0:
             smooth_val = array[:max(2*i,1)]
             res[i] = np.sum(smooth_val)/len(smooth_val)
     return res
@@ -236,15 +258,14 @@ def guillot_modif(P,delta,gamma,T_int,T_equ,ptrans,alpha):
     return guillot_global(P,np.abs(delta),np.abs(gamma),np.abs(T_int),np.abs(T_equ))* \
       (1.-alpha*(1./(1.+np.exp((np.log(P/ptrans))))))
 
-
 ### Function to make temp
-def make_temp(rad_trans_params):
+def make_press_temp(rad_trans_params):
     press_many = np.logspace(-6,5,210)
     index = (press_many <= 1e3) & (press_many >= 1e-6)
     press = press_many[index][::2]
     t = box_car_conv(guillot_modif(press_many, \
-        1e1**rad_trans_params['p0'],1e1**rad_trans_params['p1'], \
-        rad_trans_params['p2'],rad_trans_params['p3'], \
-        1e1**rad_trans_params['p4'],rad_trans_params['p5']),20)
+        1e1**rad_trans_params['log_delta'],1e1**rad_trans_params['log_gamma'], \
+        rad_trans_params['t_int'],rad_trans_params['t_equ'], \
+        1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha']),20)
     temp = t[index][::2]
-    return temp
+    return press, temp

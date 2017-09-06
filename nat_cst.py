@@ -31,3 +31,8 @@ molecular_weight['CO2'] = 44.
 molecular_weight['CO'] = 28.
 molecular_weight['H2'] = 2.
 molecular_weight['He'] = 4.
+
+def b(T,nu):
+    retVal = 2.*h*nu**3./c**2.
+    retVal = retVal / (np.exp(h*nu/kB/T)-1.)
+    return retVal

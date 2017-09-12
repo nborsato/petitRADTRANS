@@ -161,6 +161,12 @@ class radtrans:
         if (self.Pcloud != None):
             self.continuum_opa_scat[:,self.press>self.Pcloud*1e6] = 1e99
 
+        # In the line-by-line case we can simply add the opacities of different species
+        # in frequency space. All opacities are stored in the first species index slot
+        if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
+            self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
+
+
     def add_rayleigh(self,abundances):
         ''' Add Rayleigh scattering cross-sections'''
         for spec in self.rayleigh_species:
@@ -175,7 +181,6 @@ class radtrans:
     def calc_opt_depth(self,gravity):
         ''' Calculate optical depth for the total opacity. '''
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
-            self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
             self.total_tau[:,:,:1,:] = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas[:,:,:1,:])
         else:
             self.total_tau = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas)
@@ -191,13 +196,23 @@ class radtrans:
 
     def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw,contribution):
         ''' Calculate the transmission spectrum '''
-        self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas,self.temp, \
-                                self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
-                                                  self.continuum_opa_scat)
-        if contribution:
-            self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas,self.temp, \
-                                self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
-                                self.continuum_opa_scat)
+        if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
+            self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas[:,:,:1,:],self.temp, \
+                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
+                                                      self.continuum_opa_scat)
+            if contribution:
+                self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas[:,:,:1,:], self.temp, \
+                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
+                                    self.continuum_opa_scat)
+            
+        else:
+            self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas,self.temp, \
+                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
+                                                      self.continuum_opa_scat)
+            if contribution:
+                self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas,self.temp, \
+                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
+                                    self.continuum_opa_scat)
         
     def calc_flux(self,temp,abunds,gravity,mmw,contribution=False):
         ''' Function to calc flux, called from outside '''

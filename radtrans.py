@@ -174,12 +174,20 @@ class radtrans:
 
     def calc_opt_depth(self,gravity):
         ''' Calculate optical depth for the total opacity. '''
-        self.total_tau = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas)
+        if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
+            self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
+            self.total_tau[:,:,:1,:] = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas[:,:,:1,:])
+        else:
+            self.total_tau = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas)
         
     def calc_RT(self,contribution):
         ''' Calculate the flux'''
-        self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau,self.temp, \
-            self.mu,self.w_gauss_mu,self.w_gauss,contribution)
+        if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
+            self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau[:,:,:1,:],self.temp, \
+                self.mu,self.w_gauss_mu,self.w_gauss,contribution)
+        else:
+            self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau,self.temp, \
+                self.mu,self.w_gauss_mu,self.w_gauss,contribution)
 
     def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw,contribution):
         ''' Calculate the transmission spectrum '''

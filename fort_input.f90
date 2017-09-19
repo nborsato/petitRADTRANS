@@ -300,7 +300,6 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
   end do
   close(10)
 
-  write(*,*) 'Read in cloud continuum opacities...'
   DO i_cloud = 1, N_cloud_spec
 
      cloud_opa_mode(i_cloud) = species_modes_tot(species_mode_inds(1,i_cloud): &
@@ -324,7 +323,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
         path_add = trim(adjustl(path_add))//'_L'
      end if
 
-     write(*,*) '   Read in opacities of species ' &
+     write(*,*) ' Read in opacity of cloud species ' &
           //trim(adjustl(path_add(1:len(trim(adjustl(path_add)))-2)))//' ...'
 
      if (cloud_opa_mode(i_cloud)(1:1) .EQ. 'a') then
@@ -362,6 +361,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
      end do
      close(11)
   END DO
+  write(*,*) 'Done.'
   write(*,*)
 
 
@@ -676,4 +676,259 @@ subroutine CIA_read(cpair,opacity_path_str,CIA_cpair_lambda,CIA_cpair_temp,CIA_c
 
 end subroutine CIA_read
 
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
 
+!!$ Subroutine to calculate cloud opacities
+
+subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins,cloud_radii,cloud_lambdas, &
+     cloud_specs_abs_opa,cloud_specs_scat_opa,cloud_aniso,cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
+     cloud_red_fac_aniso_TOT,struc_len,N_cloud_spec,N_cloud_rad_bins, N_cloud_lambda_bins)
+  
+  use constants_block
+  implicit none
+
+  ! I/O
+  INTEGER, intent(in) :: struc_len, N_cloud_spec, N_cloud_rad_bins, N_cloud_lambda_bins
+  DOUBLE PRECISION, intent(in) :: rho(struc_len), rho_p(N_cloud_spec)
+  DOUBLE PRECISION, intent(in) :: cloud_mass_fracs(struc_len,N_cloud_spec),r_g(struc_len,N_cloud_spec) 
+  DOUBLE PRECISION, intent(in) :: sigma_n
+  DOUBLE PRECISION, intent(in) :: cloud_rad_bins(N_cloud_rad_bins+1), cloud_radii(N_cloud_rad_bins), &
+       cloud_lambdas(N_cloud_lambda_bins)
+  DOUBLE PRECISION, intent(in) :: cloud_specs_abs_opa(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), &
+       cloud_specs_scat_opa(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), &
+       cloud_aniso(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec)
+  DOUBLE PRECISION, intent(out) :: cloud_abs_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_scat_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_red_fac_aniso_TOT(N_cloud_lambda_bins,struc_len)
+
+  ! internal
+  INTEGER :: i_struc, i_spec, i_rad, i_lamb
+  DOUBLE PRECISION :: N, dndr(N_cloud_rad_bins), integrand_abs(N_cloud_rad_bins), &
+       integrand_scat(N_cloud_rad_bins), add_abs, add_scat, integrand_aniso(N_cloud_rad_bins), add_aniso
+  !~~~~~~~~~~~~~~~~
+
+  cloud_abs_opa_TOT = 0d0
+  cloud_scat_opa_TOT = 0d0
+  cloud_red_fac_aniso_TOT = 0d0
+
+  do i_struc = 1, struc_len
+     do i_spec = 1, N_cloud_spec
+
+           do i_lamb = 1, N_cloud_lambda_bins
+
+              N = 3d0*cloud_mass_fracs(i_struc,i_spec)*rho(i_struc)/4d0/pi/rho_p(i_spec)/ &
+                   r_g(i_struc,i_spec)**3d0*exp(-9d0/2d0*log(sigma_n)**2d0)
+
+              dndr = N/(cloud_radii*sqrt(2d0*pi)*log(sigma_n))* &
+                   exp(-log(cloud_radii/r_g(i_struc,i_spec))**2d0/(2d0*log(sigma_n)**2d0))
+
+              integrand_abs = 4d0*pi/3d0*cloud_radii**3d0*rho_p(i_spec)*dndr* &
+                   cloud_specs_abs_opa(:,i_lamb,i_spec)
+              integrand_scat = 4d0*pi/3d0*cloud_radii**3d0*rho_p(i_spec)*dndr* &
+                   cloud_specs_scat_opa(:,i_lamb,i_spec)
+              integrand_aniso = integrand_scat*(1d0-cloud_aniso(:,i_lamb,i_spec))
+
+              add_abs = sum(integrand_abs*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
+                   cloud_rad_bins(1:N_cloud_rad_bins)))
+              cloud_abs_opa_TOT(i_lamb,i_struc) = cloud_abs_opa_TOT(i_lamb,i_struc) + &
+                   add_abs
+                   
+              add_scat = sum(integrand_scat*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
+                   cloud_rad_bins(1:N_cloud_rad_bins)))
+              cloud_scat_opa_TOT(i_lamb,i_struc) = cloud_scat_opa_TOT(i_lamb,i_struc) + &
+                   add_scat
+
+              add_aniso = sum(integrand_aniso*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
+                   cloud_rad_bins(1:N_cloud_rad_bins)))
+              cloud_red_fac_aniso_TOT(i_lamb,i_struc) = cloud_red_fac_aniso_TOT(i_lamb,i_struc) + &
+                   add_aniso
+              
+           end do
+                   
+     end do
+
+     do i_lamb = 1, N_cloud_lambda_bins
+        if (cloud_scat_opa_TOT(i_lamb,i_struc) > 1d-200) then
+           cloud_red_fac_aniso_TOT(i_lamb,i_struc) = cloud_red_fac_aniso_TOT(i_lamb,i_struc)/ &
+                     cloud_scat_opa_TOT(i_lamb,i_struc)
+        else
+           cloud_red_fac_aniso_TOT(i_lamb,i_struc) = 0d0
+        end if
+     end do
+     
+     cloud_abs_opa_TOT(:,i_struc) = cloud_abs_opa_TOT(:,i_struc)/rho(i_struc)
+     cloud_scat_opa_TOT(:,i_struc) = cloud_scat_opa_TOT(:,i_struc)/rho(i_struc)
+     
+  end do
+
+end subroutine calc_cloud_opas
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+!!$ Interpolate cloud opacities to actual radiative transfer wavelength grid
+
+subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
+     cloud_red_fac_aniso_TOT,cloud_lambdas,HIT_border_freqs,HIT_kappa_tot_g_approx, &
+     HIT_kappa_tot_g_approx_scat,red_fac_aniso_final, HIT_kappa_tot_g_approx_scat_unred, &
+     N_cloud_lambda_bins,struc_len,HIT_coarse_borders)
+
+  use constants_block
+  implicit none
+  ! I/O
+  INTEGER, intent(in)           :: N_cloud_lambda_bins,struc_len,HIT_coarse_borders
+  DOUBLE PRECISION, intent(in)  :: cloud_abs_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_scat_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_red_fac_aniso_TOT(N_cloud_lambda_bins,struc_len), cloud_lambdas(N_cloud_lambda_bins), &
+       HIT_border_freqs(HIT_coarse_borders)
+  DOUBLE PRECISION, intent(out) :: HIT_kappa_tot_g_approx(HIT_coarse_borders-1,struc_len), &
+       HIT_kappa_tot_g_approx_scat(HIT_coarse_borders-1,struc_len), &
+       red_fac_aniso_final(HIT_coarse_borders-1,struc_len), &
+       HIT_kappa_tot_g_approx_scat_unred(HIT_coarse_borders-1,struc_len)
+  
+  ! internal
+  DOUBLE PRECISION :: kappa_integ(struc_len), kappa_scat_integ(struc_len), red_fac_aniso_integ(struc_len), &
+       kappa_tot_integ(HIT_coarse_borders-1,struc_len), kappa_tot_scat_integ(HIT_coarse_borders-1,struc_len)
+  INTEGER          :: HIT_i_lamb
+  DOUBLE PRECISION :: HIT_border_lamb(HIT_coarse_borders)
+  INTEGER          :: intp_index_small_min, intp_index_small_max, i_lamb, i_struc, &
+       new_small_ind, i_ng
+
+  HIT_kappa_tot_g_approx = 0d0
+  HIT_kappa_tot_g_approx_scat = 0d0
+  HIT_kappa_tot_g_approx_scat_unred = 0d0
+  
+  
+  HIT_border_lamb = c_l/HIT_border_freqs
+  red_fac_aniso_final = 0d0
+
+  kappa_tot_integ = 0d0
+  kappa_tot_scat_integ = 0d0
+
+  do HIT_i_lamb = 1, HIT_coarse_borders-1
+
+     intp_index_small_min = MIN(MAX(INT((log10(HIT_border_lamb(HIT_i_lamb))-log10(cloud_lambdas(1))) / &
+          log10(cloud_lambdas(N_cloud_lambda_bins)/cloud_lambdas(1))*DBLE(N_cloud_lambda_bins-1) &
+          +1d0),1),N_cloud_lambda_bins-1)
+     
+     intp_index_small_max = MIN(MAX(INT((log10(HIT_border_lamb(HIT_i_lamb+1))-log10(cloud_lambdas(1))) / &
+          log10(cloud_lambdas(N_cloud_lambda_bins)/cloud_lambdas(1))*DBLE(N_cloud_lambda_bins-1) &
+          +1d0),1),N_cloud_lambda_bins-1)
+
+     kappa_integ = 0d0
+     kappa_scat_integ = 0d0
+     red_fac_aniso_integ = 0d0
+     
+     if ((intp_index_small_max-intp_index_small_min) .EQ. 0) then
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
+                
+     else if ((intp_index_small_max-intp_index_small_min) .EQ. 1) then
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),red_fac_aniso_integ)
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
+                
+     else
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),red_fac_aniso_integ)
+
+        new_small_ind = intp_index_small_min+1
+        do while (intp_index_small_max-new_small_ind .NE. 0)
+           
+           call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+                cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),kappa_integ)
+        
+           call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+                cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),kappa_scat_integ)
+
+           call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+                cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),red_fac_aniso_integ)
+
+           new_small_ind = new_small_ind+1
+           
+        end do
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
+                
+     end if
+
+     kappa_integ = kappa_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
+     kappa_scat_integ = kappa_scat_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
+     red_fac_aniso_integ = red_fac_aniso_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
+     
+     kappa_tot_integ(HIT_i_lamb,:) = kappa_integ
+     kappa_tot_scat_integ(HIT_i_lamb,:) = kappa_scat_integ
+
+     HIT_kappa_tot_g_approx(HIT_i_lamb,:) = HIT_kappa_tot_g_approx(HIT_i_lamb,:) + &
+          kappa_integ
+     HIT_kappa_tot_g_approx_scat(HIT_i_lamb,:) = HIT_kappa_tot_g_approx_scat(HIT_i_lamb,:) + &
+          kappa_integ + kappa_scat_integ*red_fac_aniso_integ
+     HIT_kappa_tot_g_approx_scat_unred(HIT_i_lamb,:) = HIT_kappa_tot_g_approx_scat_unred(HIT_i_lamb,:) + &
+          kappa_integ + kappa_scat_integ
+
+     red_fac_aniso_final(HIT_i_lamb,:) = red_fac_aniso_final(HIT_i_lamb,:) + red_fac_aniso_integ
+     
+  end do
+
+end subroutine interp_integ_cloud_opas
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+subroutine integ_kaps(intp_ind,N_cloud_lambda_bins,struc_len,kappa,lambda,l_bord1,l_bord2,kappa_integ)
+  implicit none
+  INTEGER, intent(in) :: intp_ind,N_cloud_lambda_bins,struc_len
+  DOUBLE PRECISION, intent(in) :: lambda(N_cloud_lambda_bins), kappa(N_cloud_lambda_bins,struc_len)
+  DOUBLE PRECISION, intent(in) :: l_bord1,l_bord2
+  DOUBLE PRECISION, intent(out) :: kappa_integ(struc_len)
+
+  ! This subroutine calculates the integral of a linearly interpolated function kappa.
+  
+  kappa_integ = kappa_integ + kappa(intp_ind,:)*(l_bord2-l_bord1) + (kappa(intp_ind+1,:)-kappa(intp_ind,:))/ &
+       (lambda(intp_ind+1)-lambda(intp_ind))* &
+       0.5d0*((l_bord2-lambda(intp_ind))**2d0-(l_bord1-lambda(intp_ind))**2d0)
+
+end subroutine integ_kaps

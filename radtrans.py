@@ -56,6 +56,8 @@ class radtrans:
         self.flux = np.array(np.zeros(self.freq_len),dtype='d',order='Fortran')
         self.transm_rad = np.array(np.zeros(self.freq_len),dtype='d',order='Fortran')
 
+        self.border_freqs = np.array(nc.c/self.calc_borders(nc.c/self.freq),dtype='d',order='Fortran')
+
         # Read in opacity grid
         buffer = np.genfromtxt(self.path+'/opa_input_files/opa_PT_grid.dat')
         self.line_TP_grid = np.zeros_like(buffer)
@@ -79,38 +81,8 @@ class radtrans:
 
         # Get cloud opacities
         if len(self.cloud_species) > 0:
+            self.read_cloud_opas()
             
-            self.cloud_species_mode = []
-            for i in range(int(len(self.cloud_species))):
-                splitstr = self.cloud_species[i].split('_')
-                self.cloud_species_mode.append(splitstr[1])
-                self.cloud_species[i] = splitstr[0]
-
-            tot_str_names = ''
-            for sstring in self.cloud_species:
-                tot_str_names = tot_str_names + sstring + ':'
-
-            tot_str_modes = ''
-            for sstring in self.cloud_species_mode:
-                tot_str_modes = tot_str_modes + sstring + ':'
-
-            self.N_cloud_lambda_bins = int(len(np.genfromtxt(self.path + \
-                        '/opacities/continuum/clouds/MgSiO3_c/amorphous/mie/opa_0001.dat')[:,0]))
-
-            rho_cloud_particles, cloud_specs_abs_opa, cloud_specs_scat_opa, cloud_aniso, \
-              cloud_lambdas, cloud_rad_bins, cloud_radii \
-              = fi.read_in_cloud_opacities(self.path,tot_str_names,tot_str_modes, \
-                                len(self.cloud_species),self.N_cloud_lambda_bins)
-
-
-            self.rho_cloud_particles = np.array(rho_cloud_particles,dtype='d',order='Fortran')
-            self.cloud_specs_abs_opa = np.array(cloud_specs_abs_opa,dtype='d',order='Fortran')
-            self.cloud_specs_scat_opa = np.array(cloud_specs_scat_opa,dtype='d',order='Fortran')
-            self.cloud_aniso = np.array(cloud_aniso,dtype='d',order='Fortran')
-            self.cloud_lambdas = np.array(cloud_lambdas,dtype='d',order='Fortran')
-            self.cloud_rad_bins = np.array(cloud_rad_bins,dtype='d',order='Fortran')
-            self.cloud_radii = np.array(cloud_radii,dtype='d',order='Fortran')
-
         # Read in g grid
         if self.mode == 'c-k':
             buffer = np.genfromtxt(self.path+'/opa_input_files/g_comb_grid.dat')
@@ -139,6 +111,50 @@ class radtrans:
         # Define to not run into trouble later
         self.Pcloud = None
         self.haze_factor = None
+
+    def calc_borders(self,x):
+        xn = []
+        xn.append(x[0]-(x[1]-x[0])/2.)
+        for i in range(int(len(x))-1):
+            xn.append(x[i]+(x[i+1]-x[i])/2.)
+        xn.append(x[int(len(x))-1]+(x[int(len(x))-1]-x[int(len(x))-2])/2.)
+        return np.array(xn)
+
+    # Function to read cloud opas
+    def read_cloud_opas(self):
+
+        self.cloud_species_mode = []
+        for i in range(int(len(self.cloud_species))):
+            splitstr = self.cloud_species[i].split('_')
+            self.cloud_species_mode.append(splitstr[1])
+            self.cloud_species[i] = splitstr[0]
+
+        # Prepare single strings delimited by ':' which are then
+        # put into Fortran routines
+        tot_str_names = ''
+        for sstring in self.cloud_species:
+            tot_str_names = tot_str_names + sstring + ':'
+
+        tot_str_modes = ''
+        for sstring in self.cloud_species_mode:
+            tot_str_modes = tot_str_modes + sstring + ':'
+
+        self.N_cloud_lambda_bins = int(len(np.genfromtxt(self.path + \
+                    '/opacities/continuum/clouds/MgSiO3_c/amorphous/mie/opa_0001.dat')[:,0]))
+
+        # Actual reading of opacities
+        rho_cloud_particles, cloud_specs_abs_opa, cloud_specs_scat_opa, cloud_aniso, \
+          cloud_lambdas, cloud_rad_bins, cloud_radii \
+          = fi.read_in_cloud_opacities(self.path,tot_str_names,tot_str_modes, \
+                            len(self.cloud_species),self.N_cloud_lambda_bins)
+
+        self.rho_cloud_particles = np.array(rho_cloud_particles,dtype='d',order='Fortran')
+        self.cloud_specs_abs_opa = np.array(cloud_specs_abs_opa,dtype='d',order='Fortran')
+        self.cloud_specs_scat_opa = np.array(cloud_specs_scat_opa,dtype='d',order='Fortran')
+        self.cloud_aniso = np.array(cloud_aniso,dtype='d',order='Fortran')
+        self.cloud_lambdas = np.array(cloud_lambdas,dtype='d',order='Fortran')
+        self.cloud_rad_bins = np.array(cloud_rad_bins,dtype='d',order='Fortran')
+        self.cloud_radii = np.array(cloud_radii,dtype='d',order='Fortran')
         
     # Preparing structures
     def setup_opa_structure(self,P):
@@ -169,6 +185,14 @@ class radtrans:
         
         self.mmw = np.zeros_like(self.press)
 
+        if len(self.cloud_species) > 0:
+            self.cloud_mass_fracs = np.array(np.zeros(int(len(self.press))* \
+                        int(len(self.cloud_species))).reshape(int(len(self.press)), \
+                        int(len(self.cloud_species))),dtype='d',order='Fortran')
+            self.r_g = np.array(np.zeros(int(len(self.press))* \
+                        int(len(self.cloud_species))).reshape(int(len(self.press)), \
+                        int(len(self.cloud_species))),dtype='d',order='Fortran')
+
     def interpolate_species_opa(self,temp):
         ''' Interpolate opacities to given temperature structure. '''
         self.temp = temp
@@ -177,7 +201,7 @@ class radtrans:
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
-    def mix_opa_tot(self,abundances,mmw):
+    def mix_opa_tot(self,abundances,mmw,sigma_lnorm = None, fsed = None, Kzz = None, radius = None):
         ''' Combine total line opacities, according to mass fractions (abundances). '''
         self.scat = False
         self.mmw = mmw
@@ -193,6 +217,12 @@ class radtrans:
             self.continuum_opa = self.continuum_opa + fi.cia_interpol(self.freq,self.temp, \
                 self.cia_h2he_lambda,self.cia_h2he_temp,self.cia_h2he_alpha_grid, \
                 self.press,self.mmw,np.sqrt(abundances['H2']*abundances['He']),np.sqrt(8.))
+
+        # Add cloud opacity calculation here!
+        if int(len(self.cloud_species)) > 0:
+            self.calc_cloud_opacity(abundances, mmw, sigma_lnorm, fsed, Kzz, radius)
+            
+            
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
                                         self.line_struc_kappas,self.continuum_opa)
         if len(self.rayleigh_species) != 0:
@@ -206,6 +236,39 @@ class radtrans:
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
 
+    #def calc_cloud_opacity(abundances, sigma_lnorm, fsed = None, Kzz = None, radius = None):
+    def calc_cloud_opacity(self,abundances, mmw, sigma_lnorm, fsed = None, Kzz = None, radius = None):
+
+        rho = self.press/nc.kB/self.temp*mmw*nc.amu
+        for i_spec in range(int(len(self.cloud_species))):
+            self.cloud_mass_fracs[:,i_spec] = abundances[self.cloud_species[i_spec]]
+            if radius != None:
+                self.r_g[:,i_spec] = radius[self.cloud_species[i_spec]]
+        
+        if radius != None:
+            cloud_abs_opa_TOT,cloud_scat_opa_TOT,cloud_red_fac_aniso_TOT = \
+              fi.calc_cloud_opas(rho,self.rho_cloud_particles,self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
+                                self.cloud_rad_bins,self.cloud_radii,self.cloud_lambdas, \
+                                self.cloud_specs_abs_opa,self.cloud_specs_scat_opa, \
+                                self.cloud_aniso)
+        '''
+        else:
+            fi.calc_convective_velocity(fsed,Kzz)
+            fi.get_rg_N(w_star)
+            fi.calc_cloud_opas(cloud_mass_fraction,r_g)
+
+        fi.interp_integ_cloud_opas()
+        '''
+
+        cloud_abs, cloud_scat, aniso, cloud_abs_tot_no_aniso = \
+           fi.interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, \
+            cloud_red_fac_aniso_TOT,self.cloud_lambdas,self.border_freqs)
+
+        self.continuum_opa += cloud_abs
+        self.continuum_opa_scat += cloud_abs_tot_no_aniso - cloud_abs
+            
+        return
+    
 
     def add_rayleigh(self,abundances):
         ''' Add Rayleigh scattering cross-sections'''
@@ -254,30 +317,35 @@ class radtrans:
                                     self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
                                     self.continuum_opa_scat)
         
-    def calc_flux(self,temp,abunds,gravity,mmw,contribution=False):
+    def calc_flux(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
+                      fsed = None, Kzz = None, radius = None,contribution=False):
         ''' Function to calc flux, called from outside '''
         self.interpolate_species_opa(temp)
-        self.mix_opa_tot(abunds,mmw)
+        self.mix_opa_tot(abunds,mmw,sigma_lnorm,fsed,Kzz,radius)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
 
-    def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,Pcloud=None,contribution=False,haze_factor=None):
+    def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
+                        fsed = None, Kzz = None, radius = None,Pcloud=None, \
+                        contribution=False,haze_factor=None):
         ''' Function to calc transm. spectrum, called from outside '''
         self.Pcloud = Pcloud
         self.interpolate_species_opa(temp)
         self.haze_factor = haze_factor
-        self.mix_opa_tot(abunds,mmw)
+        self.mix_opa_tot(abunds,mmw,sigma_lnorm,fsed,Kzz,radius)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)
         
 
-    def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,Pcloud=None,contribution=False):
+    def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
+                             fsed = None, Kzz = None, radius = None,Pcloud=None, \
+                             contribution=False):
         ''' Function to calc flux, called from outside '''
         self.Pcloud = Pcloud
         self.interpolate_species_opa(temp)
-        self.mix_opa_tot(abunds,mmw)
+        self.mix_opa_tot(abunds,mmw,sigma_lnorm,fsed,Kzz,radius)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
-        self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)    
+        self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)
 
 ########################################################
 ### Radtrans utility for temperature model computation

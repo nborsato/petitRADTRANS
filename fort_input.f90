@@ -69,9 +69,9 @@ end subroutine get_freq
 !!$ #########################################################################
 !!$ #########################################################################
 
-!!$ Subroutine to read in the corr-k opacities
+!!$ Subroutine to read in the molecular opacities (c-k or line-by-line)
 
-subroutine get_opas_ck(path,species_names_tot,freq_len,g_len,species_len,opa_TP_grid_len, &
+subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,species_len,opa_TP_grid_len, &
      opa_grid_kappas, mode)
 
   implicit none
@@ -173,7 +173,199 @@ subroutine get_opas_ck(path,species_names_tot,freq_len,g_len,species_len,opa_TP_
   write(*,*) 'Done.'
   write(*,*)
   
-end subroutine get_opas_ck
+end subroutine read_in_molecular_opacities
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+!!$ Subroutine to read in the molecular opacities (c-k or line-by-line)
+
+subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cloud_spec, &
+     N_cloud_lambda_bins,rho_cloud_particles,cloud_specs_abs_opa,cloud_specs_scat_opa, &
+     cloud_aniso,cloud_lambdas,cloud_rad_bins,cloud_radii)
+
+  implicit none
+  ! Params
+  integer, parameter :: N_cloud_rad_bins = 130
+  
+  ! I/O
+  character*150, intent(in) :: path
+  character*5000, intent(in) :: species_names_tot,species_modes_tot
+  integer, intent(in) :: N_cloud_spec,N_cloud_lambda_bins
+
+  double precision, intent(out) :: rho_cloud_particles(N_cloud_spec)
+  double precision, intent(out) :: cloud_specs_abs_opa(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), &
+       cloud_specs_scat_opa(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), &
+       cloud_aniso(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), cloud_lambdas(N_cloud_lambda_bins), &
+       cloud_rad_bins(N_cloud_rad_bins+1), cloud_radii(N_cloud_rad_bins)
+
+  ! Internal
+  integer :: i_str, curr_spec_ind, i_cloud, i_cloud_read, i_cloud_lamb, i_size, i_lamb
+  integer :: species_name_inds(2,N_cloud_spec), species_mode_inds(2,N_cloud_spec)
+  character*80 :: cloud_opa_names(N_cloud_spec), cloud_name_buff, buff_line, path_add
+  double precision :: cloud_dens_buff, buffer
+  character*2 :: cloud_opa_mode(N_cloud_spec)
+
+  ! Get single cloud species names
+  curr_spec_ind = 1
+  species_name_inds(1,curr_spec_ind) = 1
+  do i_str = 1, 5000
+     if (curr_spec_ind > N_cloud_spec) then
+        EXIT
+     end if
+     if (species_names_tot(i_str:i_str) .EQ. ':') then
+        species_name_inds(2,curr_spec_ind) = i_str-1
+        curr_spec_ind = curr_spec_ind+1
+        if (curr_spec_ind <= N_cloud_spec) then
+           species_name_inds(1,curr_spec_ind) = i_str+1
+        end if
+     end if
+  end do
+
+  ! Get single cloud species modes
+  curr_spec_ind = 1
+  species_mode_inds(1,curr_spec_ind) = 1
+  do i_str = 1, 5000
+     if (curr_spec_ind > N_cloud_spec) then
+        EXIT
+     end if
+     if (species_modes_tot(i_str:i_str) .EQ. ':') then
+        species_mode_inds(2,curr_spec_ind) = i_str-1
+        curr_spec_ind = curr_spec_ind+1
+        if (curr_spec_ind <= N_cloud_spec) then
+           species_mode_inds(1,curr_spec_ind) = i_str+1
+        end if
+     end if
+  end do
+
+  ! Read in cloud densities
+  rho_cloud_particles = -1d0
+  DO i_cloud = 1, N_cloud_spec
+     
+     cloud_opa_names(i_cloud) = species_names_tot(species_name_inds(1,i_cloud): &
+          species_name_inds(2,i_cloud))
+     
+     open(unit=10,file=trim(adjustl(path))//'/opa_input_files/cloud_names.dat')
+     open(unit=11,file=trim(adjustl(path))//'/opa_input_files/cloud_densities.dat')
+     do i_cloud_read = 1, 1000000
+        read(10,*,end=199) cloud_name_buff
+        read(11,*) cloud_dens_buff
+        if (trim(adjustl(cloud_name_buff)) .EQ. &
+             trim(adjustl(cloud_opa_names(i_cloud)))) then
+           rho_cloud_particles(i_cloud) = cloud_dens_buff
+        end if
+     end do
+199  close(10)
+     close(11)
+     IF (rho_cloud_particles(i_cloud) < 0d0) THEN
+        WRITE(*,*) 'ERROR! DENSITY FOR CLOUD SPECIES '//trim(adjustl(cloud_opa_names(i_cloud))) &
+             //'NOT FOUND!'
+        STOP
+     END IF
+  END DO
+  
+  ! Read in cloud opacities
+  cloud_specs_abs_opa = 0d0
+  cloud_specs_scat_opa = 0d0
+  cloud_aniso = 0d0
+
+  open(unit=10,file=trim(adjustl(path))// &
+       '/opacities/continuum//clouds/MgSiO3_c/amorphous/mie/bin_borders.dat')
+  read(10,*)
+  do i_cloud_lamb = 1, N_cloud_rad_bins
+     read(10,*) cloud_rad_bins(i_cloud_lamb)
+  end do
+  read(10,*) cloud_rad_bins(N_cloud_rad_bins+1)
+  close(10)
+  
+  open(unit=11,file=trim(adjustl(path))// &
+       '/opacities/continuum//clouds/MgSiO3_c/amorphous/mie/particle_sizes.dat')
+  read(11,*)
+  do i_cloud_lamb = 1, N_cloud_rad_bins
+     read(11,'(A80)') buff_line
+     read(buff_line(17:len(buff_line)),*) cloud_radii(i_cloud_lamb)
+  end do
+  close(11)
+
+  open(unit=10,file=trim(adjustl(path))// &
+       '/opacities/continuum//clouds/MgSiO3_c/amorphous/mie/opa_0001.dat')
+  do i_cloud_lamb = 1,11
+     read(10,*)
+  end do
+  do i_cloud_lamb = 1, N_cloud_lambda_bins
+     read(10,*) cloud_lambdas(i_cloud_lamb)
+     cloud_lambdas(i_cloud_lamb) = cloud_lambdas(i_cloud_lamb) / 1d4
+  end do
+  close(10)
+
+  write(*,*) 'Read in cloud continuum opacities...'
+  DO i_cloud = 1, N_cloud_spec
+
+     cloud_opa_mode(i_cloud) = species_modes_tot(species_mode_inds(1,i_cloud): &
+          species_mode_inds(2,i_cloud))
+     
+     path_add = trim(adjustl( &
+          cloud_opa_names(i_cloud)(1:len(trim(adjustl( &
+          cloud_opa_names(i_cloud))))-3)))
+
+     if (trim(adjustl( &
+          cloud_opa_names(i_cloud)(len(trim(adjustl( &
+          cloud_opa_names(i_cloud))))-2: &
+          len(trim(adjustl( &
+          cloud_opa_names(i_cloud))))))) .EQ. '(c)') then
+        path_add = trim(adjustl(path_add))//'_c'
+     else if (trim(adjustl( &
+          cloud_opa_names(i_cloud)(len(trim(adjustl( &
+          cloud_opa_names(i_cloud))))-2: &
+          len(trim(adjustl( &
+          cloud_opa_names(i_cloud))))))) .EQ. '(L)') then
+        path_add = trim(adjustl(path_add))//'_L'
+     end if
+
+     write(*,*) '   Read in opacities of species ' &
+          //trim(adjustl(path_add(1:len(trim(adjustl(path_add)))-2)))//' ...'
+
+     if (cloud_opa_mode(i_cloud)(1:1) .EQ. 'a') then
+        path_add = trim(adjustl(path_add))//'/amorphous'
+     else if (cloud_opa_mode(i_cloud)(1:1) .EQ. 'c') then
+        path_add = trim(adjustl(path_add))//'/crystalline'
+     end if
+
+     if (cloud_opa_mode(i_cloud)(2:2) .EQ. 'm') then
+        path_add = trim(adjustl(path_add))//'/mie'
+     else if (cloud_opa_mode(i_cloud)(2:2) .EQ. 'd') then
+        path_add = trim(adjustl(path_add))//'/DHS'
+        ! Decrease cloud particle density due to porosity
+        rho_cloud_particles(i_cloud) = rho_cloud_particles(i_cloud)*0.75d0
+     end if
+
+     open(unit=11,file=trim(adjustl(path))// &
+          '/opacities/continuum//clouds/'//trim(adjustl(path_add))// &
+          '/particle_sizes.dat')
+     read(11,*)
+     do i_size = 1, N_cloud_rad_bins
+        read(11,'(A80)') buff_line
+        open(unit=10,file=trim(adjustl(path))// &
+             '/opacities/continuum//clouds/'//trim(adjustl(path_add))// &
+             '/'//trim(adjustl(buff_line(1:17))))
+        do i_lamb = 1,11
+           read(10,*)
+        end do
+        do i_lamb = 1, N_cloud_lambda_bins
+           read(10,*) buffer, cloud_specs_abs_opa(i_size,i_lamb,i_cloud), &
+                cloud_specs_scat_opa(i_size,i_lamb,i_cloud), &
+                cloud_aniso(i_size,i_lamb,i_cloud)
+        end do
+        close(10)
+     end do
+     close(11)
+  END DO
+  write(*,*)
+
+
+end subroutine read_in_cloud_opacities
 
 !!$ #########################################################################
 !!$ #########################################################################

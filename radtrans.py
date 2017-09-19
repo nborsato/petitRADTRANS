@@ -8,8 +8,9 @@ import read_bin as rb
 class radtrans:
     """ Class carrying out spectral calcs for a given set of opacities """
     
-    def __init__(self,line_species=[],rayleigh_species=[],H2H2CIA=False,H2HeCIA=False, \
-                     wlen_bords_micron=[0.05,300.], mode='c-k'):
+    def __init__(self,line_species=[],rayleigh_species=[],cloud_species=[], \
+                     H2H2CIA=False,H2HeCIA=False,wlen_bords_micron=[0.05,300.], \
+                     mode='c-k'):
 
         # Line-by-line or corr-k
         self.mode = mode
@@ -19,6 +20,9 @@ class radtrans:
 
         # Rayleigh scattering species to be considered
         self.rayleigh_species = rayleigh_species
+
+        # Cloud species to be considered
+        self.cloud_species = cloud_species
 
         # Include CIA?
         self.H2H2CIA = H2H2CIA
@@ -60,16 +64,52 @@ class radtrans:
         # Convert from bars to cgs
         self.line_TP_grid[:,1] = 1e6*self.line_TP_grid[:,1]
         self.line_TP_grid = np.array(self.line_TP_grid.reshape(len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
-        # Get opa grid
-        tot_str = ''
-        for sstring in line_species:
-           tot_str = tot_str + sstring + ':'
 
+        # Get opa grid
         # line_grid_kappas has the shape g_len,freq_len,len(line_species),len(line_TP_grid[:,0])
         if len(self.line_species) > 0:
-            self.line_grid_kappas = fi.get_opas_ck(self.path,tot_str,freq_len_full,self.g_len, \
-                                                       len(self.line_species),len(self.line_TP_grid[:,0]),self.mode)
+
+            tot_str = ''
+            for sstring in self.line_species:
+                tot_str = tot_str + sstring + ':'
+            
+            self.line_grid_kappas = fi.read_in_molecular_opacities(self.path,tot_str,freq_len_full,self.g_len, \
+                                        len(self.line_species),len(self.line_TP_grid[:,0]),self.mode)
             self.line_grid_kappas = np.array(self.line_grid_kappas[:,index,:,:],dtype='d',order='Fortran')
+
+        # Get cloud opacities
+        if len(self.cloud_species) > 0:
+            
+            self.cloud_species_mode = []
+            for i in range(int(len(self.cloud_species))):
+                splitstr = self.cloud_species[i].split('_')
+                self.cloud_species_mode.append(splitstr[1])
+                self.cloud_species[i] = splitstr[0]
+
+            tot_str_names = ''
+            for sstring in self.cloud_species:
+                tot_str_names = tot_str_names + sstring + ':'
+
+            tot_str_modes = ''
+            for sstring in self.cloud_species_mode:
+                tot_str_modes = tot_str_modes + sstring + ':'
+
+            self.N_cloud_lambda_bins = int(len(np.genfromtxt(self.path + \
+                        '/opacities/continuum/clouds/MgSiO3_c/amorphous/mie/opa_0001.dat')[:,0]))
+
+            rho_cloud_particles, cloud_specs_abs_opa, cloud_specs_scat_opa, cloud_aniso, \
+              cloud_lambdas, cloud_rad_bins, cloud_radii \
+              = fi.read_in_cloud_opacities(self.path,tot_str_names,tot_str_modes, \
+                                len(self.cloud_species),self.N_cloud_lambda_bins)
+
+
+            self.rho_cloud_particles = np.array(rho_cloud_particles,dtype='d',order='Fortran')
+            self.cloud_specs_abs_opa = np.array(cloud_specs_abs_opa,dtype='d',order='Fortran')
+            self.cloud_specs_scat_opa = np.array(cloud_specs_scat_opa,dtype='d',order='Fortran')
+            self.cloud_aniso = np.array(cloud_aniso,dtype='d',order='Fortran')
+            self.cloud_lambdas = np.array(cloud_lambdas,dtype='d',order='Fortran')
+            self.cloud_rad_bins = np.array(cloud_rad_bins,dtype='d',order='Fortran')
+            self.cloud_radii = np.array(cloud_radii,dtype='d',order='Fortran')
 
         # Read in g grid
         if self.mode == 'c-k':

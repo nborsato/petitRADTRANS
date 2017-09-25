@@ -201,7 +201,7 @@ class radtrans:
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
-    def mix_opa_tot(self,abundances,mmw,sigma_lnorm = None, fsed = None, Kzz = None, radius = None):
+    def mix_opa_tot(self,abundances,mmw, gravity, sigma_lnorm = None, fsed = None, Kzz = None, radius = None):
         ''' Combine total line opacities, according to mass fractions (abundances). '''
         self.scat = False
         self.mmw = mmw
@@ -220,7 +220,7 @@ class radtrans:
 
         # Add cloud opacity calculation here!
         if int(len(self.cloud_species)) > 0:
-            self.calc_cloud_opacity(abundances, mmw, sigma_lnorm, fsed, Kzz, radius)
+            self.calc_cloud_opacity(abundances, mmw, gravity, sigma_lnorm, fsed, Kzz, radius)
             
             
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
@@ -237,7 +237,7 @@ class radtrans:
             self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
 
     #def calc_cloud_opacity(abundances, sigma_lnorm, fsed = None, Kzz = None, radius = None):
-    def calc_cloud_opacity(self,abundances, mmw, sigma_lnorm, fsed = None, Kzz = None, radius = None):
+    def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, fsed = None, Kzz = None, radius = None):
 
         rho = self.press/nc.kB/self.temp*mmw*nc.amu
         for i_spec in range(int(len(self.cloud_species))):
@@ -247,21 +247,21 @@ class radtrans:
         
         if radius != None:
             cloud_abs_opa_TOT,cloud_scat_opa_TOT,cloud_red_fac_aniso_TOT = \
-              fi.calc_cloud_opas(rho,self.rho_cloud_particles,self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
+              fs.calc_cloud_opas(rho,self.rho_cloud_particles,self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
                                 self.cloud_rad_bins,self.cloud_radii,self.cloud_lambdas, \
                                 self.cloud_specs_abs_opa,self.cloud_specs_scat_opa, \
                                 self.cloud_aniso)
-        '''
         else:
-            fi.calc_convective_velocity(fsed,Kzz)
-            fi.get_rg_N(w_star)
-            fi.calc_cloud_opas(cloud_mass_fraction,r_g)
-
-        fi.interp_integ_cloud_opas()
-        '''
+            self.r_g = fs.get_rg_n(gravity,rho,self.rho_cloud_particles,self.temp,mmw,fsed,self.cloud_mass_fracs, \
+                                    sigma_lnorm,Kzz)
+            cloud_abs_opa_TOT,cloud_scat_opa_TOT,cloud_red_fac_aniso_TOT = \
+              fs.calc_cloud_opas(rho,self.rho_cloud_particles,self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
+                                self.cloud_rad_bins,self.cloud_radii,self.cloud_lambdas, \
+                                self.cloud_specs_abs_opa,self.cloud_specs_scat_opa, \
+                                self.cloud_aniso)
 
         cloud_abs, cloud_scat, aniso, cloud_abs_tot_no_aniso = \
-           fi.interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, \
+           fs.interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, \
             cloud_red_fac_aniso_TOT,self.cloud_lambdas,self.border_freqs)
 
         self.continuum_opa += cloud_abs
@@ -321,7 +321,7 @@ class radtrans:
                       fsed = None, Kzz = None, radius = None,contribution=False):
         ''' Function to calc flux, called from outside '''
         self.interpolate_species_opa(temp)
-        self.mix_opa_tot(abunds,mmw,sigma_lnorm,fsed,Kzz,radius)
+        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
 
@@ -332,7 +332,7 @@ class radtrans:
         self.Pcloud = Pcloud
         self.interpolate_species_opa(temp)
         self.haze_factor = haze_factor
-        self.mix_opa_tot(abunds,mmw,sigma_lnorm,fsed,Kzz,radius)
+        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)
         
 
@@ -342,7 +342,7 @@ class radtrans:
         ''' Function to calc flux, called from outside '''
         self.Pcloud = Pcloud
         self.interpolate_species_opa(temp)
-        self.mix_opa_tot(abunds,mmw,sigma_lnorm,fsed,Kzz,radius)
+        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)

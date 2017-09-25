@@ -817,3 +817,607 @@ end function integ_parab
 !!$ #########################################################################
 !!$ #########################################################################
 !!$ #########################################################################
+
+
+!!$ Subroutine to calculate cloud opacities
+
+subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins,cloud_radii,cloud_lambdas, &
+     cloud_specs_abs_opa,cloud_specs_scat_opa,cloud_aniso,cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
+     cloud_red_fac_aniso_TOT,struc_len,N_cloud_spec,N_cloud_rad_bins, N_cloud_lambda_bins)
+  
+  use constants_block
+  implicit none
+
+  ! I/O
+  INTEGER, intent(in) :: struc_len, N_cloud_spec, N_cloud_rad_bins, N_cloud_lambda_bins
+  DOUBLE PRECISION, intent(in) :: rho(struc_len), rho_p(N_cloud_spec)
+  DOUBLE PRECISION, intent(in) :: cloud_mass_fracs(struc_len,N_cloud_spec),r_g(struc_len,N_cloud_spec) 
+  DOUBLE PRECISION, intent(in) :: sigma_n
+  DOUBLE PRECISION, intent(in) :: cloud_rad_bins(N_cloud_rad_bins+1), cloud_radii(N_cloud_rad_bins), &
+       cloud_lambdas(N_cloud_lambda_bins)
+  DOUBLE PRECISION, intent(in) :: cloud_specs_abs_opa(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), &
+       cloud_specs_scat_opa(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec), &
+       cloud_aniso(N_cloud_rad_bins,N_cloud_lambda_bins,N_cloud_spec)
+  DOUBLE PRECISION, intent(out) :: cloud_abs_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_scat_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_red_fac_aniso_TOT(N_cloud_lambda_bins,struc_len)
+
+  ! internal
+  INTEGER :: i_struc, i_spec, i_rad, i_lamb
+  DOUBLE PRECISION :: N, dndr(N_cloud_rad_bins), integrand_abs(N_cloud_rad_bins), &
+       integrand_scat(N_cloud_rad_bins), add_abs, add_scat, integrand_aniso(N_cloud_rad_bins), add_aniso
+  !~~~~~~~~~~~~~~~~
+
+  cloud_abs_opa_TOT = 0d0
+  cloud_scat_opa_TOT = 0d0
+  cloud_red_fac_aniso_TOT = 0d0
+
+  do i_struc = 1, struc_len
+     do i_spec = 1, N_cloud_spec
+
+           do i_lamb = 1, N_cloud_lambda_bins
+
+              N = 3d0*cloud_mass_fracs(i_struc,i_spec)*rho(i_struc)/4d0/pi/rho_p(i_spec)/ &
+                   r_g(i_struc,i_spec)**3d0*exp(-9d0/2d0*log(sigma_n)**2d0)
+
+              dndr = N/(cloud_radii*sqrt(2d0*pi)*log(sigma_n))* &
+                   exp(-log(cloud_radii/r_g(i_struc,i_spec))**2d0/(2d0*log(sigma_n)**2d0))
+
+              integrand_abs = 4d0*pi/3d0*cloud_radii**3d0*rho_p(i_spec)*dndr* &
+                   cloud_specs_abs_opa(:,i_lamb,i_spec)
+              integrand_scat = 4d0*pi/3d0*cloud_radii**3d0*rho_p(i_spec)*dndr* &
+                   cloud_specs_scat_opa(:,i_lamb,i_spec)
+              integrand_aniso = integrand_scat*(1d0-cloud_aniso(:,i_lamb,i_spec))
+
+              add_abs = sum(integrand_abs*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
+                   cloud_rad_bins(1:N_cloud_rad_bins)))
+              cloud_abs_opa_TOT(i_lamb,i_struc) = cloud_abs_opa_TOT(i_lamb,i_struc) + &
+                   add_abs
+                   
+              add_scat = sum(integrand_scat*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
+                   cloud_rad_bins(1:N_cloud_rad_bins)))
+              cloud_scat_opa_TOT(i_lamb,i_struc) = cloud_scat_opa_TOT(i_lamb,i_struc) + &
+                   add_scat
+
+              add_aniso = sum(integrand_aniso*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
+                   cloud_rad_bins(1:N_cloud_rad_bins)))
+              cloud_red_fac_aniso_TOT(i_lamb,i_struc) = cloud_red_fac_aniso_TOT(i_lamb,i_struc) + &
+                   add_aniso
+              
+           end do
+                   
+     end do
+
+     do i_lamb = 1, N_cloud_lambda_bins
+        if (cloud_scat_opa_TOT(i_lamb,i_struc) > 1d-200) then
+           cloud_red_fac_aniso_TOT(i_lamb,i_struc) = cloud_red_fac_aniso_TOT(i_lamb,i_struc)/ &
+                     cloud_scat_opa_TOT(i_lamb,i_struc)
+        else
+           cloud_red_fac_aniso_TOT(i_lamb,i_struc) = 0d0
+        end if
+     end do
+     
+     cloud_abs_opa_TOT(:,i_struc) = cloud_abs_opa_TOT(:,i_struc)/rho(i_struc)
+     cloud_scat_opa_TOT(:,i_struc) = cloud_scat_opa_TOT(:,i_struc)/rho(i_struc)
+     
+  end do
+
+end subroutine calc_cloud_opas
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+!!$ Interpolate cloud opacities to actual radiative transfer wavelength grid
+
+subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
+     cloud_red_fac_aniso_TOT,cloud_lambdas,HIT_border_freqs,HIT_kappa_tot_g_approx, &
+     HIT_kappa_tot_g_approx_scat,red_fac_aniso_final, HIT_kappa_tot_g_approx_scat_unred, &
+     N_cloud_lambda_bins,struc_len,HIT_coarse_borders)
+
+  use constants_block
+  implicit none
+  ! I/O
+  INTEGER, intent(in)           :: N_cloud_lambda_bins,struc_len,HIT_coarse_borders
+  DOUBLE PRECISION, intent(in)  :: cloud_abs_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_scat_opa_TOT(N_cloud_lambda_bins,struc_len), &
+       cloud_red_fac_aniso_TOT(N_cloud_lambda_bins,struc_len), cloud_lambdas(N_cloud_lambda_bins), &
+       HIT_border_freqs(HIT_coarse_borders)
+  DOUBLE PRECISION, intent(out) :: HIT_kappa_tot_g_approx(HIT_coarse_borders-1,struc_len), &
+       HIT_kappa_tot_g_approx_scat(HIT_coarse_borders-1,struc_len), &
+       red_fac_aniso_final(HIT_coarse_borders-1,struc_len), &
+       HIT_kappa_tot_g_approx_scat_unred(HIT_coarse_borders-1,struc_len)
+  
+  ! internal
+  DOUBLE PRECISION :: kappa_integ(struc_len), kappa_scat_integ(struc_len), red_fac_aniso_integ(struc_len), &
+       kappa_tot_integ(HIT_coarse_borders-1,struc_len), kappa_tot_scat_integ(HIT_coarse_borders-1,struc_len)
+  INTEGER          :: HIT_i_lamb
+  DOUBLE PRECISION :: HIT_border_lamb(HIT_coarse_borders)
+  INTEGER          :: intp_index_small_min, intp_index_small_max, i_lamb, i_struc, &
+       new_small_ind, i_ng
+
+  HIT_kappa_tot_g_approx = 0d0
+  HIT_kappa_tot_g_approx_scat = 0d0
+  HIT_kappa_tot_g_approx_scat_unred = 0d0
+  
+  
+  HIT_border_lamb = c_l/HIT_border_freqs
+  red_fac_aniso_final = 0d0
+
+  kappa_tot_integ = 0d0
+  kappa_tot_scat_integ = 0d0
+
+  do HIT_i_lamb = 1, HIT_coarse_borders-1
+
+     intp_index_small_min = MIN(MAX(INT((log10(HIT_border_lamb(HIT_i_lamb))-log10(cloud_lambdas(1))) / &
+          log10(cloud_lambdas(N_cloud_lambda_bins)/cloud_lambdas(1))*DBLE(N_cloud_lambda_bins-1) &
+          +1d0),1),N_cloud_lambda_bins-1)
+     
+     intp_index_small_max = MIN(MAX(INT((log10(HIT_border_lamb(HIT_i_lamb+1))-log10(cloud_lambdas(1))) / &
+          log10(cloud_lambdas(N_cloud_lambda_bins)/cloud_lambdas(1))*DBLE(N_cloud_lambda_bins-1) &
+          +1d0),1),N_cloud_lambda_bins-1)
+
+     kappa_integ = 0d0
+     kappa_scat_integ = 0d0
+     red_fac_aniso_integ = 0d0
+     
+     if ((intp_index_small_max-intp_index_small_min) .EQ. 0) then
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
+                
+     else if ((intp_index_small_max-intp_index_small_min) .EQ. 1) then
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),red_fac_aniso_integ)
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
+                
+     else
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),red_fac_aniso_integ)
+
+        new_small_ind = intp_index_small_min+1
+        do while (intp_index_small_max-new_small_ind .NE. 0)
+           
+           call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+                cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),kappa_integ)
+        
+           call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+                cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),kappa_scat_integ)
+
+           call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+                cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),red_fac_aniso_integ)
+
+           new_small_ind = new_small_ind+1
+           
+        end do
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
+        
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
+
+        call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
+             cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
+                
+     end if
+
+     kappa_integ = kappa_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
+     kappa_scat_integ = kappa_scat_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
+     red_fac_aniso_integ = red_fac_aniso_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
+     
+     kappa_tot_integ(HIT_i_lamb,:) = kappa_integ
+     kappa_tot_scat_integ(HIT_i_lamb,:) = kappa_scat_integ
+
+     HIT_kappa_tot_g_approx(HIT_i_lamb,:) = HIT_kappa_tot_g_approx(HIT_i_lamb,:) + &
+          kappa_integ
+     HIT_kappa_tot_g_approx_scat(HIT_i_lamb,:) = HIT_kappa_tot_g_approx_scat(HIT_i_lamb,:) + &
+          kappa_integ + kappa_scat_integ*red_fac_aniso_integ
+     HIT_kappa_tot_g_approx_scat_unred(HIT_i_lamb,:) = HIT_kappa_tot_g_approx_scat_unred(HIT_i_lamb,:) + &
+          kappa_integ + kappa_scat_integ
+
+     red_fac_aniso_final(HIT_i_lamb,:) = red_fac_aniso_final(HIT_i_lamb,:) + red_fac_aniso_integ
+     
+  end do
+
+end subroutine interp_integ_cloud_opas
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+subroutine integ_kaps(intp_ind,N_cloud_lambda_bins,struc_len,kappa,lambda,l_bord1,l_bord2,kappa_integ)
+  implicit none
+  INTEGER, intent(in) :: intp_ind,N_cloud_lambda_bins,struc_len
+  DOUBLE PRECISION, intent(in) :: lambda(N_cloud_lambda_bins), kappa(N_cloud_lambda_bins,struc_len)
+  DOUBLE PRECISION, intent(in) :: l_bord1,l_bord2
+  DOUBLE PRECISION, intent(out) :: kappa_integ(struc_len)
+
+  ! This subroutine calculates the integral of a linearly interpolated function kappa.
+  
+  kappa_integ = kappa_integ + kappa(intp_ind,:)*(l_bord2-l_bord1) + (kappa(intp_ind+1,:)-kappa(intp_ind,:))/ &
+       (lambda(intp_ind+1)-lambda(intp_ind))* &
+       0.5d0*((l_bord2-lambda(intp_ind))**2d0-(l_bord1-lambda(intp_ind))**2d0)
+
+end subroutine integ_kaps
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
+     sigma_n,Kzz,r_g,struc_len,N_cloud_spec)
+
+  use constants_block
+  implicit none
+  ! I/O
+  INTEGER, intent(in)  :: struc_len, N_cloud_spec
+  DOUBLE PRECISION, intent(in) :: gravity, rho(struc_len), rho_p(N_cloud_spec), temp(struc_len), &
+       MMW(struc_len), frain, cloud_mass_fracs(struc_len,N_cloud_spec), &
+       sigma_n, Kzz(struc_len)
+  DOUBLE PRECISION, intent(out) :: r_g(struc_len,N_cloud_spec)
+  ! Internal
+  INTEGER, parameter :: N_fit = 100
+  INTEGER          :: i_str, i_size, i_spec, i_rad
+  DOUBLE PRECISION :: turbulent_settling_speed_ret1, turbulent_settling_speed_ret2, zbrent_particle_rad
+  DOUBLE PRECISION :: w_star(struc_len), H(struc_len)
+  DOUBLE PRECISION :: r_w(struc_len,N_cloud_spec), alpha(struc_len,N_cloud_spec)
+  DOUBLE PRECISION :: rad(N_fit), vel(N_fit), f_fill(N_cloud_spec)
+  DOUBLE PRECISION :: a,b,siga,sigb,chi2,q
+
+  H = kB*temp/(MMW*amu*gravity)
+  w_star = Kzz/H
+  
+  f_fill = 1d0
+  
+  do i_str = 1, struc_len
+     do i_spec = 1, N_cloud_spec
+        r_w(i_str,i_spec) = zbrent_particle_rad(1d-16,1d2,1d-12,gravity,rho(i_str), &
+             rho_p(i_spec),temp(i_str),MMW(i_str),w_star(i_str))
+        if (r_w(i_str,i_spec) > 1d-16) then
+           if (frain > 1d0) then
+              do i_rad = 1, N_fit
+                 rad(i_rad) = r_w(i_str,i_spec)/max(sigma_n,1.1d0) + &
+                      (r_w(i_str,i_spec)-r_w(i_str,i_spec)/max(sigma_n,1.1d0))* &
+                      DBLE(i_rad-1)/DBLE(N_fit-1)
+                 call turbulent_settling_speed(rad(i_rad),gravity,rho(i_str),rho_p(i_spec),temp(i_str), &
+                      MMW(i_str),vel(i_rad))
+              end do
+           else
+              do i_rad = 1, N_fit
+                 rad(i_rad) = r_w(i_str,i_spec) + (r_w(i_str,i_spec)*max(sigma_n,1.1d0)- &
+                      r_w(i_str,i_spec))* &
+                      DBLE(i_rad-1)/DBLE(N_fit-1)
+                 call turbulent_settling_speed(rad(i_rad),gravity,rho(i_str),rho_p(i_spec),temp(i_str), &
+                      MMW(i_str),vel(i_rad))
+              end do
+           end if
+           call fit(log(rad),log(vel/w_star(i_str)),N_fit,w_star,0,a,b,siga,sigb,chi2,q)
+           alpha(i_str,i_spec) = b
+           r_w(i_str,i_spec) = exp(-a/b)
+           r_g(i_str,i_spec) = r_w(i_str,i_spec) * frain**(1d0/alpha(i_str,i_spec))* &
+                exp(-(alpha(i_str,i_spec)+6d0)/2d0*log(sigma_n)**2d0)
+        else
+           r_g(i_str,i_spec) = 1d-17
+           alpha(i_str,i_spec) = 1d0
+        end if
+     end do
+
+  end do
+  
+end subroutine get_rg_N
+
+subroutine turbulent_settling_speed(x,gravity,rho,rho_p,temp,MMW,turbulent_settling_speed_ret)
+
+  use constants_block
+  implicit none
+  DOUBLE PRECISION    :: turbulent_settling_speed_ret
+  DOUBLE PRECISION    :: x,gravity,rho,rho_p,temp,MMW
+  DOUBLE PRECISION, parameter :: d = 2.827d-8, epsilon = 59.7*kB
+  DOUBLE PRECISION    :: N_Knudsen, psi, eta, CdNreSq, Nre, Cd, v_settling_visc
+
+  
+  N_Knudsen = MMW*amu/(pi*rho*d**2d0*x)
+  psi = 1d0 + N_Knudsen*(1.249d0+0.42d0*exp(-0.87d0*N_Knudsen))
+  eta = 15d0/16d0*sqrt(pi*2d0*amu*kB*temp)/(pi*d**2d0)*(kB*temp/epsilon)**0.16d0/1.22d0
+  CdNreSq = 32d0*rho*gravity*x**3d0*(rho_p-rho)/(3d0*eta**2d0)
+  Nre = exp(-2.7905d0+0.9209d0*log(CdNreSq)-0.0135d0*log(CdNreSq)**2d0)
+  if (Nre < 1d0) then
+     Cd = 24d0
+  else if (Nre > 1d3) then
+     Cd = 0.45d0
+  else
+     Cd = CdNreSq/Nre**2d0
+  end if
+  v_settling_visc = 2d0*x**2d0*(rho_p-rho)*psi*gravity/(9d0*eta)
+  turbulent_settling_speed_ret = psi*sqrt(8d0*gravity*x*(rho_p-rho)/(3d0*Cd*rho))
+  if ((Nre < 1d0) .AND. (v_settling_visc < turbulent_settling_speed_ret)) THEN
+     turbulent_settling_speed_ret = v_settling_visc
+  end if
+  
+end subroutine turbulent_settling_speed
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+!  (C) Copr. 1986-92 Numerical Recipes Software =v1.9"217..
+!  modified by me
+
+! zbrent root finder, taken from Numerical Recipes
+
+function zbrent_particle_rad(x1,x2,tol,gravity,rho,rho_p,temp,MMW,w_star)
+
+  INTEGER, parameter :: ITMAX = 100
+  DOUBLE PRECISION :: gravity,rho,rho_p,temp,MMW,w_star  
+  DOUBLE PRECISION :: zbrent_particle_rad,tol,x1,x2,func
+  DOUBLE PRECISION, parameter :: EPS = 3.d-8
+  INTEGER :: iter
+  DOUBLE PRECISION :: a,b,c,d,e,fa,fb,fc,p,q,r,s,tol1,xm
+
+  a=x1
+  b=x2
+  call turbulent_settling_speed(a,gravity,rho,rho_p,temp,MMW,fa)
+  fa = fa - w_star
+  call turbulent_settling_speed(b,gravity,rho,rho_p,temp,MMW,fb)
+  fb = fb - w_star
+  if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.)) then
+     write(*,*) 'warning: root must be bracketed for zbrent'
+     zbrent_particle_rad = 1d-17
+     return 
+  end if
+  c=b
+  fc=fb
+  do iter=1,ITMAX
+     if((fb.gt.0..and.fc.gt.0.).or.(fb.lt.0..and.fc.lt.0.))then
+        c=a
+        fc=fa
+        d=b-a
+        e=d
+     end if
+     if(abs(fc).lt.abs(fb)) then
+        a=b
+        b=c
+        c=a
+        fa=fb
+        fb=fc
+        fc=fa
+     end if
+     tol1=2.*EPS*abs(b)+0.5*tol
+     xm=.5*(c-b)
+     if(abs(xm).le.tol1 .or. fb.eq.0.)then
+        zbrent_particle_rad=b
+        return
+     end if
+     if(abs(e).ge.tol1 .and. abs(fa).gt.abs(fb)) then
+        s=fb/fa
+        if(a.eq.c) then
+           p=2.*xm*s
+           q=1.-s
+        else
+           q=fa/fc
+           r=fb/fc
+           p=s*(2.*xm*q*(q-r)-(b-a)*(r-1.))
+           q=(q-1.)*(r-1.)*(s-1.)
+        end if
+        if(p.gt.0.) q=-q
+        p=abs(p)
+        if(2.*p .lt. min(3.*xm*q-abs(tol1*q),abs(e*q))) then
+           e=d
+           d=p/q
+        else
+           d=xm
+           e=d
+        end if
+     else
+        d=xm
+        e=d
+     end if
+     a=b
+     fa=fb
+     if(abs(d) .gt. tol1) then
+        b=b+d
+     else
+        b=b+sign(tol1,xm)
+     end if
+     call turbulent_settling_speed(b,gravity,rho,rho_p,temp,MMW,fb)
+     fb = fb - w_star
+  end do
+  stop 'zbrent exceeding maximum iterations'
+  zbrent_particle_rad=b
+  return
+end function zbrent_particle_rad
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+!  (C) Copr. 1986-92 Numerical Recipes Software =v1.9"217..
+!  modified by me
+
+SUBROUTINE fit(x,y,ndata,sig,mwt,a,b,siga,sigb,chi2,q)
+  INTEGER :: mwt,ndata
+  DOUBLE PRECISION :: a,b,chi2,q,siga,sigb,sig(ndata),x(ndata),y(ndata)
+  INTEGER :: i
+  DOUBLE PRECISION :: sigdat,ss,st2,sx,sxoss,sy,t,wt,gammq
+  sx=0.
+  sy=0.
+  st2=0.
+  b=0.
+  if(mwt.ne.0) then
+     ss=0.
+     do i=1,ndata
+        wt=1./(sig(i)**2)
+        ss=ss+wt
+        sx=sx+x(i)*wt
+        sy=sy+y(i)*wt
+     end do
+  else
+     do i=1,ndata
+        sx=sx+x(i)
+        sy=sy+y(i)
+     end do
+     ss=float(ndata)
+  endif
+  sxoss=sx/ss
+  if(mwt.ne.0) then
+     do i=1,ndata
+        t=(x(i)-sxoss)/sig(i)
+        st2=st2+t*t
+        b=b+t*y(i)/sig(i)
+     end do
+  else
+     do i=1,ndata
+        t=x(i)-sxoss
+        st2=st2+t*t
+        b=b+t*y(i)
+     end do
+  endif
+  b=b/st2
+  a=(sy-sx*b)/ss
+  siga=sqrt((1.+sx*sx/(ss*st2))/ss)
+  sigb=sqrt(1./st2)
+  chi2=0.
+  if(mwt.eq.0) then
+     do i=1,ndata
+        chi2=chi2+(y(i)-a-b*x(i))**2
+     end do
+     q=1.
+     sigdat=sqrt(chi2/(ndata-2))
+     siga=siga*sigdat
+     sigb=sigb*sigdat
+  else
+     do i=1,ndata
+        chi2=chi2+((y(i)-a-b*x(i))/sig(i))**2
+     end do
+     q=gammq(0.5d0*(ndata-2),0.5d0*chi2)
+  endif
+END SUBROUTINE fit
+
+FUNCTION gammq(a,x)
+  DOUBLE PRECISION :: a,gammq,x
+  DOUBLE PRECISION :: gammcf,gamser,gln
+  if(x.lt.0..or.a.le.0.)stop 'bad arguments in gammq'
+  if(x.lt.a+1.)then
+     call gser(gamser,a,x,gln)
+     gammq=1.-gamser
+  else
+     call gcf(gammcf,a,x,gln)
+     gammq=gammcf
+  endif
+  return
+END FUNCTION gammq
+
+SUBROUTINE gcf(gammcf,a,x,gln)
+  INTEGER, parameter :: ITMAX=100
+  DOUBLE PRECISION :: a,gammcf,gln,x
+  DOUBLE PRECISION, parameter :: EPS=3.d-7,FPMIN=1.d-30
+  INTEGER :: i
+  DOUBLE PRECISION :: an,b,c,d,del,h,gammln
+  gln=gammln(a)
+  b=x+1.-a
+  c=1./FPMIN
+  d=1./b
+  h=d
+  do i=1,ITMAX
+     an=-i*(i-a)
+     b=b+2.
+     d=an*d+b
+     if(abs(d).lt.FPMIN)d=FPMIN
+     c=b+an/c
+     if(abs(c).lt.FPMIN)c=FPMIN
+     d=1./d
+     del=d*c
+     h=h*del
+     if(abs(del-1.).lt.EPS) exit
+  end do
+  if (abs(del-1.).lt.EPS) then
+     gammcf=exp(-x+a*log(x)-gln)*h
+  else
+     stop 'a too large, ITMAX too small in gcf'
+  end if
+END SUBROUTINE gcf
+
+FUNCTION gammln(xx)
+  DOUBLE PRECISION :: gammln,xx
+  INTEGER :: j
+  DOUBLE PRECISION :: ser,stp,tmp,x,y,cof(6)
+  SAVE cof,stp
+  DATA cof,stp/76.18009172947146d0,-86.50532032941677d0, &
+       24.01409824083091d0,-1.231739572450155d0,.1208650973866179d-2, &
+       -.5395239384953d-5,2.5066282746310005d0/
+  x=xx
+  y=x
+  tmp=x+5.5d0
+  tmp=(x+0.5d0)*log(tmp)-tmp
+  ser=1.000000000190015d0
+  do j=1,6
+     y=y+1.d0
+     ser=ser+cof(j)/y
+  end do
+  gammln=tmp+log(stp*ser/x)
+END FUNCTION gammln
+
+SUBROUTINE gser(gamser,a,x,gln)
+  INTEGER, parameter :: ITMAX = 100
+  DOUBLE PRECISION :: a,gamser,gln,x
+  DOUBLE PRECISION, parameter :: EPS=3.d-7
+  INTEGER :: n
+  DOUBLE PRECISION :: ap,del,sum,gammln
+  gln=gammln(a)
+  if(x.le.0.)then
+     if(x.lt.0.)stop 'x < 0 in gser'
+     gamser=0.
+     return
+  endif
+  ap=a
+  sum=1./a
+  del=sum
+  do n=1,ITMAX
+     ap=ap+1.
+     del=del*x/ap
+     sum=sum+del
+     if(abs(del).lt.abs(sum)*EPS) exit
+  end do
+  if(abs(del).lt.abs(sum)*EPS) then
+     gamser=sum*exp(-x+a*log(x)-gln)
+  else
+     stop 'a too large, ITMAX too small in gser'
+  end if
+END SUBROUTINE gser

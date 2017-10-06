@@ -1,9 +1,11 @@
-import fort_input as fi
-import fort_spec as fs
+from . import fort_input as fi
+from . import fort_spec as fs
+from . import nat_cst as nc
+from . import read_bin as rb
+
 import numpy as np
-import nat_cst as nc
 import copy as cp
-import read_bin as rb
+import os
 
 class radtrans:
     """ Class carrying out spectral calcs for a given set of opacities """
@@ -29,9 +31,9 @@ class radtrans:
         self.H2HeCIA = H2HeCIA
 
         # Get path to all input data (opacities, grids, etc.)
-        f = open('path.txt')
+        f = open(os.path.dirname(__file__)+'/path.txt')
         lines = f.readlines()
-        self.path = lines[1][:-1]
+        self.path = os.path.dirname(__file__)+'/'+lines[1].rstrip()
         f.close()
 
         # Read in frequency grid

@@ -113,6 +113,7 @@ class radtrans:
         # Define to not run into trouble later
         self.Pcloud = None
         self.haze_factor = None
+        self.gray_opacity = None
 
     def calc_borders(self,x):
         xn = []
@@ -203,7 +204,9 @@ class radtrans:
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
-    def mix_opa_tot(self,abundances,mmw, gravity, sigma_lnorm = None, fsed = None, Kzz = None, radius = None):
+    def mix_opa_tot(self,abundances,mmw, gravity,\
+                        sigma_lnorm = None, fsed = None, Kzz = None, \
+                        radius = None, gray_opacity = None):
         ''' Combine total line opacities, according to mass fractions (abundances). '''
         self.scat = False
         self.mmw = mmw
@@ -219,6 +222,10 @@ class radtrans:
             self.continuum_opa = self.continuum_opa + fi.cia_interpol(self.freq,self.temp, \
                 self.cia_h2he_lambda,self.cia_h2he_temp,self.cia_h2he_alpha_grid, \
                 self.press,self.mmw,np.sqrt(abundances['H2']*abundances['He']),np.sqrt(8.))
+
+        # Add mock gray cloud opacity here
+        if self.gray_opacity != None:
+            self.continuum_opa = self.continuum_opa + self.gray_opacity
 
         # Add cloud opacity calculation here!
         if int(len(self.cloud_species)) > 0:
@@ -320,8 +327,10 @@ class radtrans:
                                     self.continuum_opa_scat)
         
     def calc_flux(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
-                      fsed = None, Kzz = None, radius = None,contribution=False):
+                      fsed = None, Kzz = None, radius = None,contribution=False, \
+                      gray_opacity = None):
         ''' Function to calc flux, called from outside '''
+        self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
         self.calc_opt_depth(gravity)
@@ -329,9 +338,11 @@ class radtrans:
 
     def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
                         fsed = None, Kzz = None, radius = None,Pcloud=None, \
-                        contribution=False,haze_factor=None):
+                        contribution=False,haze_factor=None, \
+                        gray_opacity = None):
         ''' Function to calc transm. spectrum, called from outside '''
         self.Pcloud = Pcloud
+        self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.haze_factor = haze_factor
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
@@ -340,9 +351,10 @@ class radtrans:
 
     def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
                              fsed = None, Kzz = None, radius = None,Pcloud=None, \
-                             contribution=False):
+                             contribution=False,gray_opacity = None):
         ''' Function to calc flux, called from outside '''
         self.Pcloud = Pcloud
+        self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
         self.calc_opt_depth(gravity)

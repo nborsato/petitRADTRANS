@@ -224,7 +224,7 @@ end subroutine planck_f
 
 !!$ Subroutine to calculate the transmission spectrum
 
-subroutine calc_transm_spec(freq,total_kappa,temp,press,gravity,mmw,P0_bar,R_pl, &
+subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_pl, &
      w_gauss,transm,freq_len,struc_len,g_len,N_species,scat,continuum_opa_scat)
 
   use constants_block
@@ -234,7 +234,7 @@ subroutine calc_transm_spec(freq,total_kappa,temp,press,gravity,mmw,P0_bar,R_pl,
   INTEGER, intent(in)                         :: freq_len, struc_len, g_len, N_species
   DOUBLE PRECISION, intent(in)                :: freq(freq_len), P0_bar, R_pl
   DOUBLE PRECISION, intent(in)                :: temp(struc_len), press(struc_len), mmw(struc_len)
-  DOUBLE PRECISION, intent(in)                :: total_kappa(g_len,freq_len,N_species,struc_len)
+  DOUBLE PRECISION, intent(in)                :: total_kappa_in(g_len,freq_len,N_species,struc_len)
 
   DOUBLE PRECISION, intent(in)                :: gravity
   DOUBLE PRECISION, intent(in)                :: w_gauss(g_len), continuum_opa_scat(freq_len,struc_len)
@@ -242,13 +242,28 @@ subroutine calc_transm_spec(freq,total_kappa,temp,press,gravity,mmw,P0_bar,R_pl,
   DOUBLE PRECISION, intent(out)               :: transm(freq_len) !, contr_tr(struc_len,freq_len)
 
   ! Internal
-  DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len),radius_var(struc_len)
+  DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len), &
+       radius_var(struc_len), total_kappa(g_len,freq_len,N_species,struc_len)
   INTEGER                                     :: i_str, i_freq, i_g, i_spec, j_str
   LOGICAL                                     :: var_grav
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
   DOUBLE PRECISION                            :: t_graze(g_len,freq_len,N_species,struc_len), s_1, s_2, &
        t_graze_wlen_int(struc_len,freq_len), alpha_t2_scat(freq_len,struc_len-1), t_graze_scat(freq_len,struc_len)
 
+  total_kappa = total_kappa_in
+  ! Some cloud opas can be < 0 sometimes, apparently.
+  do i_str = 1, struc_len
+     do i_spec = 1, N_species
+        do i_freq = 1, freq_len
+           do i_g = 1, g_len
+              if (total_kappa(i_g,i_freq,i_spec,i_str) < 0d0) then
+                 total_kappa(i_g,i_freq,i_spec,i_str) = 0d0
+              end if
+           end do
+        end do
+     end do
+  end do
+        
   transm = 0d0
   t_graze = 0d0
   t_graze_scat = 0d0
@@ -266,6 +281,7 @@ subroutine calc_transm_spec(freq,total_kappa,temp,press,gravity,mmw,P0_bar,R_pl,
   do i_str = 1, struc_len-1
      alpha_t2(:,:,:,i_str) = (total_kappa(:,:,:,i_str)*rho(i_str)+total_kappa(:,:,:,i_str+1)*rho(i_str+1))
   end do
+
   if (scat) then
      do i_str = 1, struc_len-1
         alpha_t2_scat(:,i_str) = (continuum_opa_scat(:,i_str)*rho(i_str)+ &

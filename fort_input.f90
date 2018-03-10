@@ -72,18 +72,19 @@ end subroutine get_freq
 !!$ Subroutine to read in the molecular opacities (c-k or line-by-line)
 
 subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,species_len,opa_TP_grid_len, &
-     opa_grid_kappas, mode)
+     opa_grid_kappas, mode, arr_min, arr_max)
 
   implicit none
   ! I/O
   character*150, intent(in) :: path
   character*5000, intent(in) :: species_names_tot
-  integer, intent(in) :: freq_len,g_len,species_len, opa_TP_grid_len
+  integer, intent(in) :: freq_len,g_len,species_len, opa_TP_grid_len, arr_min, arr_max
   character*3, intent(in) :: mode
   double precision, intent(out) :: opa_grid_kappas(g_len,freq_len,species_len,opa_TP_grid_len)
   ! Internal
   character*2 :: species_id
   character*150 :: path_names(opa_TP_grid_len)
+  character*400 :: path_read_stream
   !character*150 :: species_names(species_len)
   integer :: species_name_inds(2,species_len)
   double precision :: molparam, read_val, buffer
@@ -137,35 +138,38 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
      do i_file = 1, opa_TP_grid_len
         ! Open opacity file
         if (mode .EQ. 'c-k') then
+
            open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
                 //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
                 species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
                 adjustl(trim(path_names(i_file))), form='unformatted')
+           
         else if (mode .EQ. 'lbl') then
-           open(unit=20,file=trim(adjustl(path))//'/opacities/lines/line_by_line/' &
+
+           path_read_stream =  trim(adjustl(path))//'/opacities/lines/line_by_line/' &
                 //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
                 species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
-                adjustl(trim(path_names(i_file))), form='unformatted')
+                adjustl(trim(path_names(i_file)))
+           call read_kappa(arr_min, arr_max, freq_len, &
+                path_read_stream, opa_grid_kappas(1,:,i_spec,i_file))
+
+!!$           write(*,*) minval(opa_grid_kappas(1,:,i_spec,i_file)), minval(opa_grid_kappas(1,:,i_spec,i_file))
+
+!!$           !!!!! TAKE THE FOLLOWING TWO LINES OUT AS SOON AS HR-OPAS ARE MASS CORRECTED!
+!!$           opa_grid_kappas(1,:,i_spec,i_file) = opa_grid_kappas(1,:,i_spec,i_file) / &
+!!$                (18.015d0*1.66053892d-24)
+           
         end if
         ! ...for every frequency point.
-        do i_kg = 1, g_len*freq_len
-           curr_cb_int = (i_kg-1)/g_len+1
-           curr_N_g_int = i_kg - (curr_cb_int-1)*g_len
-           if (mode .EQ. 'c-k') then
+        if (mode .EQ. 'c-k') then
+           do i_kg = 1, g_len*freq_len
+              curr_cb_int = (i_kg-1)/g_len+1
+              curr_N_g_int = i_kg - (curr_cb_int-1)*g_len
               read(20) opa_grid_kappas(curr_N_g_int,curr_cb_int,i_spec,i_file)
-           else
-              read(20) buffer, opa_grid_kappas(curr_N_g_int,curr_cb_int,i_spec,i_file)
-           end if
-        end do
-!!$        do i_kg = 1, (g_len+2)*freq_len ! for OLD 32 grid
-!!$           curr_cb_int = (i_kg-1)/(g_len+2)+1
-!!$           curr_N_g_int = i_kg - (curr_cb_int-1)*(g_len+2)
-!!$           read(20) read_val
-!!$           if (curr_N_g_int>=2 .AND. curr_N_g_int<=31) then 
-!!$              opa_grid_kappas(curr_N_g_int-1,curr_cb_int,i_spec,i_file) = read_val
-!!$           end if
-!!$        end do
-        close(20)
+           end do
+           close(20)
+        end if
+        
      end do
      opa_grid_kappas(:,:,i_spec,:) = opa_grid_kappas(:,:,i_spec,:)/molparam
   end do
@@ -204,7 +208,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
   ! Internal
   integer :: i_str, curr_spec_ind, i_cloud, i_cloud_read, i_cloud_lamb, i_size, i_lamb
   integer :: species_name_inds(2,N_cloud_spec), species_mode_inds(2,N_cloud_spec)
-  character*80 :: cloud_opa_names(N_cloud_spec), cloud_name_buff, buff_line, path_add
+  character*80  :: cloud_opa_names(N_cloud_spec), cloud_name_buff, buff_line, path_add
   double precision :: cloud_dens_buff, buffer
   character*2 :: cloud_opa_mode(N_cloud_spec)
 
@@ -681,3 +685,138 @@ end subroutine CIA_read
 !!$ #########################################################################
 !!$ #########################################################################
 
+!!$ Subroutine to get the length of the opacity arrays in the high-res case
+
+subroutine get_arr_len_array_bords(wlen_min_read, wlen_max_read, &
+     file_path, arr_len, arr_min, arr_max)
+
+  implicit none
+
+  ! I/O
+  double precision, intent(in) :: wlen_min_read, wlen_max_read
+  character*400, intent(in)    :: file_path
+  integer, intent(out)         :: arr_len, arr_min, arr_max
+  ! Internal
+  double precision :: curr_wlen, last_wlen
+  integer          :: curr_int
+
+  ! open wavelength file
+  open(file=trim(adjustl(file_path)), unit=10, form = 'unformatted', &
+       ACCESS='stream')
+
+  ! to contain the current wavelength index
+  curr_int = 1
+
+  ! to contain the the minimum and the maximum wavelength index
+  ! to be used for reading in the opacities and wavelengths later.
+  arr_min = -1
+  arr_max = -1
+
+  ! to contain the wavelength of the previous line reading
+  last_wlen = 0d0
+
+  do while (1>0)
+
+     read(10,end=123) curr_wlen
+
+     if ((curr_int .EQ. 1) .AND. (curr_wlen > wlen_min_read)) then
+        write(*,*) 'ERROR! Desired minimum wavelength is too small!'
+        STOP
+     end if
+
+     ! look for minimum index, bracketing the desired range
+     if (arr_min .EQ. -1) then
+        if ((curr_wlen > wlen_min_read) .AND. &
+             (last_wlen < wlen_min_read)) then
+           arr_min = curr_int - 1
+        end if
+     end if
+
+     ! look for maximum index, bracketing the desired range
+     if (arr_min .NE. -1) then
+        if ((curr_wlen > wlen_max_read) .AND. &
+             (last_wlen < wlen_max_read)) then
+           arr_max = curr_int
+           EXIT
+        end if
+     end if
+
+     last_wlen = curr_wlen
+
+     curr_int = curr_int + 1
+  end do
+
+123 close(10)
+
+  if ((arr_min .EQ. -1) .OR. (arr_max .EQ. -1)) then
+
+     write(*,*) 'ERROR! Desired wavelength range is too large,'
+     write(*,*) 'or not contained within the tabulated opacity' &
+          // ' wavelength range.'
+     STOP
+
+  end if
+
+  arr_len = arr_max - arr_min + 1
+
+end subroutine get_arr_len_array_bords
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+!!$ Subroutine to read the wavelength array in the high-res case
+
+subroutine read_wlen(arr_min, arr_max, arr_len, file_path, wlen)
+
+  implicit none
+  ! I/O
+  integer, intent(in)           :: arr_min, arr_max
+  integer, intent(in)           :: arr_len
+  character*400, intent(in)     :: file_path
+  double precision, intent(out) :: wlen(arr_len)
+
+  integer          :: i_lamb
+
+  open(unit=49, file=trim(adjustl(file_path)), &
+       form = 'unformatted', ACCESS='stream')
+
+  read(49, pos = (arr_min-1)*8+1) wlen(1)
+  do i_lamb = 2, arr_len
+     read(49) wlen(i_lamb)
+  end do
+
+  close(49)
+
+end subroutine read_wlen
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+!!$ Subroutine to read the kappa array in the high-res case
+
+subroutine read_kappa(arr_min, arr_max, arr_len, file_path, kappa)
+
+  implicit none
+  ! I/O
+  integer, intent(in)           :: arr_min, arr_max
+  integer, intent(in)           :: arr_len
+  character*400, intent(in)     :: file_path
+  double precision, intent(out) :: kappa(arr_len)
+
+  integer          :: i_lamb
+
+  open(unit=49, file=trim(adjustl(file_path)), &
+       form = 'unformatted', ACCESS='stream')
+
+  read(49, pos = (arr_min-1)*8+1) kappa(1)
+  do i_lamb = 2, arr_len
+     read(49) kappa(i_lamb)
+  end do
+
+  close(49)
+
+end subroutine read_kappa

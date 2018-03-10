@@ -1,11 +1,11 @@
 from . import fort_input as fi
 from . import fort_spec as fs
 from . import nat_cst as nc
-from . import read_bin as rb
 
 import numpy as np
 import copy as cp
 import os
+import sys
 
 class radtrans:
     """ Class carrying out spectral calcs for a given set of opacities """
@@ -38,29 +38,64 @@ class radtrans:
 
         # Read in frequency grid
         if self.mode == 'c-k':
+            # For correlated-k
+
+            # Get dimensions of molecular opacity arrays for a given P-T point,
+            # they define the resolution.
             self.freq_len, self.g_len = fi.get_freq_len(self.path)
             freq_len_full = cp.copy(self.freq_len)
+            # Read in the frequency range of the opcity data
             self.freq = fi.get_freq(self.path,self.freq_len)
+            arr_min, arr_max = -1, -1
+            
         elif self.mode == 'lbl':
-            x,y = rb.read_bin(self.path+'/opacities/lines/line_by_line/'+ \
-                                'CO_all_iso/sigma_05_110.K_0.000001bar.dat')
-            self.freq_len = int(len(x)+0.01)
-            self.g_len = 1
-            freq_len_full = cp.copy(self.freq_len)
-            self.freq = nc.c/x
-        
-        index = (nc.c/self.freq > wlen_bords_micron[0]*1e-4) & \
-          (nc.c/self.freq < wlen_bords_micron[1]*1e-4)
+            # For high-res line-by-line radiative transfer
+            path_length = self.path+'/opacities/lines/line_by_line/'+ \
+                                line_species[0]+'/wlen.dat'
+            # Get dimensions of opacity arrays for a given P-T point
+            # arr_min, arr_max denote where in the large opacity files
+            # the required wavelength range sits.
+            self.freq_len, arr_min, arr_max = \
+              fi.get_arr_len_array_bords(wlen_bords_micron[0]*1e-4, \
+                                         wlen_bords_micron[1]*1e-4, \
+                                         path_length)
 
-        self.freq = np.array(self.freq[index],dtype='d',order='Fortran')
-        self.freq_len = len(self.freq)
+            self.g_len = 1
+            freq_len_full = self.freq_len
+            # Read in the frequency range of the opcity data
+            wlen = fi.read_wlen(arr_min, arr_max, self.freq_len, path_length)
+            self.freq = nc.c/wlen
+
+        if self.mode == 'c-k':
+            # Cut opacity data to required range
+            index = (nc.c/self.freq > wlen_bords_micron[0]*1e-4) & \
+              (nc.c/self.freq < wlen_bords_micron[1]*1e-4)
+
+            self.freq = np.array(self.freq[index],dtype='d',order='Fortran')
+            self.freq_len = len(self.freq)
+
+        ###########################
+        # Some necessary definitions, also prepare arrays for fluxes, transmission radius...
+        ###########################        
+
         self.lambda_angstroem = np.array(nc.c/self.freq/1e-8,dtype='d',order='Fortran')
         self.flux = np.array(np.zeros(self.freq_len),dtype='d',order='Fortran')
         self.transm_rad = np.array(np.zeros(self.freq_len),dtype='d',order='Fortran')
 
+        # Define frequency bins around grid for later interpolatioin purposes when including
+        # clouds...
         self.border_freqs = np.array(nc.c/self.calc_borders(nc.c/self.freq),dtype='d',order='Fortran')
 
-        # Read in opacity grid
+        self.Pcloud = None
+        self.haze_factor = None
+        self.gray_opacity = None
+
+        ###########################
+        # Read in opacities
+        ###########################
+        
+        # Molecules:
+        # First get the P-Ts where the grid is defined.
         buffer = np.genfromtxt(self.path+'/opa_input_files/opa_PT_grid.dat')
         self.line_TP_grid = np.zeros_like(buffer)
         self.line_TP_grid[:,0] = buffer[:,1]
@@ -69,23 +104,22 @@ class radtrans:
         self.line_TP_grid[:,1] = 1e6*self.line_TP_grid[:,1]
         self.line_TP_grid = np.array(self.line_TP_grid.reshape(len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
 
-        # Get opa grid
+        # Read actual opacities....
         # line_grid_kappas has the shape g_len,freq_len,len(line_species),len(line_TP_grid[:,0])
         if len(self.line_species) > 0:
 
             tot_str = ''
             for sstring in self.line_species:
                 tot_str = tot_str + sstring + ':'
-            
-            self.line_grid_kappas = fi.read_in_molecular_opacities(self.path,tot_str,freq_len_full,self.g_len, \
-                                        len(self.line_species),len(self.line_TP_grid[:,0]),self.mode)
-            self.line_grid_kappas = np.array(self.line_grid_kappas[:,index,:,:],dtype='d',order='Fortran')
 
-        # Get cloud opacities
-        if len(self.cloud_species) > 0:
-            self.read_cloud_opas()
+            self.line_grid_kappas = fi.read_in_molecular_opacities(self.path,tot_str,freq_len_full,self.g_len, \
+                                        len(self.line_species),len(self.line_TP_grid[:,0]),self.mode, arr_min, arr_max)
+            if self.mode == 'c-k':
+                self.line_grid_kappas = np.array(self.line_grid_kappas[:,index,:,:],dtype='d',order='Fortran')
+            else:
+                self.line_grid_kappas = np.array(self.line_grid_kappas,dtype='d',order='Fortran')
             
-        # Read in g grid
+        # Read in g grid for correlated-k
         if self.mode == 'c-k':
             buffer = np.genfromtxt(self.path+'/opa_input_files/g_comb_grid.dat')
             self.g_gauss, self.w_gauss = buffer[:,0], buffer[:,1]
@@ -94,10 +128,19 @@ class radtrans:
             self.g_gauss, self.w_gauss = np.ones(1), np.ones(1)
             self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d',order='Fortran'),np.array(self.w_gauss,dtype='d',order='Fortran')
         
-        # Read in RT mu grid
+        # Read in the angle (mu) grid for the emission spectral calculations.
         buffer = np.genfromtxt(self.path+'/opa_input_files/mu_points.dat')
         self.mu, self.w_gauss_mu = buffer[:,0], buffer[:,1]
 
+        ###########################
+        # Read in continuum opacities
+        ###########################
+
+        # Clouds
+        if len(self.cloud_species) > 0:
+            self.read_cloud_opas()
+
+        # CIA
         if H2H2CIA:
           print('  Read CIA opacities for H2-H2...')
           self.cia_h2h2_lambda, self.cia_h2h2_temp, self.cia_h2h2_alpha_grid = fi.cia_read('H2H2',self.path)
@@ -110,12 +153,8 @@ class radtrans:
           print(' Done.')
           print()
 
-        # Define to not run into trouble later
-        self.Pcloud = None
-        self.haze_factor = None
-        self.gray_opacity = None
-
     def calc_borders(self,x):
+        ''' Return bin borders for midpoints. '''
         xn = []
         xn.append(x[0]-(x[1]-x[0])/2.)
         for i in range(int(len(x))-1):
@@ -123,9 +162,8 @@ class radtrans:
         xn.append(x[int(len(x))-1]+(x[int(len(x))-1]-x[int(len(x))-2])/2.)
         return np.array(xn)
 
-    # Function to read cloud opas
     def read_cloud_opas(self):
-
+        ''' Function to read cloud opacities '''
         self.cloud_species_mode = []
         for i in range(int(len(self.cloud_species))):
             splitstr = self.cloud_species[i].split('_')
@@ -161,7 +199,7 @@ class radtrans:
         
     # Preparing structures
     def setup_opa_structure(self,P):
-        ''' Setup opacity array for structure, as well as pressure array '''
+        ''' Setup opacity array for atmospheruc structure dimensions, as well as pressure array '''
         # bar to cgs
         self.press = P*1e6
         self.continuum_opa = np.array(np.zeros(self.freq_len*len(P)).reshape(self.freq_len, \
@@ -196,24 +234,28 @@ class radtrans:
                         int(len(self.cloud_species))).reshape(int(len(self.press)), \
                         int(len(self.cloud_species))),dtype='d',order='Fortran')
 
-    def interpolate_species_opa(self,temp):
-        ''' Interpolate opacities to given temperature structure. '''
+    def interpolate_species_opa(self, temp):
+        ''' Interpolate line opacities to given temperature structure. '''
         self.temp = temp
         if len(self.line_species) > 0:
             self.line_struc_kappas = fi.interpol_opa_ck(self.press,temp,self.line_TP_grid,self.line_grid_kappas)
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
-    def mix_opa_tot(self,abundances,mmw, gravity,\
+    def mix_opa_tot(self, abundances, mmw, gravity,\
                         sigma_lnorm = None, fsed = None, Kzz = None, \
                         radius = None, gray_opacity = None):
-        ''' Combine total line opacities, according to mass fractions (abundances). '''
+        ''' Combine total line opacities, according to mass fractions (abundances),
+            also add continuum opacities, i.e. clouds, CIA...'''
+        
         self.scat = False
         self.mmw = mmw
         for i_spec in range(len(self.line_species)):
             self.line_abundances[:,i_spec] = abundances[self.line_species[i_spec]]
         self.continuum_opa = np.zeros_like(self.continuum_opa)
         self.continuum_opa_scat = np.zeros_like(self.continuum_opa_scat)
+
+        # Calc. CIA opacity
         if self.H2H2CIA:
             self.continuum_opa = self.continuum_opa + fi.cia_interpol(self.freq,self.temp, \
                 self.cia_h2h2_lambda,self.cia_h2h2_temp,self.cia_h2h2_alpha_grid, \
@@ -227,11 +269,11 @@ class radtrans:
         if self.gray_opacity != None:
             self.continuum_opa = self.continuum_opa + self.gray_opacity
 
-        # Add cloud opacity calculation here!
+        # Add cloud opacity here, will modify self.continuum_opa
         if int(len(self.cloud_species)) > 0:
             self.calc_cloud_opacity(abundances, mmw, gravity, sigma_lnorm, fsed, Kzz, radius)
-            
-            
+
+        # Interpolate line opacities, combine with continuum oacities
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
                                         self.line_struc_kappas,self.continuum_opa)
         if len(self.rayleigh_species) != 0:
@@ -245,9 +287,8 @@ class radtrans:
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
 
-    #def calc_cloud_opacity(abundances, sigma_lnorm, fsed = None, Kzz = None, radius = None):
     def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, fsed = None, Kzz = None, radius = None):
-
+        ''' Function to calculate cloud opacities for defined atmospheric structure. '''
         rho = self.press/nc.kB/self.temp*mmw*nc.amu
         for i_spec in range(int(len(self.cloud_species))):
             self.cloud_mass_fracs[:,i_spec] = abundances[self.cloud_species[i_spec]]
@@ -352,7 +393,7 @@ class radtrans:
     def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
                              fsed = None, Kzz = None, radius = None,Pcloud=None, \
                              contribution=False,gray_opacity = None):
-        ''' Function to calc flux, called from outside '''
+        ''' Function to calc flux and transmission spectrum, called from outside '''
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)

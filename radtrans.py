@@ -1,6 +1,7 @@
 from . import fort_input as fi
 from . import fort_spec as fs
 from . import nat_cst as nc
+from . import pyth_input as pyi
 
 import numpy as np
 import copy as cp
@@ -10,9 +11,9 @@ import sys
 class radtrans:
     """ Class carrying out spectral calcs for a given set of opacities """
     
-    def __init__(self,line_species=[],rayleigh_species=[],cloud_species=[], \
-                     H2H2CIA=False,H2HeCIA=False,wlen_bords_micron=[0.05,300.], \
-                     mode='c-k'):
+    def __init__(self, line_species=[], rayleigh_species=[], cloud_species=[], \
+                     continuum_opacities = [], H2H2CIA=False, H2HeCIA=False, \
+                     wlen_bords_micron=[0.05,300.], mode='c-k'):
 
         # Line-by-line or corr-k
         self.mode = mode
@@ -26,9 +27,22 @@ class radtrans:
         # Cloud species to be considered
         self.cloud_species = cloud_species
 
-        # Include CIA?
+        # Include continuum opacities?
+        # Still allow for old way, when only CIA were continuum opacities
         self.H2H2CIA = H2H2CIA
         self.H2HeCIA = H2HeCIA
+        # New species
+        self.Hminus = False
+        # Check what is supposed to be included.
+        if len(continuum_opacities) > 0:
+            for c in continuum_opacities:
+                if c == 'H2-H2':
+                    self.H2H2CIA = True
+                elif c == 'H2-He':
+                    self.H2HeCIA = True
+                elif c == 'H-':
+                    self.Hminus = True
+            
 
         # Get path to all input data (opacities, grids, etc.)
         f = open(os.path.dirname(__file__)+'/path.txt')
@@ -85,6 +99,7 @@ class radtrans:
         # Define frequency bins around grid for later interpolatioin purposes when including
         # clouds...
         self.border_freqs = np.array(nc.c/self.calc_borders(nc.c/self.freq),dtype='d',order='Fortran')
+        self.border_lambda_angstroem = np.array(self.calc_borders(self.lambda_angstroem))
 
         self.Pcloud = None
         self.haze_factor = None
@@ -141,15 +156,15 @@ class radtrans:
             self.read_cloud_opas()
 
         # CIA
-        if H2H2CIA:
+        if self.H2H2CIA:
           print('  Read CIA opacities for H2-H2...')
           self.cia_h2h2_lambda, self.cia_h2h2_temp, self.cia_h2h2_alpha_grid = fi.cia_read('H2H2',self.path)
           self.cia_h2h2_alpha_grid = np.array(self.cia_h2h2_alpha_grid,dtype='d',order='Fortran')
-        if H2HeCIA:
+        if self.H2HeCIA:
           print('  Read CIA opacities for H2-He...')
           self.cia_h2he_lambda, self.cia_h2he_temp, self.cia_h2he_alpha_grid = fi.cia_read('H2He',self.path)
           self.cia_h2he_alpha_grid = np.array(self.cia_h2he_alpha_grid,dtype='d',order='Fortran')
-        if H2H2CIA or H2HeCIA:
+        if self.H2H2CIA or self.H2HeCIA:
           print(' Done.')
           print()
 
@@ -242,7 +257,7 @@ class radtrans:
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
-    def mix_opa_tot(self, abundances, mmw, gravity,\
+    def mix_opa_tot(self, abundances, mmw, gravity, \
                         sigma_lnorm = None, fsed = None, Kzz = None, \
                         radius = None, gray_opacity = None):
         ''' Combine total line opacities, according to mass fractions (abundances),
@@ -264,6 +279,11 @@ class radtrans:
             self.continuum_opa = self.continuum_opa + fi.cia_interpol(self.freq,self.temp, \
                 self.cia_h2he_lambda,self.cia_h2he_temp,self.cia_h2he_alpha_grid, \
                 self.press,self.mmw,np.sqrt(abundances['H2']*abundances['He']),np.sqrt(8.))
+
+        # Calc. H- opacity
+        if self.Hminus:
+            self.continuum_opa = self.continuum_opa + pyi.hminus_opacity(self.lambda_angstroem, \
+                self.border_lambda_angstroem, self.temp, self.press, mmw, abundances)
 
         # Add mock gray cloud opacity here
         if self.gray_opacity != None:

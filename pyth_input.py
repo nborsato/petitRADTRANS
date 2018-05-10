@@ -1,3 +1,11 @@
+""" pyth_input.py: provide continuum opacities for the petitRADTRANS module in polynomial form (currently H- only). """
+
+__author__ = "Paul Molliere"
+__copyright__ = "Copyright 2016-2018, Paul Molliere"
+__maintainer__ = "Paul Molliere"
+__email__ = "molliere@strw.leidenunivl.nl"
+__status__ = "Development"
+
 import numpy as np
 import nat_cst as nc
 

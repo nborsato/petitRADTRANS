@@ -1,3 +1,12 @@
+""" nat_cst.py: provides natural constants and functions such as the black body intensity for the petitRADTRANS module. """
+
+__author__ = "Paul Molliere"
+__copyright__ = "Copyright 2016-2018, Paul Molliere"
+__maintainer__ = "Paul Molliere"
+__email__ = "molliere@strw.leidenunivl.nl"
+__status__ = "Development"
+
+
 import numpy as np
 
 # Natural constants

@@ -1,7 +1,7 @@
 !!$*****************************************************************************
 !!$*****************************************************************************
 !!$*****************************************************************************
-!!$ rebin.f90: utility function to rebin synthetic spectrum to data spectrum
+!!$ fort_rebin.f90: utility function to rebin synthetic spectrum to data spectrum
 !!$ for the petitRADTRANS radiative transfer package.
 !!$ 
 !!$ Copyright 2016-2018, Paul Molliere

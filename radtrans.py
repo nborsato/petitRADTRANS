@@ -1,3 +1,11 @@
+""" radtrans.py: class definition for petitRADTRANS radiative transfer package + some utility functions. """
+
+__author__ = "Paul Molliere"
+__copyright__ = "Copyright 2016-2018, Paul Molliere"
+__maintainer__ = "Paul Molliere"
+__email__ = "molliere@strw.leidenunivl.nl"
+__status__ = "Development"
+
 from . import fort_input as fi
 from . import fort_spec as fs
 from . import nat_cst as nc

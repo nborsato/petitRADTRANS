@@ -267,7 +267,7 @@ class radtrans:
             
     def mix_opa_tot(self, abundances, mmw, gravity, \
                         sigma_lnorm = None, fsed = None, Kzz = None, \
-                        radius = None, gray_opacity = None):
+                        radius = None, gray_opacity = None, add_cloud_scat_as_abs = None):
         ''' Combine total line opacities, according to mass fractions (abundances),
             also add continuum opacities, i.e. clouds, CIA...'''
         
@@ -299,7 +299,8 @@ class radtrans:
 
         # Add cloud opacity here, will modify self.continuum_opa
         if int(len(self.cloud_species)) > 0:
-            self.calc_cloud_opacity(abundances, mmw, gravity, sigma_lnorm, fsed, Kzz, radius)
+            self.calc_cloud_opacity(abundances, mmw, gravity, sigma_lnorm, fsed, Kzz, radius, \
+                                        add_cloud_scat_as_abs)
 
         # Interpolate line opacities, combine with continuum oacities
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
@@ -315,7 +316,8 @@ class radtrans:
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
 
-    def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, fsed = None, Kzz = None, radius = None):
+    def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, fsed = None, Kzz = None, \
+                               radius = None, add_cloud_scat_as_abs = None):
         ''' Function to calculate cloud opacities for defined atmospheric structure. '''
         rho = self.press/nc.kB/self.temp*mmw*nc.amu
         for i_spec in range(int(len(self.cloud_species))):
@@ -342,8 +344,16 @@ class radtrans:
            fs.interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, \
             cloud_red_fac_aniso_TOT,self.cloud_lambdas,self.border_freqs)
 
-        self.continuum_opa += cloud_abs
         self.continuum_opa_scat += cloud_abs_tot_no_aniso - cloud_abs
+
+        if add_cloud_scat_as_abs != None:
+            if add_cloud_scat_as_abs:
+                self.continuum_opa += cloud_abs + 0.20*(cloud_abs_tot_no_aniso - cloud_abs)
+            else:
+                self.continuum_opa += cloud_abs
+        else:
+            self.continuum_opa += cloud_abs
+
             
         return
     
@@ -397,17 +407,18 @@ class radtrans:
         
     def calc_flux(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
                       fsed = None, Kzz = None, radius = None,contribution=False, \
-                      gray_opacity = None):
+                      gray_opacity = None, add_cloud_scat_as_abs = None):
         ''' Function to calc flux, called from outside '''
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
-        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
+        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
+                             add_cloud_scat_as_abs = add_cloud_scat_as_abs)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
 
     def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
-                        fsed = None, Kzz = None, radius = None,Pcloud=None, \
-                        contribution=False,haze_factor=None, \
+                        fsed = None, Kzz = None, radius = None, Pcloud = None, \
+                        contribution = False, haze_factor = None, \
                         gray_opacity = None):
         ''' Function to calc transm. spectrum, called from outside '''
         self.Pcloud = Pcloud
@@ -420,15 +431,21 @@ class radtrans:
 
     def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
                              fsed = None, Kzz = None, radius = None,Pcloud=None, \
-                             contribution=False,gray_opacity = None):
+                             contribution=False,gray_opacity = None, add_cloud_scat_as_abs = None):
         ''' Function to calc flux and transmission spectrum, called from outside '''
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
-        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
+        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
+                             add_cloud_scat_as_abs = add_cloud_scat_as_abs)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)
+
+    def get_opa(self,temp):
+        ''' Function to calc flux, called from outside '''
+        self.interpolate_species_opa(temp)
+        return self.line_struc_kappas
 
 ########################################################
 ### Radtrans utility for temperature model computation

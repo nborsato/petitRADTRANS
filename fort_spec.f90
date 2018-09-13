@@ -279,7 +279,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   t_graze_scat = 0d0
 
   ! Variable gravity (varies with 1/radius**2)?
-  var_grav = .FALSE.
+  var_grav = .TRUE.
   ! Convert reference pressure to cgs
   P0_cgs = P0_bar*1d6
   ! Calculate density
@@ -399,6 +399,11 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav
   radius = 0d0
 
   if (var_grav) then
+
+     write(*,*) '####################### VARIABLE RADIUS'
+     write(*,*) '####################### VARIABLE RADIUS'
+     write(*,*) '####################### VARIABLE RADIUS'
+     write(*,*) '####################### VARIABLE RADIUS'
      
      ! Calculate radius with vertically varying gravity, set up such that at P=P0, i.e. R=R_pl
      ! the planet has the predefined scalar gravity value

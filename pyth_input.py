@@ -7,7 +7,7 @@ __email__ = "molliere@strw.leidenunivl.nl"
 __status__ = "Development"
 
 import numpy as np
-import nat_cst as nc
+from . import nat_cst as nc
 
 def sigma_hm_ff(lambda_angstroem, temp, P_e):
     '''

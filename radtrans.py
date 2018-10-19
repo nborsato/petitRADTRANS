@@ -385,25 +385,25 @@ class radtrans:
             self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau,self.temp, \
                 self.mu,self.w_gauss_mu,self.w_gauss,contribution)
 
-    def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw,contribution):
+    def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw,contribution,variable_gravity):
         ''' Calculate the transmission spectrum '''
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas[:,:,:1,:],self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
-                                                      self.continuum_opa_scat)
+                                                      self.continuum_opa_scat,variable_gravity)
             if contribution:
                 self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas[:,:,:1,:], self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
-                                    self.continuum_opa_scat)
+                                    self.continuum_opa_scat,variable_gravity)
             
         else:
             self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas,self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
-                                                      self.continuum_opa_scat)
+                                                      self.continuum_opa_scat,variable_gravity)
             if contribution:
                 self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas,self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
-                                    self.continuum_opa_scat)
+                                    self.continuum_opa_scat,variable_gravity)
         
     def calc_flux(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
                       fsed = None, Kzz = None, radius = None,contribution=False, \
@@ -419,19 +419,20 @@ class radtrans:
     def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
                         fsed = None, Kzz = None, radius = None, Pcloud = None, \
                         contribution = False, haze_factor = None, \
-                        gray_opacity = None):
+                        gray_opacity = None,variable_gravity=True):
         ''' Function to calc transm. spectrum, called from outside '''
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.haze_factor = haze_factor
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
-        self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)
+        self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
         
 
     def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
                              fsed = None, Kzz = None, radius = None,Pcloud=None, \
-                             contribution=False,gray_opacity = None, add_cloud_scat_as_abs = None):
+                             contribution=False,gray_opacity = None, add_cloud_scat_as_abs = None, \
+                             variable_gravity=True):
         ''' Function to calc flux and transmission spectrum, called from outside '''
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
@@ -440,7 +441,7 @@ class radtrans:
                              add_cloud_scat_as_abs = add_cloud_scat_as_abs)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
-        self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution)
+        self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
 
     def get_opa(self,temp):
         ''' Function to calc flux, called from outside '''

@@ -235,7 +235,7 @@ end subroutine planck_f
 !!$ Subroutine to calculate the transmission spectrum
 
 subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_pl, &
-     w_gauss,transm,freq_len,struc_len,g_len,N_species,scat,continuum_opa_scat)
+     w_gauss,scat,continuum_opa_scat,var_grav,transm,freq_len,struc_len,g_len,N_species)
 
   use constants_block
   implicit none
@@ -278,8 +278,6 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   t_graze = 0d0
   t_graze_scat = 0d0
 
-  ! Variable gravity (varies with 1/radius**2)?
-  var_grav = .TRUE.
   ! Convert reference pressure to cgs
   P0_cgs = P0_bar*1d6
   ! Calculate density
@@ -400,10 +398,10 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav
 
   if (var_grav) then
 
-     write(*,*) '####################### VARIABLE RADIUS'
-     write(*,*) '####################### VARIABLE RADIUS'
-     write(*,*) '####################### VARIABLE RADIUS'
-     write(*,*) '####################### VARIABLE RADIUS'
+     write(*,*) '####################### VARIABLE GRAVITY'
+     write(*,*) '####################### VARIABLE GRAVITY'
+     write(*,*) '####################### VARIABLE GRAVITY'
+     write(*,*) '####################### VARIABLE GRAVITY'
      
      ! Calculate radius with vertically varying gravity, set up such that at P=P0, i.e. R=R_pl
      ! the planet has the predefined scalar gravity value
@@ -432,6 +430,12 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav
      radius = 1d0/radius
      
   else
+
+     write(*,*) '####################### CONSTANT GRAVITY'
+     write(*,*) '####################### CONSTANT GRAVITY'
+     write(*,*) '####################### CONSTANT GRAVITY'
+     write(*,*) '####################### CONSTANT GRAVITY'
+
      
      ! Calculate radius with vertically constant gravity
      do i_str = struc_len-1, 1, -1
@@ -693,7 +697,7 @@ end subroutine add_rayleigh
 !!$ Subroutine to calculate the contribution function of the transmission spectrum
 
 subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar,R_pl, &
-     w_gauss,transm_in,contr_tr,freq_len,struc_len,g_len,N_species,scat,continuum_opa_scat)
+     w_gauss,transm_in,scat,continuum_opa_scat,var_grav,contr_tr,freq_len,struc_len,g_len,N_species)
 
   use constants_block
   implicit none
@@ -720,8 +724,6 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
        total_kappa_use(g_len,freq_len,N_species,struc_len), continuum_opa_scat_use(freq_len,struc_len), &
        transm(freq_len)
 
-  ! Variable gravity (varies with 1/radius**2)?
-  var_grav = .FALSE.
   ! Convert reference pressure to cgs
   P0_cgs = P0_bar*1d6
   ! Calculate density

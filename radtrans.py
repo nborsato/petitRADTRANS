@@ -452,6 +452,7 @@ class radtrans:
 ### Radtrans utility for temperature model computation
 ########################################################
 
+'''
 ### Box car conv. average
 def box_car_conv(array,points):
 
@@ -469,7 +470,12 @@ def box_car_conv(array,points):
             smooth_val = array[:max(2*i,1)]
             res[i] = np.sum(smooth_val)/len(smooth_val)
     return res
+'''
 
+### Box car conv. average, found online somewhere
+def running_mean(x, N):
+    cumsum = np.cumsum(np.insert(x, 0, 0)) 
+    return (cumsum[N:] - cumsum[:-N]) / float(N)
 
 ### Global Guillot P-T formula with kappa/grav replaced by delta
 def guillot_global(P,delta,gamma,T_int,T_equ):
@@ -490,6 +496,7 @@ def guillot_modif(P,delta,gamma,T_int,T_equ,ptrans,alpha):
     return guillot_global(P,np.abs(delta),np.abs(gamma),np.abs(T_int),np.abs(T_equ))* \
       (1.-alpha*(1./(1.+np.exp((np.log(P/ptrans))))))
 
+'''
 ### Function to make temp
 def make_press_temp(rad_trans_params):
     press_many = np.logspace(-6,5,210)
@@ -501,3 +508,23 @@ def make_press_temp(rad_trans_params):
         1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha']),20)
     temp = t[index][::2]
     return press, temp
+'''
+
+### Function to make temp
+def make_press_temp(rad_trans_params):
+
+    press_many = np.logspace(-8,5,260)
+    t_no_ave = guillot_modif(press_many, \
+        1e1**rad_trans_params['log_delta'],1e1**rad_trans_params['log_gamma'], \
+        rad_trans_params['t_int'],rad_trans_params['t_equ'], \
+        1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha'])
+
+    # new
+    press_many_new = running_mean(press_many, 15)
+    t_new          = running_mean(t_no_ave  , 15)
+    index_new      = (press_many_new <= 1e3) & (press_many_new >= 1e-6)
+    temp_new       = t_new[index_new][::2]
+    press_new      = press_many_new[index_new][::2]
+    
+    return press_new, temp_new
+

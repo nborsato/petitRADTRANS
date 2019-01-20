@@ -16,7 +16,7 @@ import copy as cp
 import os
 import sys
 
-class radtrans:
+class Radtrans:
     """ Class carrying out spectral calcs for a given set of opacities """
     
     def __init__(self, line_species=[], rayleigh_species=[], cloud_species=[], \
@@ -177,7 +177,7 @@ class radtrans:
           print()
 
     def calc_borders(self,x):
-        ''' Return bin borders for midpoints. '''
+        # Return bin borders for midpoints.
         xn = []
         xn.append(x[0]-(x[1]-x[0])/2.)
         for i in range(int(len(x))-1):
@@ -186,7 +186,7 @@ class radtrans:
         return np.array(xn)
 
     def read_cloud_opas(self):
-        ''' Function to read cloud opacities '''
+        # Function to read cloud opacities
         self.cloud_species_mode = []
         for i in range(int(len(self.cloud_species))):
             splitstr = self.cloud_species[i].split('_')
@@ -222,7 +222,8 @@ class radtrans:
         
     # Preparing structures
     def setup_opa_structure(self,P):
-        ''' Setup opacity array for atmospheruc structure dimensions, as well as pressure array '''
+        ''' Setup opacity array for atmospheric structure dimensions, as well as pressure array '''
+        
         # bar to cgs
         self.press = P*1e6
         self.continuum_opa = np.array(np.zeros(self.freq_len*len(P)).reshape(self.freq_len, \
@@ -258,7 +259,7 @@ class radtrans:
                         int(len(self.cloud_species))),dtype='d',order='Fortran')
 
     def interpolate_species_opa(self, temp):
-        ''' Interpolate line opacities to given temperature structure. '''
+        # Interpolate line opacities to given temperature structure.
         self.temp = temp
         if len(self.line_species) > 0:
             self.line_struc_kappas = fi.interpol_opa_ck(self.press,temp,self.line_TP_grid,self.line_grid_kappas)
@@ -268,8 +269,8 @@ class radtrans:
     def mix_opa_tot(self, abundances, mmw, gravity, \
                         sigma_lnorm = None, fsed = None, Kzz = None, \
                         radius = None, gray_opacity = None, add_cloud_scat_as_abs = None):
-        ''' Combine total line opacities, according to mass fractions (abundances),
-            also add continuum opacities, i.e. clouds, CIA...'''
+        # Combine total line opacities, according to mass fractions (abundances),
+        #    also add continuum opacities, i.e. clouds, CIA...
         
         self.scat = False
         self.mmw = mmw
@@ -318,7 +319,7 @@ class radtrans:
 
     def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, fsed = None, Kzz = None, \
                                radius = None, add_cloud_scat_as_abs = None):
-        ''' Function to calculate cloud opacities for defined atmospheric structure. '''
+        # Function to calculate cloud opacities for defined atmospheric structure.
         rho = self.press/nc.kB/self.temp*mmw*nc.amu
         for i_spec in range(int(len(self.cloud_species))):
             self.cloud_mass_fracs[:,i_spec] = abundances[self.cloud_species[i_spec]]
@@ -359,7 +360,7 @@ class radtrans:
     
 
     def add_rayleigh(self,abundances):
-        ''' Add Rayleigh scattering cross-sections'''
+        # Add Rayleigh scattering cross-sections
         for spec in self.rayleigh_species:
             haze_multiply = 1.
             if (self.haze_factor != None):
@@ -370,14 +371,14 @@ class radtrans:
         #print(self.continuum_opa_scat[:,0])
 
     def calc_opt_depth(self,gravity):
-        ''' Calculate optical depth for the total opacity. '''
+        # Calculate optical depth for the total opacity.
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.total_tau[:,:,:1,:] = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas[:,:,:1,:])
         else:
             self.total_tau = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas)
         
     def calc_RT(self,contribution):
-        ''' Calculate the flux'''
+        # Calculate the flux
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau[:,:,:1,:],self.temp, \
                 self.mu,self.w_gauss_mu,self.w_gauss,contribution)
@@ -386,7 +387,7 @@ class radtrans:
                 self.mu,self.w_gauss_mu,self.w_gauss,contribution)
 
     def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw,contribution,variable_gravity):
-        ''' Calculate the transmission spectrum '''
+        # Calculate the transmission spectrum
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
             self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas[:,:,:1,:],self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
@@ -520,8 +521,8 @@ def make_press_temp(rad_trans_params):
         1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha'])
 
     # new
-    press_many_new = running_mean(press_many, 15)
-    t_new          = running_mean(t_no_ave  , 15)
+    press_many_new = 1e1**running_mean(np.log10(press_many), 25)
+    t_new          = running_mean(t_no_ave  , 25)
     index_new      = (press_many_new <= 1e3) & (press_many_new >= 1e-6)
     temp_new       = t_new[index_new][::2]
     press_new      = press_many_new[index_new][::2]

@@ -398,10 +398,10 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav
 
   if (var_grav) then
 
-     write(*,*) '####################### VARIABLE GRAVITY'
-     write(*,*) '####################### VARIABLE GRAVITY'
-     write(*,*) '####################### VARIABLE GRAVITY'
-     write(*,*) '####################### VARIABLE GRAVITY'
+     !write(*,*) '####################### VARIABLE GRAVITY'
+     !write(*,*) '####################### VARIABLE GRAVITY'
+     !write(*,*) '####################### VARIABLE GRAVITY'
+     !write(*,*) '####################### VARIABLE GRAVITY'
      
      ! Calculate radius with vertically varying gravity, set up such that at P=P0, i.e. R=R_pl
      ! the planet has the predefined scalar gravity value
@@ -431,10 +431,10 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav
      
   else
 
-     write(*,*) '####################### CONSTANT GRAVITY'
-     write(*,*) '####################### CONSTANT GRAVITY'
-     write(*,*) '####################### CONSTANT GRAVITY'
-     write(*,*) '####################### CONSTANT GRAVITY'
+     !write(*,*) '####################### CONSTANT GRAVITY'
+     !write(*,*) '####################### CONSTANT GRAVITY'
+     !write(*,*) '####################### CONSTANT GRAVITY'
+     !write(*,*) '####################### CONSTANT GRAVITY'
 
      
      ! Calculate radius with vertically constant gravity

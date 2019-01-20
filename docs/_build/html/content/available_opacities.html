@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Available opacity species &mdash; petitRADTRANS 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="code.html" />
+    <link rel="prev" title="Analysis tools" href="notebooks/analysis.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> petitRADTRANS
+          
+
+          
+            
+            <img src="../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Available opacity species</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#line-absorbers">Line absorbers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#line-absorbers-low-resolution-mode-c-k-with-lambda-delta-lambda-1000"><strong>Line absorbers, low resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;c-k&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#line-absorbers-high-resolution-mode-lbl-with-lambda-delta-lambda-10-6"><strong>Line absorbers, high resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;lbl&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cloud-opacities">Cloud opacities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rayleigh-scatterers">Rayleigh scatterers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuum-opacity-sources">Continuum opacity sources</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_radtrans.html">Radtrans class</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">petitRADTRANS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Available opacity species</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/content/available_opacities.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="available-opacity-species">
+<h1>Available opacity species<a class="headerlink" href="#available-opacity-species" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="line-absorbers">
+<h2>Line absorbers<a class="headerlink" href="#line-absorbers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="line-absorbers-low-resolution-mode-c-k-with-lambda-delta-lambda-1000">
+<h3><strong>Line absorbers, low resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;c-k&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>)<a class="headerlink" href="#line-absorbers-low-resolution-mode-c-k-with-lambda-delta-lambda-1000" title="Permalink to this headline">¶</a></h3>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">In low resolution mode (<code class="docutils literal notranslate"><span class="pre">&quot;c-k&quot;</span></code>), most of the molecular opacitites are calculated considering only the main isotopologue. This is different only for CO and TiO, where the contribution of all isotopologues is considered. For CO because the secondary isotopes of carbon, for example <span class="math notranslate nohighlight">\(\rm ^{13}C\)</span>, are quite abundant when compared to the main isotope, that is <span class="math notranslate nohighlight">\(\rm ^{12}C/^{13}C\sim 100\)</span>, and because CO has very strong and sparse lines. Not including these lines therefore has a noticeable effect already at low resolution. For TiO all isotopologues are included because the relative ratios between the Ti isotopes are quite large. Apart from these two species, the main isotopologue treatment compared very well to codes including all isotopologues, at this low resolution, see <a class="reference external" href="http://adsabs.harvard.edu/abs/2017ApJ...850..150B">Baudino et al. (2017)</a>.</p>
+</div>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Species name</th>
+<th class="head">Required in abuncance dictionary</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>C2H2</td>
+<td>C2H2</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>CH4</td>
+<td>CH4</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-even"><td>CO</td>
+<td>CO</td>
+<td>Main isotopologue, HITEMP/Kurucz</td>
+</tr>
+<tr class="row-odd"><td>CO2</td>
+<td>CO2</td>
+<td>Main isotopologue, HITEMP</td>
+</tr>
+<tr class="row-even"><td>CO_all_iso</td>
+<td>CO_all_iso</td>
+<td>All isotopologues, HITEMP/Kurucz</td>
+</tr>
+<tr class="row-odd"><td>H2</td>
+<td>H2</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>H2O</td>
+<td>H2O</td>
+<td>Main isotopologue, HITEMP</td>
+</tr>
+<tr class="row-odd"><td>H2S</td>
+<td>H2S</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>HCN</td>
+<td>HCN</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>HDO</td>
+<td>HDO</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>K</td>
+<td>K</td>
+<td>Main isotopologue, VALD, Allard wings</td>
+</tr>
+<tr class="row-odd"><td>K_lor_cut</td>
+<td>K_lor_cut</td>
+<td>Main isotopologue, VALD, Lorentzian wings</td>
+</tr>
+<tr class="row-even"><td>NH3</td>
+<td>NH3</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>NH3_HITRAN</td>
+<td>NH3_HITRAN</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>Na</td>
+<td>Na</td>
+<td>Main isotopologue, VALD, Allard wings</td>
+</tr>
+<tr class="row-odd"><td>Na_lor_cut</td>
+<td>Na_lor_cut</td>
+<td>Main isotopologue, VALD, Lorentzian wings</td>
+</tr>
+<tr class="row-even"><td>O3</td>
+<td>O3</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>OH</td>
+<td>OH</td>
+<td>Main isotopologue, HITEMP</td>
+</tr>
+<tr class="row-even"><td>PH3</td>
+<td>PH3</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>PH3_HITRAN</td>
+<td>PH3_HITRAN</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>SiO_main_iso</td>
+<td>SiO_main_iso</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>TiO</td>
+<td>TiO</td>
+<td>All isotopologues, B. Plez</td>
+</tr>
+<tr class="row-even"><td>VO</td>
+<td>VO</td>
+<td>Main isotopologue, B. Plez</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="line-absorbers-high-resolution-mode-lbl-with-lambda-delta-lambda-10-6">
+<h3><strong>Line absorbers, high resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;lbl&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>)<a class="headerlink" href="#line-absorbers-high-resolution-mode-lbl-with-lambda-delta-lambda-10-6" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Species name</th>
+<th class="head">Required in abundance dictionary</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>C2H2_main_iso</td>
+<td>C2H2_main_iso</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>CH4_212</td>
+<td>CH4_212</td>
+<td><span class="math notranslate nohighlight">\(\rm CH_3D\)</span>, HITRAN</td>
+</tr>
+<tr class="row-even"><td>CH4_main_iso</td>
+<td>CH4_main_iso</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>CO2_main_iso</td>
+<td>CO2_main_iso</td>
+<td>Main isotopologue, HITEMP</td>
+</tr>
+<tr class="row-even"><td>CO_27</td>
+<td>CO_27</td>
+<td><span class="math notranslate nohighlight">\(\rm ^{12}C^{17}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>CO_28</td>
+<td>CO_28</td>
+<td><span class="math notranslate nohighlight">\(\rm ^{12}C^{18}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-even"><td>CO_36</td>
+<td>CO_36</td>
+<td><span class="math notranslate nohighlight">\(\rm ^{13}C^{16}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>CO_37</td>
+<td>CO_37</td>
+<td><span class="math notranslate nohighlight">\(\rm ^{13}C^{17}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-even"><td>CO_38</td>
+<td>CO_38</td>
+<td><span class="math notranslate nohighlight">\(\rm ^{13}C^{18}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>CO_all_iso</td>
+<td>CO_all_iso</td>
+<td>All isotopologues</td>
+</tr>
+<tr class="row-even"><td>CO_main_iso</td>
+<td>CO_main_iso</td>
+<td>Main isotopologue, HITEMP</td>
+</tr>
+<tr class="row-odd"><td>H2O_162</td>
+<td>H2O_162</td>
+<td><span class="math notranslate nohighlight">\(\rm HDO\)</span>, HITRAN</td>
+</tr>
+<tr class="row-even"><td>H2O_171</td>
+<td>H2O_171</td>
+<td><span class="math notranslate nohighlight">\(\rm H_2 \ ^{17}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>H2O_172</td>
+<td>H2O_172</td>
+<td><span class="math notranslate nohighlight">\(\rm HD^{17}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-even"><td>H2O_181</td>
+<td>H2O_181</td>
+<td><span class="math notranslate nohighlight">\(\rm H_2 \ ^{18}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>H2O_182</td>
+<td>H2O_182</td>
+<td><span class="math notranslate nohighlight">\(\rm HD^{18}O\)</span>, HITRAN</td>
+</tr>
+<tr class="row-even"><td>H2O_main_iso</td>
+<td>H2O_main_iso</td>
+<td>Main isotopologue, HITEMP</td>
+</tr>
+<tr class="row-odd"><td>H2S_main_iso</td>
+<td>H2S_main_iso</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>H2_12</td>
+<td>H2_12</td>
+<td><span class="math notranslate nohighlight">\(\rm HD\)</span>, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>H2_main_iso</td>
+<td>H2_main_iso</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-even"><td>HCN_main_iso</td>
+<td>HCN_main_iso</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>K</td>
+<td>K</td>
+<td>Main isotopologue, VALD, Allard wings</td>
+</tr>
+<tr class="row-even"><td>NH3_main_iso</td>
+<td>NH3_main_iso</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>Na</td>
+<td>Na</td>
+<td>Main isotopologue, VALD, Allard wings</td>
+</tr>
+<tr class="row-even"><td>O3_main_iso</td>
+<td>O3_main_iso</td>
+<td>Main isotopologue, HITRAN</td>
+</tr>
+<tr class="row-odd"><td>PH3_main_iso</td>
+<td>PH3_main_iso</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-even"><td>SiO_main_iso</td>
+<td>SiO_main_iso</td>
+<td>Main isotopologue, Exomol</td>
+</tr>
+<tr class="row-odd"><td>TiO_all_iso</td>
+<td>TiO_all_iso</td>
+<td>All isotopologues, B. Plez</td>
+</tr>
+<tr class="row-even"><td>VO</td>
+<td>VO</td>
+<td>Main isotopologue, B. Plez</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="cloud-opacities">
+<h2>Cloud opacities<a class="headerlink" href="#cloud-opacities" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Species name</th>
+<th class="head">Required in abundance dictionary</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Al2O3(c)_cm</td>
+<td>Al2O3(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Al2O3(c)_cd</td>
+<td>Al2O3(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>Fe(c)_am</td>
+<td>Fe(c)</td>
+<td>Amorphous, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Fe(c)_ad</td>
+<td>Fe(c)</td>
+<td>Amorphous, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>Fe(c)_cm</td>
+<td>Fe(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Fe(c)_cd</td>
+<td>Fe(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>H2O(c)_cm</td>
+<td>H2O(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>H2O(c)_cd</td>
+<td>H2O(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>KCL(c)_cm</td>
+<td>KCL(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>KCL(c)_cd</td>
+<td>KCL(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>Mg05Fe05SiO3(c)_am</td>
+<td>Mg05Fe05SiO3(c)</td>
+<td>Amorphous, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Mg05Fe05SiO3(c)_ad</td>
+<td>Mg05Fe05SiO3(c)</td>
+<td>Amorphous, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>Mg2SiO4(c)_am</td>
+<td>Mg2SiO4(c)</td>
+<td>Amorphous, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Mg2SiO4(c)_ad</td>
+<td>Mg2SiO4(c)</td>
+<td>Amorphous, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>Mg2SiO4(c)_cm</td>
+<td>Mg2SiO4(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Mg2SiO4(c)_cd</td>
+<td>Mg2SiO4(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>MgAl2O4(c)_cm</td>
+<td>MgAl2O4(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>MgAl2O4(c)_cd</td>
+<td>MgAl2O4(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>MgFeSiO4(c)_am</td>
+<td>MgFeSiO4(c)</td>
+<td>Amorphous, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>MgFeSiO4(c)_ad</td>
+<td>MgFeSiO4(c)</td>
+<td>Amorphous, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>MgSiO3(c)_am</td>
+<td>MgSiO3(c)</td>
+<td>Amorphous, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>MgSiO3(c)_ad</td>
+<td>MgSiO3(c)</td>
+<td>Amorphous, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>MgSiO3(c)_cm</td>
+<td>MgSiO3(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>MgSiO3(c)_cd</td>
+<td>MgSiO3(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>Na2S(c)_cm</td>
+<td>Na2S(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>Na2S(c)_cd</td>
+<td>Na2S(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+<tr class="row-even"><td>SiC(c)_cm</td>
+<td>SiC(c)</td>
+<td>Crystalline, Mie scattering (spherical)</td>
+</tr>
+<tr class="row-odd"><td>SiC(c)_cd</td>
+<td>SiC(c)</td>
+<td>Crystalline, DHS (irregular shape)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="rayleigh-scatterers">
+<h2>Rayleigh scatterers<a class="headerlink" href="#rayleigh-scatterers" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Species name</th>
+<th class="head">Required in abundance dictionary</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>H2</td>
+<td>H2</td>
+</tr>
+<tr class="row-odd"><td>He</td>
+<td>He</td>
+</tr>
+<tr class="row-even"><td>H2O</td>
+<td>H2O</td>
+</tr>
+<tr class="row-odd"><td>CO2</td>
+<td>CO2</td>
+</tr>
+<tr class="row-even"><td>O2</td>
+<td>O2</td>
+</tr>
+<tr class="row-odd"><td>N2</td>
+<td>N2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="continuum-opacity-sources">
+<h2>Continuum opacity sources<a class="headerlink" href="#continuum-opacity-sources" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Species name</th>
+<th class="head">Required in abundance dictionary</th>
+<th class="head">Descripton</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>H2-H2</td>
+<td>H2</td>
+<td>Collision induced absorption (CIA)</td>
+</tr>
+<tr class="row-odd"><td>H2-He</td>
+<td>H2, He</td>
+<td>Collision induced absorption (CIA)</td>
+</tr>
+<tr class="row-even"><td>H-</td>
+<td>H, H-, e-</td>
+<td>H- bound-free and free-free opacity</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="code.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="notebooks/analysis.html" class="btn btn-neutral" title="Analysis tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Paul Mollière
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

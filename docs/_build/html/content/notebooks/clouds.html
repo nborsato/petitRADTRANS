@@ -1,0 +1,870 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Including clouds &mdash; petitRADTRANS 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Analysis tools" href="analysis.html" />
+    <link rel="prev" title="High-resolution spectra" href="highres.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> petitRADTRANS
+          
+
+          
+            
+            <img src="../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="highres.html">High-resolution spectra</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Including clouds</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Powerlaw-cloud-models">Powerlaw cloud models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering">Gray cloud deck and/or scaled Rayhleigh scattering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Condensate-clouds-from-real-optical-constants">Condensate clouds from real optical constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Setting-the-cloud-particle-size">Setting the cloud particle size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Calculating-the-particle-size">Calculating the particle size</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Emission-spectra">Emission spectra</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html">Analysis tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../code_radtrans.html">Radtrans class</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">petitRADTRANS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../tutorial.html">Tutorial</a> &raquo;</li>
+        
+      <li>Including clouds</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/content/notebooks/clouds.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 5ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Including-clouds">
+<h1>Including clouds<a class="headerlink" href="#Including-clouds" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Powerlaw-cloud-models">
+<h2>Powerlaw cloud models<a class="headerlink" href="#Powerlaw-cloud-models" title="Permalink to this headline">¶</a></h2>
+<p>To be added soon.</p>
+</div>
+<div class="section" id="Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering">
+<h2>Gray cloud deck and/or scaled Rayhleigh scattering<a class="headerlink" href="#Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering" title="Permalink to this headline">¶</a></h2>
+<p>Let’s initialize an atmosphere in the usual way, see <a class="reference external" href="getting_started.html">“Getting Started”</a>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import numpy as np
+from petitRADTRANS import Radtrans
+
+atmosphere = Radtrans(line_species = [&#39;H2O&#39;, &#39;CO_all_iso&#39;, &#39;CH4&#39;, &#39;CO2&#39;, &#39;Na&#39;, &#39;K&#39;], \
+      rayleigh_species = [&#39;H2&#39;, &#39;He&#39;], \
+      continuum_opacities = [&#39;H2-H2&#39;, &#39;H2-He&#39;], \
+      wlen_bords_micron = [0.3, 15])
+
+pressures = np.logspace(-6, 2, 100)
+atmosphere.setup_opa_structure(pressures)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+  Read CIA opacities for H2-H2...
+  Read CIA opacities for H2-He...
+ Done.
+
+</pre></div></div>
+</div>
+<div class="admonition warning">
+<strong>Units in petitRADTRANS:</strong> remember that all units in <em>petitRADTRANS</em> are in cgs, <strong>except for pressure</strong>, which is in bars, <strong>and the mean molecular weight (MMW)</strong>, which is in units of atomic mass units.</div>
+<p>Next we set up the atmospheric parameters, with a parameter selection identical to the <a class="reference external" href="getting_started.html">“Getting Started”</a> case.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from petitRADTRANS import nat_cst as nc
+R_pl = 1.838*nc.r_jup_mean
+gravity = 1e1**2.45
+P0 = 0.01
+
+kappa_IR = 0.01
+gamma = 0.4
+T_int = 200.
+T_equ = 1500.
+temperature = nc.guillot_global(pressures, kappa_IR, gamma, gravity, T_int, T_equ)
+
+abundances = {}
+abundances[&#39;H2&#39;] = 0.74 * np.ones_like(temperature)
+abundances[&#39;He&#39;] = 0.24 * np.ones_like(temperature)
+abundances[&#39;H2O&#39;] = 0.001 * np.ones_like(temperature)
+abundances[&#39;CO_all_iso&#39;] = 0.01 * np.ones_like(temperature)
+abundances[&#39;CO2&#39;] = 0.00001 * np.ones_like(temperature)
+abundances[&#39;CH4&#39;] = 0.000001 * np.ones_like(temperature)
+abundances[&#39;Na&#39;] = 0.00001 * np.ones_like(temperature)
+abundances[&#39;K&#39;] = 0.000001 * np.ones_like(temperature)
+
+MMW = 2.33 * np.ones_like(temperature)
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
+X_i = \frac{\mu_i}{\mu}n_i,
+\end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</div>
+<p>Let’s calculate three spectra: - A clear model - A cloudy model with a gray cloud deck at 0.01 bar - A haze-like model, mimicked by scaling the Rayleigh scattering of the gas by a factor 10 - A combination of the two above cloud models: gray cloud deck plus haze</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import pylab as plt
+plt.rcParams[&#39;figure.figsize&#39;] = (10, 6)
+
+# Clear
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, R_pl=R_pl, P0_bar=P0)
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, label = &#39;Clear&#39;)
+
+# Gray cloud deck at 0.01 bar
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                      Pcloud = 0.01)
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, label = &#39;Gray cloud deck at 0.01 bar&#39;)
+
+# Haze (10 x gas Rayleigh scattering)
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                      haze_factor = 10)
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, label = &#39;Rayleigh haze&#39;)
+
+# Haze + cloud deck
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                      haze_factor = 10, Pcloud = 0.01)
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, label = &#39;Rayleigh haze + cloud deck&#39;)
+
+plt.xscale(&#39;log&#39;)
+plt.xlabel(&#39;Wavelength (microns)&#39;)
+plt.ylabel(r&#39;Transit radius ($\rm R_{Jup}$)&#39;)
+plt.legend(loc = &#39;best&#39;)
+plt.show()
+plt.clf()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/content_notebooks_clouds_11_0.png" src="../../_images/content_notebooks_clouds_11_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Condensate-clouds-from-real-optical-constants">
+<h2>Condensate clouds from real optical constants<a class="headerlink" href="#Condensate-clouds-from-real-optical-constants" title="Permalink to this headline">¶</a></h2>
+<p>Let’s calculate some spectra using opacities derived from optical constants of various materials. In this example we will start of with forsterite, that is <span class="math notranslate nohighlight">\(\rm Mg_2SiO_4\)</span>. For the list of available cloud species see <a class="reference external" href="../available_opacities.html">“Available opacity species”</a>.</p>
+<div class="admonition note">
+<strong>Choose your favorite particle setup:</strong> petitRADTRANS offers multiple opacity versions for every given condensate, assuming either spherical (Mie scattering) or irreagularly shaped (DHS method = distribution of hollow spheres) particles. Moreover, opacities assuming a crystalline and/or amorphous internal structure can be used, where available.</div>
+<p>We set up the atmosphere like before, this time loading the opacity of crystalline (<code class="docutils literal notranslate"><span class="pre">c</span></code>), irregularly shaped particles (DHS method, abbreviated <code class="docutils literal notranslate"><span class="pre">d</span></code>). The mode identifier for the <span class="math notranslate nohighlight">\(\rm Mg_2SiO_4\)</span> opacity therefore is <code class="docutils literal notranslate"><span class="pre">Mg2SiO4(c)_cd</span></code>. <code class="docutils literal notranslate"><span class="pre">(c)</span></code> stands for condensed. These are all possible modes, note that for some species only crystalline or amorphous cross-sections are available.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Opacity code</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Species(c)_cm</td>
+<td>crystalline Mie opacity of Species</td>
+</tr>
+<tr class="row-odd"><td>Species(c)_cd</td>
+<td>crystalline DHS opacity of Species</td>
+</tr>
+<tr class="row-even"><td>Species(c)_am</td>
+<td>amorphous Mie opacity of Species</td>
+</tr>
+<tr class="row-odd"><td>Species(c)_ad</td>
+<td>amorphous DHS opacity of Species</td>
+</tr>
+</tbody>
+</table>
+<p>But now, let’s start! We simply give one additional <code class="docutils literal notranslate"><span class="pre">cloud_species</span></code> list to the Radtrans object, containing the name of the opacity species we want to use.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import numpy as np
+from petitRADTRANS import Radtrans
+
+atmosphere = Radtrans(line_species = [&#39;H2O&#39;, &#39;CO_all_iso&#39;, &#39;CH4&#39;, &#39;CO2&#39;, &#39;Na&#39;, &#39;K&#39;], \
+      cloud_species = [&#39;Mg2SiO4(c)_cd&#39;], \
+      rayleigh_species = [&#39;H2&#39;, &#39;He&#39;], \
+      continuum_opacities = [&#39;H2-H2&#39;, &#39;H2-He&#39;], \
+      wlen_bords_micron = [0.3, 15])
+
+pressures = np.logspace(-6, 2, 100)
+atmosphere.setup_opa_structure(pressures)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+  Read CIA opacities for H2-H2...
+  Read CIA opacities for H2-He...
+ Done.
+
+</pre></div></div>
+</div>
+<div class="admonition warning">
+<strong>Units in petitRADTRANS:</strong> remember that all units in <em>petitRADTRANS</em> are in cgs, <strong>except for pressure</strong>, which is in bars, <strong>and the mean molecular weight (MMW)</strong>, which is in units of atomic mass units.</div>
+<p>Next we set up the atmospheric parameters, with a parameter selection <em>almost</em> identical to the <a class="reference external" href="getting_started.html">“Getting Started”</a> case. We now also add the mass fraction of the cloud species we are interested in. Note that the mass fractions only contains the name <code class="docutils literal notranslate"><span class="pre">Mg2SiO4(c)</span></code> now, the <code class="docutils literal notranslate"><span class="pre">_cd</span></code> suffix has to be omitted.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>from petitRADTRANS import nat_cst as nc
+R_pl = 1.838*nc.r_jup_mean
+gravity = 1e1**2.45
+P0 = 0.01
+
+kappa_IR = 0.01
+gamma = 0.4
+T_int = 200.
+T_equ = 1500.
+temperature = nc.guillot_global(pressures, kappa_IR, gamma, gravity, T_int, T_equ)
+
+abundances = {}
+abundances[&#39;H2&#39;] = 0.74 * np.ones_like(temperature)
+abundances[&#39;He&#39;] = 0.24 * np.ones_like(temperature)
+abundances[&#39;H2O&#39;] = 0.001 * np.ones_like(temperature)
+abundances[&#39;CO_all_iso&#39;] = 0.01 * np.ones_like(temperature)
+abundances[&#39;CO2&#39;] = 0.00001 * np.ones_like(temperature)
+abundances[&#39;CH4&#39;] = 0.000001 * np.ones_like(temperature)
+abundances[&#39;Na&#39;] = 0.00001 * np.ones_like(temperature)
+abundances[&#39;K&#39;] = 0.000001 * np.ones_like(temperature)
+abundances[&#39;Mg2SiO4(c)&#39;] = 0.0000005 * np.ones_like(temperature)
+
+MMW = 2.33 * np.ones_like(temperature)
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
+X_i = \frac{\mu_i}{\mu}n_i,
+\end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</div>
+<div class="section" id="Setting-the-cloud-particle-size">
+<h3>Setting the cloud particle size<a class="headerlink" href="#Setting-the-cloud-particle-size" title="Permalink to this headline">¶</a></h3>
+<p>We have to define a few additional parameters for the clouds, to start the calculation. We can give the mean particle size and width of the log-normal particle distribution:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>radius = {}
+radius[&#39;Mg2SiO4(c)&#39;] = 0.00005*np.ones_like(temperature) # I.e. a 0.5-micron particle size (0.00005 cm)
+
+sigma_lnorm = 1.05
+</pre></div>
+</div>
+</div>
+<p>Now, let’s calculate a clear and cloudy spectrum to compare:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>atmosphere.calc_transm(temperature, abundances, gravity, MMW, \
+                       R_pl=R_pl, P0_bar=P0, \
+                       radius = radius, sigma_lnorm = sigma_lnorm)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.transm_rad/nc.r_jup_mean, label = &#39;cloudy&#39;, zorder = 2)
+
+abundances[&#39;Mg2SiO4(c)&#39;] = np.zeros_like(temperature)
+
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, \
+                       R_pl=R_pl, P0_bar=P0, \
+                       radius = radius, sigma_lnorm = sigma_lnorm)
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.transm_rad/nc.r_jup_mean, label = &#39;clear&#39;, zorder = 1)
+
+plt.xscale(&#39;log&#39;)
+plt.xlabel(&#39;Wavelength (microns)&#39;)
+plt.ylabel(r&#39;Transit radius ($\rm R_{Jup}$)&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+plt.clf()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/content_notebooks_clouds_27_0.png" src="../../_images/content_notebooks_clouds_27_0.png" />
+</div>
+</div>
+<p>Here one sees that there is a lot of additional absorption in the optical and near-IR. Also note the silicate (Si-O stretching mode) becoming visible at 10 micron.</p>
+</div>
+<div class="section" id="Calculating-the-particle-size">
+<h3>Calculating the particle size<a class="headerlink" href="#Calculating-the-particle-size" title="Permalink to this headline">¶</a></h3>
+<p>Alternatively, one can specify an eddy diffusion parameter (<span class="math notranslate nohighlight">\(K_{zz}\)</span>, with units of cm<span class="math notranslate nohighlight">\(^2\)</span>/s), which expresses how strongly atmospheric mixing is. The cloud particle size is then controlled by specifying <span class="math notranslate nohighlight">\(K_{zz}\)</span>, and the unitless settling parameter <span class="math notranslate nohighlight">\(f_{\rm sed}\)</span>, which expresses the particles’ mass averaged settling velocity, when compared to the local atmospheric mixing speed. Also, a width for the log-normal particle size distribution must be specified:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>Kzz = np.ones_like(temperature)*1e1**7.5
+fsed = 2.
+sigma_lnorm = 1.05
+</pre></div>
+</div>
+</div>
+<p>Again, let’s calculate a clear and cloudy spectrum to compare:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>abundances[&#39;Mg2SiO4(c)&#39;] = 0.0000005 * np.ones_like(temperature)
+
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, \
+                       R_pl=R_pl, P0_bar=P0, \
+                       Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.transm_rad/nc.r_jup_mean, label = &#39;cloudy&#39;, zorder = 2)
+
+abundances[&#39;Mg2SiO4(c)&#39;] = np.zeros_like(temperature)
+
+atmosphere.calc_transm(temperature, abundances, gravity, MMW, \
+                       R_pl=R_pl, P0_bar=P0, \
+                       Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.transm_rad/nc.r_jup_mean, label = &#39;clear&#39;, zorder = 1)
+
+plt.xscale(&#39;log&#39;)
+plt.xlabel(&#39;Wavelength (microns)&#39;)
+plt.ylabel(r&#39;Transit radius ($\rm R_{Jup}$)&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+plt.clf()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/content_notebooks_clouds_33_0.png" src="../../_images/content_notebooks_clouds_33_0.png" />
+</div>
+</div>
+<p>The resulting mean particle sizes can be accessed like this:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>plt.yscale(&#39;log&#39;)
+plt.xscale(&#39;log&#39;)
+
+plt.ylim([1e2,1e-6])
+
+plt.ylabel(&#39;P (bar)&#39;)
+plt.xlabel(&#39;Average particle size (microns)&#39;)
+
+plt.plot(atmosphere.r_g[:,atmosphere.cloud_species.index(&#39;Mg2SiO4(c)&#39;)]/1e-4, pressures)
+plt.show()
+plt.clf()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/content_notebooks_clouds_35_0.png" src="../../_images/content_notebooks_clouds_35_0.png" />
+</div>
+</div>
+<div class="admonition warning">
+<strong>Minimum particle size:</strong> the opacity of particles smaller than 1 nm is set to zero.</div>
+</div>
+</div>
+<div class="section" id="Emission-spectra">
+<h2>Emission spectra<a class="headerlink" href="#Emission-spectra" title="Permalink to this headline">¶</a></h2>
+<p>We can use the Radtrans object created above to calculate emission spectra as well.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>abundances[&#39;Mg2SiO4(c)&#39;] = 0.0000005 * np.ones_like(temperature)
+
+atmosphere.calc_flux(temperature, abundances, gravity, MMW, \
+                       Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, \
+         color = &#39;black&#39;, label = &#39;cloudy&#39;, zorder = 1)
+
+atmosphere.calc_flux(temperature, abundances, gravity, MMW, \
+                       Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm, \
+                       add_cloud_scat_as_abs = True)
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, \
+         label = &#39;cloudy, add scattering to absorption&#39;, zorder = 2)
+
+abundances[&#39;Mg2SiO4(c)&#39;] = np.zeros_like(temperature)
+
+atmosphere.calc_flux(temperature, abundances, gravity, MMW, \
+                       Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, &#39;-&#39;, \
+         color = &#39;red&#39;, label = &#39;clear&#39;, zorder = 0)
+
+plt.legend(loc=&#39;best&#39;)
+plt.xscale(&#39;log&#39;)
+plt.xlabel(&#39;Wavelength (microns)&#39;)
+plt.ylabel(r&#39;Planet flux $F_\nu$ (10$^{-6}$ erg cm$^{-2}$ s$^{-1}$ Hz$^{-1}$)&#39;)
+plt.show()
+plt.clf()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/content_notebooks_clouds_39_0.png" src="../../_images/content_notebooks_clouds_39_0.png" />
+</div>
+</div>
+<p>Here we plotted the clear spectrum, neglecting the cloud opacity, the cloudy spectrum only considering the absorption of the cloud particles (petitRADTRANS does not include scattering in its emission spectra), and the cloudy spectrum resulting from adding 20 % of the cloud scattering opacity to the absorption opacity (toggled by setting the keyword argument <code class="docutils literal notranslate"><span class="pre">add_cloud_scat_as_abs</span> <span class="pre">=</span> <span class="pre">True</span></code>). Because the two latter cases differ quite strongly, we can see that in the case studied here,
+petitRADTRANS should not be used to calculate emission spectra.</p>
+<div class="admonition warning">
+<strong>Scattering and petitRADTRANS:</strong> remember that scattering is not included for emission spectra in petitRADTRANS (but it is for the transmission spectra). We plan to migrate the scattering implementation of <a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/#petitcode">petitCODE</a> to petitRADTRANS soon.</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="analysis.html" class="btn btn-neutral float-right" title="Analysis tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="highres.html" class="btn btn-neutral" title="High-resolution spectra" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Paul Mollière
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

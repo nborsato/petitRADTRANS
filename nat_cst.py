@@ -45,3 +45,13 @@ def b(T,nu):
     retVal = 2.*h*nu**3./c**2.
     retVal = retVal / (np.exp(h*nu/kB/T)-1.)
     return retVal
+
+def guillot_global(P,kappa_IR,gamma,grav,T_int,T_equ):
+
+    tau = P*1e6*kappa_IR/grav
+    T_irr = T_equ*np.sqrt(2.)
+    T = (0.75 * T_int**4. * (2. / 3. + tau) + \
+      0.75 * T_irr**4. / 4. * (2. / 3. + 1. / gamma / 3.**0.5 + \
+      (gamma / 3.**0.5 - 1. / 3.**0.5 / gamma)* \
+      np.exp(-gamma * tau *3.**0.5)))**0.25
+    return T

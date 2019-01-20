@@ -1,1 +1,1 @@
-from . import radtrans
+from .radtrans import Radtrans

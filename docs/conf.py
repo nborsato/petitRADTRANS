@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'petitRADTRANS'
-copyright = '2019, Paul Molli'+u"\u00E8"+'re'
-author = 'Paul Molli'+u"\u00E8"+'re'
+copyright = u'2019, Paul Molli\u00E8re'
+author = u'Paul Molli\u00E8re'
 
 # The short X.Y version
 version = ''

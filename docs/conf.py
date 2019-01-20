@@ -134,7 +134,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'petitRADTRANS.tex', 'petitRADTRANS Documentation',
-     'Paul Mollière', 'manual'),
+      u'Paul Molli\u00E8re', 'manual'),
 ]
 
 

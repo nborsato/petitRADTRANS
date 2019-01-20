@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: latin-1 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'petitRADTRANS'
-copyright = '2019, Paul Molli&egrave;re'
-author = 'Paul Molli&egrave;re'
+copyright = '2019, Paul Mollière'
+author = 'Paul Mollière'
 
 # The short X.Y version
 version = ''
@@ -134,7 +134,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'petitRADTRANS.tex', 'petitRADTRANS Documentation',
-     'Paul MolliÃ¨re', 'manual'),
+     'Paul Mollière', 'manual'),
 ]
 
 

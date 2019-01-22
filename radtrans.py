@@ -30,6 +30,9 @@ class Radtrans:
         continuum_species (Optional):
             list of strings, denoting which continuum absorber species to
             include.
+        H2H2CIA (Optional[bool]): If ``True``, will add H2-H2 Collision induced
+            absoprtion as continuum absorber (alternatively, put ``'H2-H2'``)
+            into continuum_species list.
 
     """
     

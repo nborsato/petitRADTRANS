@@ -6,6 +6,27 @@
 petitRADTRANS documentation
 =========================================
 
+Welcome to the **petitRADTRANS** documentation. petitRADTRANS is a
+Python package for the calculating transmission and emission spectra
+of exoplanets, at low (:math:`\lambda/\Delta\lambda=1000`) and high
+(:math:`\lambda/\Delta\lambda=10^6`) resolution, for clear and cloudy
+atmospheres.
+
+.. important::
+   Scattering is currently not included for
+   emission spectra in petitRADTRANS (but it is for the transmission
+   spectra). We intend to migrate the scattering implementation of
+   `petitCODE <https://home.strw.leidenuniv.nl/~molliere/#petitcode>`_
+   to petitRADTRANS soon.
+
+petitRADTRANS will be available under the MIT License, and documented in Mollière et al, in prep.
+Until the documentation paper is published, please invite Paul Mollière
+as coauthor if you make use of petitRADTRANS in your work.
+
+This documentation webpage currently contains an installation guide, as
+well as a tutorial. We are currently working on the full code
+documentation for all methods and functions of the petitRADTRANS package.
+
 .. toctree::
    :maxdepth: 2
    :caption: Guide:
@@ -14,8 +35,9 @@ petitRADTRANS documentation
    content/tutorial
    content/available_opacities
 
-.. toctree::
+..
+   .. toctree::
    :maxdepth: 2
    :caption: Code documentation:
 
-   content/code
+..   content/code

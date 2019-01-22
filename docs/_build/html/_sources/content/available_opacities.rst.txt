@@ -1,3 +1,5 @@
+.. _avail_opas:
+
 Available opacity species
 =========================
 

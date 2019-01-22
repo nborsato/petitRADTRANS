@@ -86,10 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="content/tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/available_opacities.html">Available opacity species</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="content/code_radtrans.html">Radtrans class</a></li>
-</ul>
 
             
           
@@ -179,10 +175,37 @@
 </style>
 <div class="section" id="petitradtrans-documentation">
 <h1>petitRADTRANS documentation<a class="headerlink" href="#petitradtrans-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the <strong>petitRADTRANS</strong> documentation. petitRADTRANS is a
+Python package for the calculating transmission and emission spectra
+of exoplanets, at low (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>) and high
+(<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>) resolution, for clear and cloudy
+atmospheres.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Scattering is currently not included for
+emission spectra in petitRADTRANS (but it is for the transmission
+spectra). We intend to migrate the scattering implementation of
+<a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/#petitcode">petitCODE</a>
+to petitRADTRANS soon.</p>
+</div>
+<p>petitRADTRANS will be available under the MIT License, and documented in Mollière et al, in prep.
+Until the documentation paper is published, please invite Paul Mollière
+as coauthor if you make use of petitRADTRANS in your work.</p>
+<p>This documentation webpage currently contains an installation guide, as
+well as a tutorial. We are currently working on the full code
+documentation for all methods and functions of the petitRADTRANS package.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Guide:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="content/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#download-code">Download Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#download-opacity-data">Download opacity data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#id1">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#installation-tips">Installation tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#testing-the-installation">Testing the installation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="content/tutorial.html">Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/getting_started.html">Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/highres.html">High-resolution spectra</a></li>
@@ -197,12 +220,6 @@
 <li class="toctree-l2"><a class="reference internal" href="content/available_opacities.html#continuum-opacity-sources">Continuum opacity sources</a></li>
 </ul>
 </li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="content/code_radtrans.html">Radtrans class</a></li>
 </ul>
 </div>
 </div>

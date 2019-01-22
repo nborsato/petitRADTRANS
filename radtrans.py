@@ -1,8 +1,4 @@
-__author__ = "Paul Molliere"
-__copyright__ = "Copyright 2016-2018, Paul Molliere"
-__maintainer__ = "Paul Molliere"
-__email__ = "molliere@strw.leidenunivl.nl"
-__status__ = "Development"
+from __future__ import division, print_function
 
 from . import fort_input as fi
 from . import fort_spec as fs
@@ -284,7 +280,14 @@ class Radtrans:
         
     # Preparing structures
     def setup_opa_structure(self,P):
-        ''' Setup opacity array for atmospheric structure dimensions, as well as pressure array '''
+        ''' Setup opacity arrays at atmospheric structure dimensions, 
+        and set the atmospheric pressure array.
+
+        Args:
+            P:
+                the atmospheric pressure (1-d numpy array, sorted in increasing
+                order), in units of bar. Will be converted to cgs internally.  
+        '''
         
         # bar to cgs
         self.press = P*1e6

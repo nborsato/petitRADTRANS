@@ -1,5 +1,3 @@
-""" radtrans.py: class definition for petitRADTRANS radiative transfer package + some utility functions. """
-
 __author__ = "Paul Molliere"
 __copyright__ = "Copyright 2016-2018, Paul Molliere"
 __maintainer__ = "Paul Molliere"
@@ -17,7 +15,8 @@ import os
 import sys
 
 class Radtrans:
-    """ Class carrying out spectral calculations for a given set of opacities
+    """ Class defining objects for carrying out spectral calculations for a
+    given set of opacities
 
     Args:
         line_species (Optional):
@@ -30,9 +29,29 @@ class Radtrans:
         continuum_species (Optional):
             list of strings, denoting which continuum absorber species to
             include.
-        H2H2CIA (Optional[bool]): If ``True``, will add H2-H2 Collision induced
-            absoprtion as continuum absorber (alternatively, put ``'H2-H2'``)
-            into continuum_species list.
+        H2H2CIA (Optional[bool]):
+            Will be ``False`` by default.
+            If ``True``, will add H2-H2 Collision induced
+            absoprtion as continuum absorber (alternatively, put ``'H2-H2'``
+            into continuum_species list).
+        H2HeCIA (Optional[bool]):
+            Will be ``False`` by default.
+            If ``True``, will add H2-He Collision induced
+            absoprtion as continuum absorber (alternatively, put ``'H2-He'``
+            into continuum_species list).
+        wlen_bords_micron (Optional):
+            list containing left and right border of wavelength region to be
+            considered, in micron. If nothing else is specified, it will be
+            equal to ``[0.05, 300]``, hence using the full petitRADTRANS
+            wavelength range (0.11 to 250 microns for ``'c-k'`` mode, 0.3 to 30
+            microns for the ``'lbl'`` mode). The larger the range the longer the
+            computation time.
+        mode (Optinional[string]):
+            if equal to ``'c-k'``: use low-resolution mode, at
+            :math:`\lambda/\Delta \lambda = 1000`, with the correlated-k
+            assumption. if equal to ``'lbl'``: use high-resolution mode, at
+            :math:`\lambda/\Delta \lambda = 10^6`, with a line-by-line
+            treatment.
 
     """
     
@@ -114,17 +133,24 @@ class Radtrans:
             self.freq_len = len(self.freq)
 
         ###########################
-        # Some necessary definitions, also prepare arrays for fluxes, transmission radius...
+        # Some necessary definitions, also prepare arrays for fluxes,
+        # transmission radius...
         ###########################        
 
-        self.lambda_angstroem = np.array(nc.c/self.freq/1e-8,dtype='d',order='Fortran')
-        self.flux = np.array(np.zeros(self.freq_len),dtype='d',order='Fortran')
-        self.transm_rad = np.array(np.zeros(self.freq_len),dtype='d',order='Fortran')
+        self.lambda_angstroem = np.array(nc.c/self.freq/1e-8,dtype='d', \
+                                             order='Fortran')
+        self.flux = np.array(np.zeros(self.freq_len),dtype='d', \
+                                 order='Fortran')
+        self.transm_rad = np.array(np.zeros(self.freq_len),dtype='d', \
+                                       order='Fortran')
 
-        # Define frequency bins around grid for later interpolatioin purposes when including
+        # Define frequency bins around grid for later interpolation
+        # purposes when including
         # clouds...
-        self.border_freqs = np.array(nc.c/self.calc_borders(nc.c/self.freq),dtype='d',order='Fortran')
-        self.border_lambda_angstroem = np.array(self.calc_borders(self.lambda_angstroem))
+        self.border_freqs = np.array(nc.c/self.calc_borders(nc.c/self.freq), \
+                                         dtype='d',order='Fortran')
+        self.border_lambda_angstroem = \
+          np.array(self.calc_borders(self.lambda_angstroem))
 
         self.Pcloud = None
         self.haze_factor = None
@@ -142,31 +168,42 @@ class Radtrans:
         self.line_TP_grid[:,1] = buffer[:,0]
         # Convert from bars to cgs
         self.line_TP_grid[:,1] = 1e6*self.line_TP_grid[:,1]
-        self.line_TP_grid = np.array(self.line_TP_grid.reshape(len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
+        self.line_TP_grid = np.array(self.line_TP_grid.reshape( \
+                    len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
 
         # Read actual opacities....
-        # line_grid_kappas has the shape g_len,freq_len,len(line_species),len(line_TP_grid[:,0])
+        # line_grid_kappas has the shape g_len,freq_len,len(line_species),
+        # len(line_TP_grid[:,0])
         if len(self.line_species) > 0:
 
             tot_str = ''
             for sstring in self.line_species:
                 tot_str = tot_str + sstring + ':'
 
-            self.line_grid_kappas = fi.read_in_molecular_opacities(self.path,tot_str,freq_len_full,self.g_len, \
-                                        len(self.line_species),len(self.line_TP_grid[:,0]),self.mode, arr_min, arr_max)
+            self.line_grid_kappas = fi.read_in_molecular_opacities( \
+                    self.path,tot_str,freq_len_full,self.g_len, \
+                    len(self.line_species),len(self.line_TP_grid[:,0]), \
+                                                self.mode, arr_min, arr_max)
             if self.mode == 'c-k':
-                self.line_grid_kappas = np.array(self.line_grid_kappas[:,index,:,:],dtype='d',order='Fortran')
+                self.line_grid_kappas = np.array( \
+                    self.line_grid_kappas[:,index,:,:], \
+                    dtype='d',order='Fortran')
             else:
-                self.line_grid_kappas = np.array(self.line_grid_kappas,dtype='d',order='Fortran')
+                self.line_grid_kappas = \
+                  np.array(self.line_grid_kappas,dtype='d',order='Fortran')
             
         # Read in g grid for correlated-k
         if self.mode == 'c-k':
             buffer = np.genfromtxt(self.path+'/opa_input_files/g_comb_grid.dat')
             self.g_gauss, self.w_gauss = buffer[:,0], buffer[:,1]
-            self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d',order='Fortran'),np.array(self.w_gauss,dtype='d',order='Fortran')
+            self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d', \
+                order='Fortran'),np.array(self.w_gauss, \
+                dtype='d',order='Fortran')
         elif self.mode == 'lbl':
             self.g_gauss, self.w_gauss = np.ones(1), np.ones(1)
-            self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d',order='Fortran'),np.array(self.w_gauss,dtype='d',order='Fortran')
+            self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d', \
+                order='Fortran'),np.array(self.w_gauss, \
+                dtype='d',order='Fortran')
         
         # Read in the angle (mu) grid for the emission spectral calculations.
         buffer = np.genfromtxt(self.path+'/opa_input_files/mu_points.dat')
@@ -183,12 +220,16 @@ class Radtrans:
         # CIA
         if self.H2H2CIA:
           print('  Read CIA opacities for H2-H2...')
-          self.cia_h2h2_lambda, self.cia_h2h2_temp, self.cia_h2h2_alpha_grid = fi.cia_read('H2H2',self.path)
-          self.cia_h2h2_alpha_grid = np.array(self.cia_h2h2_alpha_grid,dtype='d',order='Fortran')
+          self.cia_h2h2_lambda, self.cia_h2h2_temp, \
+            self.cia_h2h2_alpha_grid = fi.cia_read('H2H2',self.path)
+          self.cia_h2h2_alpha_grid = np.array(self.cia_h2h2_alpha_grid, \
+                                                dtype='d',order='Fortran')
         if self.H2HeCIA:
           print('  Read CIA opacities for H2-He...')
-          self.cia_h2he_lambda, self.cia_h2he_temp, self.cia_h2he_alpha_grid = fi.cia_read('H2He',self.path)
-          self.cia_h2he_alpha_grid = np.array(self.cia_h2he_alpha_grid,dtype='d',order='Fortran')
+          self.cia_h2he_lambda, self.cia_h2he_temp, self.cia_h2he_alpha_grid = \
+            fi.cia_read('H2He',self.path)
+          self.cia_h2he_alpha_grid = np.array(self.cia_h2he_alpha_grid, \
+                                                dtype='d',order='Fortran')
         if self.H2H2CIA or self.H2HeCIA:
           print(' Done.')
           print()
@@ -221,17 +262,21 @@ class Radtrans:
             tot_str_modes = tot_str_modes + sstring + ':'
 
         self.N_cloud_lambda_bins = int(len(np.genfromtxt(self.path + \
-                    '/opacities/continuum/clouds/MgSiO3_c/amorphous/mie/opa_0001.dat')[:,0]))
+            '/opacities/continuum/clouds/MgSiO3_c/amorphous/mie/opa_0001.dat' \
+                                                             )[:,0]))
 
         # Actual reading of opacities
-        rho_cloud_particles, cloud_specs_abs_opa, cloud_specs_scat_opa, cloud_aniso, \
-          cloud_lambdas, cloud_rad_bins, cloud_radii \
+        rho_cloud_particles, cloud_specs_abs_opa, cloud_specs_scat_opa, \
+          cloud_aniso, cloud_lambdas, cloud_rad_bins, cloud_radii \
           = fi.read_in_cloud_opacities(self.path,tot_str_names,tot_str_modes, \
                             len(self.cloud_species),self.N_cloud_lambda_bins)
 
-        self.rho_cloud_particles = np.array(rho_cloud_particles,dtype='d',order='Fortran')
-        self.cloud_specs_abs_opa = np.array(cloud_specs_abs_opa,dtype='d',order='Fortran')
-        self.cloud_specs_scat_opa = np.array(cloud_specs_scat_opa,dtype='d',order='Fortran')
+        self.rho_cloud_particles = \
+          np.array(rho_cloud_particles,dtype='d',order='Fortran')
+        self.cloud_specs_abs_opa = \
+          np.array(cloud_specs_abs_opa,dtype='d',order='Fortran')
+        self.cloud_specs_scat_opa = \
+          np.array(cloud_specs_scat_opa,dtype='d',order='Fortran')
         self.cloud_aniso = np.array(cloud_aniso,dtype='d',order='Fortran')
         self.cloud_lambdas = np.array(cloud_lambdas,dtype='d',order='Fortran')
         self.cloud_rad_bins = np.array(cloud_rad_bins,dtype='d',order='Fortran')
@@ -470,26 +515,6 @@ class Radtrans:
 ### Radtrans utility for temperature model computation
 ########################################################
 
-'''
-### Box car conv. average
-def box_car_conv(array,points):
-
-    res = np.zeros_like(array)
-    len_arr = int(len(array) + 0.01)
-    for i in range(len(array)):
-        if (i-int(points/2) >= 0) and (i+int(points/2) <= len_arr+1):
-            smooth_val = array[i-int(points/2):i+int(points/2)]
-            res[i] = np.sum(smooth_val)/len(smooth_val)
-        elif (i+int(points/2) > len_arr+1):
-            len_use = len_arr+1-i
-            smooth_val = array[i-len_use:i+len_use]
-            res[i] = np.sum(smooth_val)/len(smooth_val)
-        elif i-int(points/2) < 0:
-            smooth_val = array[:max(2*i,1)]
-            res[i] = np.sum(smooth_val)/len(smooth_val)
-    return res
-'''
-
 ### Box car conv. average, found online somewhere
 def running_mean(x, N):
     cumsum = np.cumsum(np.insert(x, 0, 0)) 
@@ -513,20 +538,6 @@ def guillot_global(P,delta,gamma,T_int,T_equ):
 def guillot_modif(P,delta,gamma,T_int,T_equ,ptrans,alpha):
     return guillot_global(P,np.abs(delta),np.abs(gamma),np.abs(T_int),np.abs(T_equ))* \
       (1.-alpha*(1./(1.+np.exp((np.log(P/ptrans))))))
-
-'''
-### Function to make temp
-def make_press_temp(rad_trans_params):
-    press_many = np.logspace(-6,5,210)
-    index = (press_many <= 1e3) & (press_many >= 1e-6)
-    press = press_many[index][::2]
-    t = box_car_conv(guillot_modif(press_many, \
-        1e1**rad_trans_params['log_delta'],1e1**rad_trans_params['log_gamma'], \
-        rad_trans_params['t_int'],rad_trans_params['t_equ'], \
-        1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha']),20)
-    temp = t[index][::2]
-    return press, temp
-'''
 
 ### Function to make temp
 def make_press_temp(rad_trans_params):

@@ -291,51 +291,75 @@ class Radtrans:
         
         # bar to cgs
         self.press = P*1e6
-        self.continuum_opa = np.array(np.zeros(self.freq_len*len(P)).reshape(self.freq_len, \
-                        len(P)),dtype='d',order='Fortran')
-        self.continuum_opa_scat = np.array(np.zeros(self.freq_len*len(P)).reshape(self.freq_len, \
-                        len(P)),dtype='d',order='Fortran')
-        self.contr_em = np.array(np.zeros(self.freq_len*len(P)).reshape(len(P),self.freq_len), \
+        self.continuum_opa = np.array(np.zeros(self.freq_len*len(P)) \
+                                          .reshape(self.freq_len, \
+                                          len(P)),dtype='d',order='Fortran')
+        self.continuum_opa_scat = np.array(np.zeros(self.freq_len*len(P)) \
+                                            .reshape(self.freq_len, \
+                                            len(P)),dtype='d',order='Fortran')
+        self.contr_em = np.array(np.zeros(self.freq_len*len(P)) \
+                                     .reshape(len(P),self.freq_len), \
                                      dtype='d',order='Fortran')
-        self.contr_tr = np.array(np.zeros(self.freq_len*len(P)).reshape(len(P),self.freq_len), \
+        self.contr_tr = np.array(np.zeros(self.freq_len*len(P)) \
+                                     .reshape(len(P),self.freq_len), \
                                      dtype='d',order='Fortran')
         if len(self.line_species) > 0:
-            self.line_struc_kappas = np.array(np.zeros(self.g_len*self.freq_len*len(P)* \
+            self.line_struc_kappas = \
+              np.array(np.zeros(self.g_len*self.freq_len*len(P)* \
                 len(self.line_species)).reshape(self.g_len,self.freq_len, \
                 len(self.line_species),len(P)),dtype='d',order='Fortran')
-            self.total_tau = np.array(np.zeros_like(self.line_struc_kappas),dtype='d',order='Fortran')
-            self.line_abundances = np.array(np.zeros(len(self.press)*len(self.line_species)).reshape(len(self.press), \
-                                                                    len(self.line_species)),dtype='d',order='Fortran')
-        else: # If there are no specified line species then we need at least an array to contain the continuum opas
+            self.total_tau = \
+              np.array(np.zeros_like(self.line_struc_kappas), \
+                           dtype='d',order='Fortran')
+            self.line_abundances = \
+              np.array(np.zeros(len(self.press)*len(self.line_species)) \
+                           .reshape(len(self.press), \
+                            len(self.line_species)),dtype='d',order='Fortran')
+        else: # If there are no specified line species then we need at
+              # least an array to contain the continuum opas
               # I'll (mis)use the line_struc_kappas array for that
-            self.line_struc_kappas = np.array(np.zeros(self.g_len*self.freq_len*len(P)).reshape(self.g_len,self.freq_len, \
-                1,len(P)),dtype='d',order='Fortran')
-            self.total_tau = np.array(np.zeros_like(self.line_struc_kappas),dtype='d',order='Fortran')
-            self.line_abundances = np.array(np.zeros(len(self.press)).reshape(len(self.press),1),dtype='d',order='Fortran')
+            self.line_struc_kappas = \
+              np.array(np.zeros(self.g_len*self.freq_len*len(P)) \
+                           .reshape(self.g_len,self.freq_len, \
+                            1,len(P)),dtype='d',order='Fortran')
+            self.total_tau = \
+              np.array(np.zeros_like(self.line_struc_kappas), \
+                           dtype='d',order='Fortran')
+            self.line_abundances = \
+              np.array(np.zeros(len(self.press)) \
+                           .reshape(len(self.press),1), \
+                           dtype='d',order='Fortran')
         
         self.mmw = np.zeros_like(self.press)
 
         if len(self.cloud_species) > 0:
             self.cloud_mass_fracs = np.array(np.zeros(int(len(self.press))* \
-                        int(len(self.cloud_species))).reshape(int(len(self.press)), \
-                        int(len(self.cloud_species))),dtype='d',order='Fortran')
+                        int(len(self.cloud_species))) \
+                            .reshape(int(len(self.press)), \
+                            int(len(self.cloud_species))), \
+                                                 dtype='d',order='Fortran')
             self.r_g = np.array(np.zeros(int(len(self.press))* \
-                        int(len(self.cloud_species))).reshape(int(len(self.press)), \
-                        int(len(self.cloud_species))),dtype='d',order='Fortran')
+                        int(len(self.cloud_species))) \
+                                    .reshape(int(len(self.press)), \
+                                            int(len(self.cloud_species))), \
+                                            dtype='d',order='Fortran')
 
     def interpolate_species_opa(self, temp):
         # Interpolate line opacities to given temperature structure.
         self.temp = temp
         if len(self.line_species) > 0:
-            self.line_struc_kappas = fi.interpol_opa_ck(self.press,temp,self.line_TP_grid,self.line_grid_kappas)
+            self.line_struc_kappas = fi.interpol_opa_ck(self.press,temp, \
+                                    self.line_TP_grid,self.line_grid_kappas)
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
     def mix_opa_tot(self, abundances, mmw, gravity, \
                         sigma_lnorm = None, fsed = None, Kzz = None, \
-                        radius = None, gray_opacity = None, add_cloud_scat_as_abs = None):
-        # Combine total line opacities, according to mass fractions (abundances),
-        #    also add continuum opacities, i.e. clouds, CIA...
+                        radius = None, gray_opacity = None, \
+                        add_cloud_scat_as_abs = None):
+        # Combine total line opacities,
+        # according to mass fractions (abundances),
+        # also add continuum opacities, i.e. clouds, CIA...
         
         self.scat = False
         self.mmw = mmw
@@ -346,18 +370,25 @@ class Radtrans:
 
         # Calc. CIA opacity
         if self.H2H2CIA:
-            self.continuum_opa = self.continuum_opa + fi.cia_interpol(self.freq,self.temp, \
-                self.cia_h2h2_lambda,self.cia_h2h2_temp,self.cia_h2h2_alpha_grid, \
-                    self.press,self.mmw,abundances['H2'],2.)
+            self.continuum_opa = self.continuum_opa + \
+              fi.cia_interpol(self.freq,self.temp, \
+                self.cia_h2h2_lambda,self.cia_h2h2_temp, \
+                self.cia_h2h2_alpha_grid, \
+                self.press,self.mmw,abundances['H2'],2.)
         if self.H2HeCIA:
-            self.continuum_opa = self.continuum_opa + fi.cia_interpol(self.freq,self.temp, \
-                self.cia_h2he_lambda,self.cia_h2he_temp,self.cia_h2he_alpha_grid, \
-                self.press,self.mmw,np.sqrt(abundances['H2']*abundances['He']),np.sqrt(8.))
+            self.continuum_opa = self.continuum_opa + \
+              fi.cia_interpol(self.freq,self.temp, \
+                self.cia_h2he_lambda,self.cia_h2he_temp, \
+                self.cia_h2he_alpha_grid, \
+                self.press,self.mmw, \
+                np.sqrt(abundances['H2']*abundances['He']),np.sqrt(8.))
 
         # Calc. H- opacity
         if self.Hminus:
-            self.continuum_opa = self.continuum_opa + pyi.hminus_opacity(self.lambda_angstroem, \
-                self.border_lambda_angstroem, self.temp, self.press, mmw, abundances)
+            self.continuum_opa = \
+              self.continuum_opa + pyi.hminus_opacity(self.lambda_angstroem, \
+                self.border_lambda_angstroem, \
+                self.temp, self.press, mmw, abundances)
 
         # Add mock gray cloud opacity here
         if self.gray_opacity != None:
@@ -365,46 +396,62 @@ class Radtrans:
 
         # Add cloud opacity here, will modify self.continuum_opa
         if int(len(self.cloud_species)) > 0:
-            self.calc_cloud_opacity(abundances, mmw, gravity, sigma_lnorm, fsed, Kzz, radius, \
+            self.calc_cloud_opacity(abundances, mmw, gravity, \
+                                        sigma_lnorm, fsed, Kzz, radius, \
                                         add_cloud_scat_as_abs)
 
         # Interpolate line opacities, combine with continuum oacities
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
-                                        self.line_struc_kappas,self.continuum_opa)
+                                    self.line_struc_kappas,self.continuum_opa)
         if len(self.rayleigh_species) != 0:
             self.scat = True
             self.add_rayleigh(abundances)
         if (self.Pcloud != None):
             self.continuum_opa_scat[:,self.press>self.Pcloud*1e6] = 1e99
 
-        # In the line-by-line case we can simply add the opacities of different species
-        # in frequency space. All opacities are stored in the first species index slot
+        # In the line-by-line case we can simply
+        # add the opacities of different species
+        # in frequency space. All opacities are
+        # stored in the first species index slot
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
-            self.line_struc_kappas[:,:,0,:] = np.sum(self.line_struc_kappas, axis = 2)
+            self.line_struc_kappas[:,:,0,:] = \
+              np.sum(self.line_struc_kappas, axis = 2)
 
-    def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, fsed = None, Kzz = None, \
+    def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, \
+                               fsed = None, Kzz = None, \
                                radius = None, add_cloud_scat_as_abs = None):
-        # Function to calculate cloud opacities for defined atmospheric structure.
+        # Function to calculate cloud opacities
+        # for defined atmospheric structure.
         rho = self.press/nc.kB/self.temp*mmw*nc.amu
         for i_spec in range(int(len(self.cloud_species))):
-            self.cloud_mass_fracs[:,i_spec] = abundances[self.cloud_species[i_spec]]
+            self.cloud_mass_fracs[:,i_spec] = \
+              abundances[self.cloud_species[i_spec]]
             if radius != None:
                 self.r_g[:,i_spec] = radius[self.cloud_species[i_spec]]
         
         if radius != None:
             cloud_abs_opa_TOT,cloud_scat_opa_TOT,cloud_red_fac_aniso_TOT = \
-              fs.calc_cloud_opas(rho,self.rho_cloud_particles,self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
-                                self.cloud_rad_bins,self.cloud_radii,self.cloud_lambdas, \
-                                self.cloud_specs_abs_opa,self.cloud_specs_scat_opa, \
+              fs.calc_cloud_opas(rho,self.rho_cloud_particles, \
+                                self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
+                                self.cloud_rad_bins,self.cloud_radii, \
+                                self.cloud_lambdas, \
+                                self.cloud_specs_abs_opa, \
+                                self.cloud_specs_scat_opa, \
                                 self.cloud_aniso)
         else:
-            self.r_g = fs.get_rg_n(gravity,rho,self.rho_cloud_particles,self.temp,mmw,fsed,self.cloud_mass_fracs, \
-                                    sigma_lnorm,Kzz)
+            self.r_g = fs.get_rg_n(gravity,rho,self.rho_cloud_particles, \
+                                       self.temp,mmw,fsed, \
+                                       self.cloud_mass_fracs, \
+                                       sigma_lnorm,Kzz)
             cloud_abs_opa_TOT,cloud_scat_opa_TOT,cloud_red_fac_aniso_TOT = \
-              fs.calc_cloud_opas(rho,self.rho_cloud_particles,self.cloud_mass_fracs,self.r_g,sigma_lnorm, \
-                                self.cloud_rad_bins,self.cloud_radii,self.cloud_lambdas, \
-                                self.cloud_specs_abs_opa,self.cloud_specs_scat_opa, \
-                                self.cloud_aniso)
+              fs.calc_cloud_opas(rho,self.rho_cloud_particles, \
+                                     self.cloud_mass_fracs, \
+                                     self.r_g,sigma_lnorm, \
+                                     self.cloud_rad_bins,self.cloud_radii, \
+                                     self.cloud_lambdas, \
+                                     self.cloud_specs_abs_opa, \
+                                     self.cloud_specs_scat_opa, \
+                                     self.cloud_aniso)
 
         cloud_abs, cloud_scat, aniso, cloud_abs_tot_no_aniso = \
            fs.interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, \
@@ -414,12 +461,12 @@ class Radtrans:
 
         if add_cloud_scat_as_abs != None:
             if add_cloud_scat_as_abs:
-                self.continuum_opa += cloud_abs + 0.20*(cloud_abs_tot_no_aniso - cloud_abs)
+                self.continuum_opa += cloud_abs \
+                  + 0.20*(cloud_abs_tot_no_aniso - cloud_abs)
             else:
                 self.continuum_opa += cloud_abs
         else:
             self.continuum_opa += cloud_abs
-
             
         return
     
@@ -431,50 +478,112 @@ class Radtrans:
             if (self.haze_factor != None):
                 haze_multiply = self.haze_factor
             self.continuum_opa_scat = self.continuum_opa_scat + \
-              haze_multiply*fs.add_rayleigh(spec,abundances[spec],self.lambda_angstroem, \
-                                  self.mmw,self.temp,self.press)
-        #print(self.continuum_opa_scat[:,0])
-
+              haze_multiply*fs.add_rayleigh(spec,abundances[spec], \
+                                                self.lambda_angstroem, \
+                                                self.mmw,self.temp,self.press)
+                                                
     def calc_opt_depth(self,gravity):
         # Calculate optical depth for the total opacity.
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
-            self.total_tau[:,:,:1,:] = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas[:,:,:1,:])
+            self.total_tau[:,:,:1,:] = fs.calc_tau_g_tot_ck(gravity, \
+                                self.press,self.line_struc_kappas[:,:,:1,:])
         else:
-            self.total_tau = fs.calc_tau_g_tot_ck(gravity,self.press,self.line_struc_kappas)
+            self.total_tau = fs.calc_tau_g_tot_ck(gravity,self.press, \
+                                                      self.line_struc_kappas)
         
     def calc_RT(self,contribution):
         # Calculate the flux
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
-            self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau[:,:,:1,:],self.temp, \
-                self.mu,self.w_gauss_mu,self.w_gauss,contribution)
+            self.flux, self.contr_em = fs.flux_ck(self.freq, \
+                                                  self.total_tau[:,:,:1,:], \
+                                                  self.temp, \
+                                                  self.mu, \
+                                                  self.w_gauss_mu,
+                                                  self.w_gauss, \
+                                                  contribution)
         else:
-            self.flux, self.contr_em = fs.flux_ck(self.freq,self.total_tau,self.temp, \
-                self.mu,self.w_gauss_mu,self.w_gauss,contribution)
+            self.flux, self.contr_em = fs.flux_ck(self.freq, \
+                             self.total_tau,self.temp, \
+                             self.mu,self.w_gauss_mu, \
+                             self.w_gauss,contribution)
 
-    def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw,contribution,variable_gravity):
+    def calc_tr_rad(self,P0_bar,R_pl,gravity,mmw, \
+                        contribution,variable_gravity):
         # Calculate the transmission spectrum
         if (self.mode == 'lbl') and (int(len(self.line_species)) > 1):
-            self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas[:,:,:1,:],self.temp, \
-                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
-                                                      self.continuum_opa_scat,variable_gravity)
+            self.transm_rad = fs.calc_transm_spec(self.freq, \
+                                self.line_struc_kappas[:,:,:1,:],self.temp, \
+                                self.press,gravity,mmw,P0_bar,R_pl, \
+                                self.w_gauss,self.scat, \
+                                self.continuum_opa_scat,variable_gravity)
             if contribution:
-                self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas[:,:,:1,:], self.temp, \
-                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
-                                    self.continuum_opa_scat,variable_gravity)
+                self.contr_tr = fs.calc_transm_spec_contr(self.freq, \
+                                self.line_struc_kappas[:,:,:1,:], self.temp, \
+                                self.press,gravity,mmw,P0_bar,R_pl, \
+                                self.w_gauss,self.transm_rad**2.,self.scat, \
+                                self.continuum_opa_scat,variable_gravity)
             
         else:
-            self.transm_rad = fs.calc_transm_spec(self.freq,self.line_struc_kappas,self.temp, \
-                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.scat, \
-                                                      self.continuum_opa_scat,variable_gravity)
+            self.transm_rad = fs.calc_transm_spec(self.freq, \
+                                    self.line_struc_kappas,self.temp, \
+                                    self.press,gravity,mmw,P0_bar,R_pl, \
+                                    self.w_gauss,self.scat, \
+                                    self.continuum_opa_scat,variable_gravity)
             if contribution:
-                self.contr_tr = fs.calc_transm_spec_contr(self.freq,self.line_struc_kappas,self.temp, \
-                                    self.press,gravity,mmw,P0_bar,R_pl,self.w_gauss,self.transm_rad**2.,self.scat, \
+                self.contr_tr = fs.calc_transm_spec_contr(self.freq, \
+                                    self.line_struc_kappas,self.temp, \
+                                    self.press,gravity,mmw,P0_bar,R_pl, \
+                                    self.w_gauss,self.transm_rad**2., \
+                                    self.scat, \
                                     self.continuum_opa_scat,variable_gravity)
         
     def calc_flux(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
-                      fsed = None, Kzz = None, radius = None,contribution=False, \
+                      fsed = None, Kzz = None, radius = None, \
+                      contribution=False, \
                       gray_opacity = None, add_cloud_scat_as_abs = None):
-        ''' Function to calc flux, called from outside '''
+        ''' Method to calculate the atmosphere's emitted flux
+        (emission spectrum).
+
+            Args:
+                temp:
+                    the atmospheric temperature in K, at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                abunds:
+                    dictionary of mass fractions for all atmospheric absorbers.
+                    Dictionary keys are the species names.
+                    Every mass fraction array
+                    has same length as pressure array.
+                gravity (float):
+                    Surface gravity in cgs. Vertically constant for emission
+                    spectra.
+                mmw:
+                   the atmospheric mean molecular weight in amu,
+                   at each atmospheric layer
+                   (1-d numpy array, same length as pressure array).
+                sigma_lnorm (Optional[float]):
+                    width of the log-normal cloud particle size distribution
+                fsed (Optional[float]):
+                    cloud settling parameter
+                Kzz (Optional):
+                    the atmospheric eddy diffusion coeffiecient in cgs untis
+                    (i.e. :math:`cm^2/s`),
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                radius (Optional):
+                    dictionary of mean particle radii for all cloud species.
+                    Dictionary keys are the cloud species names.
+                    Every radius array has same length as pressure array.    
+                contribution (Optional[bool]):
+                    If ``True`` the emission contribution function will be
+                    calculated. Default is ``False``.
+                gray_opacity (Optional[float]):
+                    Gray opacity value, to be added to the opacity at all
+                    pressures and wavelengths (units :math:`cm^2/g`)
+                contribution (Optional[bool]):
+                    If ``True``, 20 % of the cloud scattering opacity will be
+                    added to the absorption opacity, introduced to test for the
+                    effect of neglecting scattering.
+        '''
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \

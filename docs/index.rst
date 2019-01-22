@@ -35,9 +35,8 @@ documentation for all methods and functions of the petitRADTRANS package.
    content/tutorial
    content/available_opacities
 
-..
-   .. toctree::
+.. toctree::
    :maxdepth: 2
    :caption: Code documentation:
 
-..   content/code
+   content/code

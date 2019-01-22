@@ -17,7 +17,21 @@ import os
 import sys
 
 class Radtrans:
-    """ Class carrying out spectral calcs for a given set of opacities """
+    """ Class carrying out spectral calculations for a given set of opacities
+
+    Args:
+        line_species (Optional):
+            list of strings, denoting which line absorber species to include.
+        rayleigh_species (Optional):
+            list of strings, denoting which Rayleigh scattering species to 
+            include.
+        cloud_species (Optional): 
+            list of strings, denoting which cloud opacity species to include.
+        continuum_species (Optional):
+            list of strings, denoting which continuum absorber species to
+            include.
+
+    """
     
     def __init__(self, line_species=[], rayleigh_species=[], cloud_species=[], \
                      continuum_opacities = [], H2H2CIA=False, H2HeCIA=False, \

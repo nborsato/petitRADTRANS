@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tutorial &mdash; petitRADTRANS 1.0.0 documentation</title>
+  <title>nat_cst utility functions and constants &mdash; petitRADTRANS 1.0.0 documentation</title>
   
 
   
@@ -28,8 +28,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Getting Started" href="notebooks/getting_started.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="prev" title="Radtrans class" href="code_radtrans.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,21 +81,15 @@
             
             
               <p class="caption"><span class="caption-text">Guide:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/getting_started.html">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/highres.html">High-resolution spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/clouds.html">Including clouds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/analysis.html">Analysis tools</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="available_opacities.html">Available opacity species</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="code_radtrans.html">Radtrans class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="code_nat_cst.html">nat_cst utility functions and constants</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nat_cst utility functions and constants</a></li>
 </ul>
 
             
@@ -142,13 +135,15 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Tutorial</li>
+          <li><a href="code.html">&lt;no title&gt;</a> &raquo;</li>
+        
+      <li>nat_cst utility functions and constants</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/content/tutorial.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/content/code_nat_cst.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -185,31 +180,124 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/getting_started.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/getting_started.html#Preparing-a-radiative-transfer-object">Preparing a radiative transfer object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/getting_started.html#Calculating-a-transmission-spectrum">Calculating a transmission spectrum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/getting_started.html#Calculating-an-emission-spectrum">Calculating an emission spectrum</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/highres.html">High-resolution spectra</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/clouds.html">Including clouds</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/clouds.html#Powerlaw-cloud-models">Powerlaw cloud models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/clouds.html#Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering">Gray cloud deck and/or scaled Rayhleigh scattering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/clouds.html#Condensate-clouds-from-real-optical-constants">Condensate clouds from real optical constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/clouds.html#Emission-spectra">Emission spectra</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/analysis.html">Analysis tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/analysis.html#Transmission-contribution-functions">Transmission contribution functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/analysis.html#Emission-contribution-functions">Emission contribution functions</a></li>
-</ul>
-</li>
-</ul>
-</div>
+<div class="section" id="nat-cst-utility-functions-and-constants">
+<h1>nat_cst utility functions and constants<a class="headerlink" href="#nat-cst-utility-functions-and-constants" title="Permalink to this headline">¶</a></h1>
+<p>This package contains a few utility functions (see below), as well as the
+following natural constants, in cgs units:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>c = 2.99792458e10</td>
+<td>Speed of light</td>
+</tr>
+<tr class="row-odd"><td>G = 6.67384e-8</td>
+<td>Gravitational constant</td>
+</tr>
+<tr class="row-even"><td>kB = 1.3806488e-16</td>
+<td>Boltzman constant</td>
+</tr>
+<tr class="row-odd"><td>sigma = 5.670373e-5</td>
+<td>Stefan-Boltzman constant</td>
+</tr>
+<tr class="row-even"><td>bar = 1e6</td>
+<td>1 bar in cgs</td>
+</tr>
+<tr class="row-odd"><td>atm = 1.01325e6</td>
+<td>1 atmosphere in cgs</td>
+</tr>
+<tr class="row-even"><td>losch = 2.68676e19</td>
+<td>Loschmidt constant</td>
+</tr>
+<tr class="row-odd"><td>h = 6.62606957e-27</td>
+<td>Planck constant</td>
+</tr>
+<tr class="row-even"><td>r_sun = 6.955e10</td>
+<td>Solar radius</td>
+</tr>
+<tr class="row-odd"><td>r_jup=7.1492e9</td>
+<td>Jupiter equatorial radius</td>
+</tr>
+<tr class="row-even"><td>r_jup_mean=6.9911e9</td>
+<td>Jupiter mean radius</td>
+</tr>
+<tr class="row-odd"><td>m_jup = 1.89813e30</td>
+<td>Jupiter mass</td>
+</tr>
+<tr class="row-even"><td>m_sun = 1.9891e33</td>
+<td>Solar mass</td>
+</tr>
+<tr class="row-odd"><td>AU = 1.49597871e13</td>
+<td>Astronomical unit</td>
+</tr>
+<tr class="row-even"><td>pc = 3.08567758e18</td>
+<td>Parsec</td>
+</tr>
+<tr class="row-odd"><td>amu = 1.66053892e-24</td>
+<td>Atomic mass unit</td>
+</tr>
+<tr class="row-even"><td>nA = 6.0221413e23</td>
+<td>Avogadro constant</td>
+</tr>
+<tr class="row-odd"><td>m_earth = 5.9722e27</td>
+<td>Earth mass</td>
+</tr>
+<tr class="row-even"><td>r_earth = 637813660.</td>
+<td>Earth radius</td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-petitRADTRANS.nat_cst"></span><dl class="function">
+<dt id="petitRADTRANS.nat_cst.b">
+<code class="descclassname">petitRADTRANS.nat_cst.</code><code class="descname">b</code><span class="sig-paren">(</span><em>T</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.nat_cst.b" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Planck function <span class="math notranslate nohighlight">\(B_{\nu}(T)\)</span> in units of
+<span class="math notranslate nohighlight">\(\rm erg/s/cm^2/Hz/steradian\)</span>.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>T (float):</dt>
+<dd>Temperature in K.</dd>
+<dt>nu:</dt>
+<dd>numpy array containing the frequency in Hz.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="petitRADTRANS.nat_cst.guillot_global">
+<code class="descclassname">petitRADTRANS.nat_cst.</code><code class="descname">guillot_global</code><span class="sig-paren">(</span><em>P</em>, <em>kappa_IR</em>, <em>gamma</em>, <em>grav</em>, <em>T_int</em>, <em>T_equ</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.nat_cst.guillot_global" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a temperature array, in units of K,
+of the same dimensions as the pressure P
+(in bar). For this the temperature model of Guillot (2010)
+is used (his Equation 29).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>P:</dt>
+<dd>numpy array of floats, containing the input pressure in bars.</dd>
+<dt>kappa_IR (float):</dt>
+<dd>The infrared opacity in units of <span class="math notranslate nohighlight">\(\rm cm^2/s\)</span>.</dd>
+<dt>gamma (float):</dt>
+<dd>The ratio between the visual and infrated opacity.</dd>
+<dt>grav (float):</dt>
+<dd>The planetary surface gravity in units of <span class="math notranslate nohighlight">\(\rm cm/s^2\)</span>.</dd>
+<dt>T_int (float):</dt>
+<dd>The planetary internal temperature (in units of K).</dd>
+<dt>T_equ (float):</dt>
+<dd>The planetary equilibrium temperature (in units of K).</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -220,10 +308,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="notebooks/getting_started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="code_radtrans.html" class="btn btn-neutral" title="Radtrans class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

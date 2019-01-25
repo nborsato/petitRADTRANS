@@ -1,7 +1,4 @@
-#----------------------------------------------------------------
-# Reading 2 column double data from a binary file
-# Paul Molliere (2014)
-#----------------------------------------------------------------
+from __future__ import print_function
 
 import numpy as np
 import struct

@@ -180,8 +180,8 @@ subroutine flux_ck(freq,tau,temp,mu,w_gauss_mu, &
            flux_mu(i_freq) = flux_mu(i_freq)+ &
                 (r(i_str)+r(i_str+1))*(transm_all_loc(i_str)-transm_all_loc(i_str+1))/2d0
            if (contribution) then
-              contr_em(i_str,i_freq) = (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
-                   *mu(i_mu)*w_gauss_mu(i_mu)
+                 contr_em(i_str,i_freq) = (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
+                      *mu(i_mu)*w_gauss_mu(i_mu)              
            end if
         end do
         flux_mu(i_freq) = flux_mu(i_freq) + r(struc_len)*transm_all_loc(struc_len)

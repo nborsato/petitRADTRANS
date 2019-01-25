@@ -11,6 +11,11 @@ _____________
 Download Code
 _____________
 
+Until the accompanying paper is published, please `contact`_ Paul Mollière in order to be added to the GitLab repository for the project. Only then will you be
+able to clone it.
+
+.. _contact: molliere@strw.leidenuniv.nl
+
 Download petitRADTRANS from `Gitlab <https://gitlab.com/mauricemolli/petitRADTRANS.git>`_, or clone it from GitLab via
 
 .. code-block:: bash

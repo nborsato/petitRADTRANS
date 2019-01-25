@@ -566,7 +566,7 @@ class Radtrans:
                     cloud settling parameter
                 Kzz (Optional):
                     the atmospheric eddy diffusion coeffiecient in cgs untis
-                    (i.e. :math:`cm^2/s`),
+                    (i.e. :math:`\\rm cm^2/s`),
                     at each atmospheric layer
                     (1-d numpy array, same length as pressure array).
                 radius (Optional):
@@ -578,7 +578,7 @@ class Radtrans:
                     calculated. Default is ``False``.
                 gray_opacity (Optional[float]):
                     Gray opacity value, to be added to the opacity at all
-                    pressures and wavelengths (units :math:`cm^2/g`)
+                    pressures and wavelengths (units :math:`\\rm cm^2/g`)
                 add_cloud_scat_as_abs (Optional[bool]):
                     If ``True``, 20 % of the cloud scattering opacity will be
                     added to the absorption opacity, introduced to test for the
@@ -628,7 +628,7 @@ class Radtrans:
                     cloud settling parameter
                 Kzz (Optional):
                     the atmospheric eddy diffusion coeffiecient in cgs untis
-                    (i.e. :math:`cm^2/s`),
+                    (i.e. :math:`\\rm cm^2/s`),
                     at each atmospheric layer
                     (1-d numpy array, same length as pressure array).
                 radius (Optional):
@@ -641,7 +641,7 @@ class Radtrans:
                     calculated. Default is ``False``.
                 gray_opacity (Optional[float]):
                     Gray opacity value, to be added to the opacity at all
-                    pressures and wavelengths (units :math:`cm^2/g`)
+                    pressures and wavelengths (units :math:`\\rm cm^2/g`)
                 Pcloud (Optional[float]):
                     Pressure, in bar, where opaque cloud deck is added to the
                     scattering opacity.
@@ -705,7 +705,7 @@ class Radtrans:
                     cloud settling parameter
                 Kzz (Optional):
                     the atmospheric eddy diffusion coeffiecient in cgs untis
-                    (i.e. :math:`cm^2/s`),
+                    (i.e. :math:`\\rm cm^2/s`),
                     at each atmospheric layer
                     (1-d numpy array, same length as pressure array).
                 radius (Optional):
@@ -717,7 +717,7 @@ class Radtrans:
                     calculated. Default is ``False``.
                 gray_opacity (Optional[float]):
                     Gray opacity value, to be added to the opacity at all
-                    pressures and wavelengths (units :math:`cm^2/g`)
+                    pressures and wavelengths (units :math:`\\rm cm^2/g`)
                 Pcloud (Optional[float]):
                     Pressure, in bar, where opaque cloud deck is added to the
                     scattering opacity.

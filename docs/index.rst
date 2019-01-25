@@ -20,8 +20,10 @@ atmospheres.
    to petitRADTRANS soon.
 
 petitRADTRANS will be available under the MIT License, and documented in Mollière et al, in prep.
-Until the documentation paper is published, please invite Paul Mollière
+Until the documentation paper is published, please contact_ and invite Paul Mollière
 as coauthor if you make use of petitRADTRANS in your work.
+
+.. _contact: molliere@strw.leidenuniv.nl
 
 This documentation webpage currently contains an installation guide, as
 well as a tutorial. We are currently working on the full code

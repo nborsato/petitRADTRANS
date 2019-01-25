@@ -48,3 +48,50 @@ def guillot_global(P,kappa_IR,gamma,grav,T_int,T_equ):
       (gamma / 3.**0.5 - 1. / 3.**0.5 / gamma)* \
       np.exp(-gamma * tau *3.**0.5)))**0.25
     return T
+
+########################################################
+### Radtrans utility for temperature model computation
+########################################################
+
+### Box car conv. average, found on stackoverflow somewhere
+def running_mean(x, N):
+    cumsum = np.cumsum(np.insert(x, 0, 0)) 
+    return (cumsum[N:] - cumsum[:-N]) / float(N)
+
+### Global Guillot P-T formula with kappa/grav replaced by delta
+def guillot_global_ret(P,delta,gamma,T_int,T_equ):
+
+    delta = np.abs(delta)
+    gamma = np.abs(gamma)
+    T_int = np.abs(T_int)
+    T_equ = np.abs(T_equ)
+    tau = P*1e6*delta
+    T_irr = T_equ*np.sqrt(2.)
+    T = (0.75*T_int**4.*(2./3.+tau) + \
+      0.75*T_irr**4./4.*(2./3.+1./gamma/3.**0.5+ \
+                         (gamma/3.**0.5-1./3.**0.5/gamma)*np.exp(-gamma*tau*3.**0.5)))**0.25
+    return T
+
+### Modified Guillot P-T formula
+def guillot_modif(P,delta,gamma,T_int,T_equ,ptrans,alpha):
+    return guillot_global_ret(P,np.abs(delta),np.abs(gamma),np.abs(T_int),np.abs(T_equ))* \
+      (1.-alpha*(1./(1.+np.exp((np.log(P/ptrans))))))
+
+### Function to make temp
+def make_press_temp(rad_trans_params):
+
+    press_many = np.logspace(-8,5,260)
+    t_no_ave = guillot_modif(press_many, \
+        1e1**rad_trans_params['log_delta'],1e1**rad_trans_params['log_gamma'], \
+        rad_trans_params['t_int'],rad_trans_params['t_equ'], \
+        1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha'])
+
+    # new
+    press_many_new = 1e1**running_mean(np.log10(press_many), 25)
+    t_new          = running_mean(t_no_ave  , 25)
+    index_new      = (press_many_new <= 1e3) & (press_many_new >= 1e-6)
+    temp_new       = t_new[index_new][::2]
+    press_new      = press_many_new[index_new][::2]
+    
+    return press_new, temp_new
+

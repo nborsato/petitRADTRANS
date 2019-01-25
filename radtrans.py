@@ -557,9 +557,9 @@ class Radtrans:
                     Surface gravity in cgs. Vertically constant for emission
                     spectra.
                 mmw:
-                   the atmospheric mean molecular weight in amu,
-                   at each atmospheric layer
-                   (1-d numpy array, same length as pressure array).
+                    the atmospheric mean molecular weight in amu,
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
                 sigma_lnorm (Optional[float]):
                     width of the log-normal cloud particle size distribution
                 fsed (Optional[float]):
@@ -579,7 +579,7 @@ class Radtrans:
                 gray_opacity (Optional[float]):
                     Gray opacity value, to be added to the opacity at all
                     pressures and wavelengths (units :math:`cm^2/g`)
-                contribution (Optional[bool]):
+                add_cloud_scat_as_abs (Optional[bool]):
                     If ``True``, 20 % of the cloud scattering opacity will be
                     added to the absorption opacity, introduced to test for the
                     effect of neglecting scattering.
@@ -591,11 +591,73 @@ class Radtrans:
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
 
-    def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
-                        fsed = None, Kzz = None, radius = None, Pcloud = None, \
+    def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl, \
+                        sigma_lnorm = None, \
+                        fsed = None, Kzz = None, radius = None, \
+                        Pcloud = None, \
                         contribution = False, haze_factor = None, \
                         gray_opacity = None,variable_gravity=True):
-        ''' Function to calc transm. spectrum, called from outside '''
+        ''' Method to calculate the atmosphere's transmission radius
+        (for the transmission spectrum).
+
+            Args:
+                temp:
+                    the atmospheric temperature in K, at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                abunds:
+                    dictionary of mass fractions for all atmospheric absorbers.
+                    Dictionary keys are the species names.
+                    Every mass fraction array
+                    has same length as pressure array.
+                gravity (float):
+                    Surface gravity in cgs at reference radius and pressure.
+                mmw:
+                    the atmospheric mean molecular weight in amu,
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                P0_bar (float):
+                    Reference pressure P0 in bar where R(P=P0) = R_pl,
+                    where R_pl is the reference radius (parameter of this
+                    method), and g(P=P0) = gravity, where gravity is the
+                    reference gravity (parameter of this method)
+                R_pl (float):
+                    Reference radius R_pl, in cm.
+                sigma_lnorm (Optional[float]):
+                    width of the log-normal cloud particle size distribution
+                fsed (Optional[float]):
+                    cloud settling parameter
+                Kzz (Optional):
+                    the atmospheric eddy diffusion coeffiecient in cgs untis
+                    (i.e. :math:`cm^2/s`),
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                radius (Optional):
+                    dictionary of mean particle radii for all cloud species.
+                    Dictionary keys are the cloud species names.
+                    Every radius array has same length as pressure array.    
+                contribution (Optional[bool]):
+                    If ``True`` the transmission and emission
+                    contribution function will be
+                    calculated. Default is ``False``.
+                gray_opacity (Optional[float]):
+                    Gray opacity value, to be added to the opacity at all
+                    pressures and wavelengths (units :math:`cm^2/g`)
+                Pcloud (Optional[float]):
+                    Pressure, in bar, where opaque cloud deck is added to the
+                    scattering opacity.
+                haze_factor (Optional[float]):
+                    Scalar factor, increasing the gas Rayleigh scattering
+                    cross-section.
+                variable_gravity (Optional[bool]):
+                    Standard is ``True``. If ``False`` the gravity will be
+                    constant as a function of pressure, during the transmission
+                    radius calculation.
+                add_cloud_scat_as_abs (Optional[bool]):
+                    If ``True``, 20 % of the cloud scattering opacity will be
+                    added to the absorption opacity, introduced to test for the
+                    effect of neglecting scattering.
+        '''
+        
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
@@ -604,11 +666,69 @@ class Radtrans:
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
         
 
-    def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,sigma_lnorm = None, \
-                             fsed = None, Kzz = None, radius = None,Pcloud=None, \
-                             contribution=False,gray_opacity = None, add_cloud_scat_as_abs = None, \
+    def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,\
+                             sigma_lnorm = None, \
+                             fsed = None, Kzz = None, radius = None, \
+                             Pcloud=None, \
+                             contribution=False,gray_opacity = None, \
+                             add_cloud_scat_as_abs = None, \
                              variable_gravity=True):
-        ''' Function to calc flux and transmission spectrum, called from outside '''
+        ''' Method to calculate the atmosphere's emission flux *and*
+        transmission radius (for the transmission spectrum).
+
+            Args:
+                temp:
+                    the atmospheric temperature in K, at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                abunds:
+                    dictionary of mass fractions for all atmospheric absorbers.
+                    Dictionary keys are the species names.
+                    Every mass fraction array
+                    has same length as pressure array.
+                gravity (float):
+                    Surface gravity in cgs at reference radius and pressure,
+                    constant durng the emission spectrum calculation.
+                mmw:
+                    the atmospheric mean molecular weight in amu,
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                P0_bar (float):
+                    Reference pressure P0 in bar where R(P=P0) = R_pl,
+                    where R_pl is the reference radius (parameter of this
+                    method), and g(P=P0) = gravity, where gravity is the
+                    reference gravity (parameter of this method)
+                R_pl (float):
+                    Reference radius R_pl, in cm.
+                sigma_lnorm (Optional[float]):
+                    width of the log-normal cloud particle size distribution
+                fsed (Optional[float]):
+                    cloud settling parameter
+                Kzz (Optional):
+                    the atmospheric eddy diffusion coeffiecient in cgs untis
+                    (i.e. :math:`cm^2/s`),
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                radius (Optional):
+                    dictionary of mean particle radii for all cloud species.
+                    Dictionary keys are the cloud species names.
+                    Every radius array has same length as pressure array.    
+                contribution (Optional[bool]):
+                    If ``True`` the transmission contribution function will be
+                    calculated. Default is ``False``.
+                gray_opacity (Optional[float]):
+                    Gray opacity value, to be added to the opacity at all
+                    pressures and wavelengths (units :math:`cm^2/g`)
+                Pcloud (Optional[float]):
+                    Pressure, in bar, where opaque cloud deck is added to the
+                    scattering opacity.
+                haze_factor (Optional[float]):
+                    Scalar factor, increasing the gas Rayleigh scattering
+                    cross-section.
+                variable_gravity (Optional[bool]):
+                    Standard is ``True``. If ``False`` the gravity will be
+                    constant as a function of pressure, during the transmission
+                    radius calculation.
+        '''
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
@@ -619,53 +739,7 @@ class Radtrans:
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
 
     def get_opa(self,temp):
-        ''' Function to calc flux, called from outside '''
+        # Function to calc flux, called from outside
         self.interpolate_species_opa(temp)
         return self.line_struc_kappas
-
-########################################################
-### Radtrans utility for temperature model computation
-########################################################
-
-### Box car conv. average, found online somewhere
-def running_mean(x, N):
-    cumsum = np.cumsum(np.insert(x, 0, 0)) 
-    return (cumsum[N:] - cumsum[:-N]) / float(N)
-
-### Global Guillot P-T formula with kappa/grav replaced by delta
-def guillot_global(P,delta,gamma,T_int,T_equ):
-
-    delta = np.abs(delta)
-    gamma = np.abs(gamma)
-    T_int = np.abs(T_int)
-    T_equ = np.abs(T_equ)
-    tau = P*1e6*delta
-    T_irr = T_equ*np.sqrt(2.)
-    T = (0.75*T_int**4.*(2./3.+tau) + \
-      0.75*T_irr**4./4.*(2./3.+1./gamma/3.**0.5+ \
-                         (gamma/3.**0.5-1./3.**0.5/gamma)*np.exp(-gamma*tau*3.**0.5)))**0.25
-    return T
-
-### Modified Guillot P-T formula
-def guillot_modif(P,delta,gamma,T_int,T_equ,ptrans,alpha):
-    return guillot_global(P,np.abs(delta),np.abs(gamma),np.abs(T_int),np.abs(T_equ))* \
-      (1.-alpha*(1./(1.+np.exp((np.log(P/ptrans))))))
-
-### Function to make temp
-def make_press_temp(rad_trans_params):
-
-    press_many = np.logspace(-8,5,260)
-    t_no_ave = guillot_modif(press_many, \
-        1e1**rad_trans_params['log_delta'],1e1**rad_trans_params['log_gamma'], \
-        rad_trans_params['t_int'],rad_trans_params['t_equ'], \
-        1e1**rad_trans_params['log_p_trans'],rad_trans_params['alpha'])
-
-    # new
-    press_many_new = 1e1**running_mean(np.log10(press_many), 25)
-    t_new          = running_mean(t_no_ave  , 25)
-    index_new      = (press_many_new <= 1e3) & (press_many_new >= 1e-6)
-    temp_new       = t_new[index_new][::2]
-    press_new      = press_many_new[index_new][::2]
-    
-    return press_new, temp_new
 

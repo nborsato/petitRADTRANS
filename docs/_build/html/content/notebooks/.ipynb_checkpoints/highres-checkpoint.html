@@ -418,11 +418,11 @@ atmosphere.setup_opa_structure(pressures)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>R_pl = 1.838*nc.r_jup_mean
+<span></span>import petitRADTRANS.nat_cst as nc
+
+R_pl = 1.838*nc.r_jup_mean
 gravity = 1e1**2.45
 P0 = 0.01
-
-import petitRADTRANS.nat_cst as nc
 
 kappa_IR = 0.01
 gamma = 0.4

@@ -25,7 +25,9 @@ as coauthor if you make use of petitRADTRANS in your work.
 
 .. _contact: molliere@strw.leidenuniv.nl
 
-This documentation webpage currently contains an installation guide, a tutorial, and a first code documentation.
+This documentation webpage currently contains an installation guide, as
+well as a tutorial. We are currently working on the full code
+documentation for all methods and functions of the petitRADTRANS package.
 
 .. toctree::
    :maxdepth: 2

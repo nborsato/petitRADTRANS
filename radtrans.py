@@ -400,14 +400,15 @@ class Radtrans:
                                         sigma_lnorm, fsed, Kzz, radius, \
                                         add_cloud_scat_as_abs)
 
-        # Interpolate line opacities, combine with continuum oacities
-        self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
-                                    self.line_struc_kappas,self.continuum_opa)
         if len(self.rayleigh_species) != 0:
             self.scat = True
             self.add_rayleigh(abundances)
         if (self.Pcloud != None):
-            self.continuum_opa[:,self.press>self.Pcloud*1e6] = 1e99
+            self.continuum_opa[:,self.press>self.Pcloud*1e6] += 1e99
+
+        # Interpolate line opacities, combine with continuum oacities
+        self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
+                                    self.line_struc_kappas,self.continuum_opa)
 
         # In the line-by-line case we can simply
         # add the opacities of different species

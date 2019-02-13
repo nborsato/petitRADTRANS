@@ -407,7 +407,7 @@ class Radtrans:
             self.scat = True
             self.add_rayleigh(abundances)
         if (self.Pcloud != None):
-            self.continuum_opa_scat[:,self.press>self.Pcloud*1e6] = 1e99
+            self.continuum_opa[:,self.press>self.Pcloud*1e6] = 1e99
 
         # In the line-by-line case we can simply
         # add the opacities of different species

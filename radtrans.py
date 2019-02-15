@@ -396,15 +396,27 @@ class Radtrans:
 
         # Add cloud opacity here, will modify self.continuum_opa
         if int(len(self.cloud_species)) > 0:
+            self.scat = True
             self.calc_cloud_opacity(abundances, mmw, gravity, \
                                         sigma_lnorm, fsed, Kzz, radius, \
                                         add_cloud_scat_as_abs)
 
+        # Calculate rayleigh scattering opacities
         if len(self.rayleigh_species) != 0:
             self.scat = True
             self.add_rayleigh(abundances)
+        # Add gray cloud deck
         if (self.Pcloud != None):
             self.continuum_opa[:,self.press>self.Pcloud*1e6] += 1e99
+        # Add power law opacity
+        if (self.kappa_zero != None):
+            self.scat = True
+            wlen_micron = nc.c/self.freq/1e-4
+            scattering_add = self.kappa_zero * \
+                (wlen_micron/0.35)**self.gamma_scat
+            self.continuum_opa_scat += \
+                np.repeat(scattering_add[None], \
+                int(len(self.press)), axis = 0).transpose()
 
         # Interpolate line opacities, combine with continuum oacities
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
@@ -541,7 +553,8 @@ class Radtrans:
     def calc_flux(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
                       fsed = None, Kzz = None, radius = None, \
                       contribution=False, \
-                      gray_opacity = None, add_cloud_scat_as_abs = None):
+                      gray_opacity = None, Pcloud = None, \
+                      add_cloud_scat_as_abs = None):
         ''' Method to calculate the atmosphere's emitted flux
         (emission spectrum).
 
@@ -580,11 +593,16 @@ class Radtrans:
                 gray_opacity (Optional[float]):
                     Gray opacity value, to be added to the opacity at all
                     pressures and wavelengths (units :math:`\\rm cm^2/g`)
+                Pcloud (Optional[float]):
+                    Pressure, in bar, where opaque cloud deck is added to the
+                    absorption opacity.
                 add_cloud_scat_as_abs (Optional[bool]):
                     If ``True``, 20 % of the cloud scattering opacity will be
                     added to the absorption opacity, introduced to test for the
                     effect of neglecting scattering.
         '''
+
+        self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
@@ -596,8 +614,10 @@ class Radtrans:
                         sigma_lnorm = None, \
                         fsed = None, Kzz = None, radius = None, \
                         Pcloud = None, \
+                        kappa_zero = None, \
+                        gamma_scat = None, \
                         contribution = False, haze_factor = None, \
-                        gray_opacity = None,variable_gravity=True):
+                        gray_opacity = None, variable_gravity=True):
         ''' Method to calculate the atmosphere's transmission radius
         (for the transmission spectrum).
 
@@ -645,7 +665,13 @@ class Radtrans:
                     pressures and wavelengths (units :math:`\\rm cm^2/g`)
                 Pcloud (Optional[float]):
                     Pressure, in bar, where opaque cloud deck is added to the
-                    scattering opacity.
+                    absorption opacity.
+                kappa_zero (Optional[float]):
+                    Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).
+                gamma_scat (Optional[float]):
+                    Has to be given if kappa_zero is definded, this is the
+                    wavelength powerlaw index of the parametrized scattering
+                    opacity.
                 haze_factor (Optional[float]):
                     Scalar factor, increasing the gas Rayleigh scattering
                     cross-section.
@@ -663,6 +689,8 @@ class Radtrans:
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.haze_factor = haze_factor
+        self.kappa_zero = kappa_zero
+        self.gamma_scat = gamma_scat
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
         
@@ -670,7 +698,9 @@ class Radtrans:
     def calc_flux_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl,\
                              sigma_lnorm = None, \
                              fsed = None, Kzz = None, radius = None, \
-                             Pcloud=None, \
+                             Pcloud = None, \
+                             kappa_zero = None, \
+                             gamma_scat = None, \
                              contribution=False,gray_opacity = None, \
                              add_cloud_scat_as_abs = None, \
                              variable_gravity=True):
@@ -721,7 +751,13 @@ class Radtrans:
                     pressures and wavelengths (units :math:`\\rm cm^2/g`)
                 Pcloud (Optional[float]):
                     Pressure, in bar, where opaque cloud deck is added to the
-                    scattering opacity.
+                    absorption opacity.
+                kappa_zero (Optional[float]):
+                    Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).
+                gamma_scat (Optional[float]):
+                    Has to be given if kappa_zero is definded, this is the
+                    wavelength powerlaw index of the parametrized scattering
+                    opacity.
                 haze_factor (Optional[float]):
                     Scalar factor, increasing the gas Rayleigh scattering
                     cross-section.
@@ -730,8 +766,11 @@ class Radtrans:
                     constant as a function of pressure, during the transmission
                     radius calculation.
         '''
+
         self.Pcloud = Pcloud
         self.gray_opacity = gray_opacity
+        self.kappa_zero = kappa_zero
+        self.gamma_scat = gamma_scat
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
                              add_cloud_scat_as_abs = add_cloud_scat_as_abs)

@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import numpy as np
+import os as os
 
 # Natural constants
 # Everything is in cgs!
@@ -76,6 +77,75 @@ def guillot_global(P,kappa_IR,gamma,grav,T_int,T_equ):
       (gamma / 3.**0.5 - 1. / 3.**0.5 / gamma)* \
       np.exp(-gamma * tau *3.**0.5)))**0.25
     return T
+
+# Get path to stellar spectral data
+f = open(os.path.dirname(__file__)+'/path.txt')
+lines = f.readlines()
+spec_path = os.path.dirname(__file__)+'/'+lines[1].rstrip() + \
+  '/stellar_specs'
+f.close()
+
+description = np.genfromtxt(spec_path+'/stellar_params.dat')
+logTempGrid = description[:,0]
+
+specDats = []
+for i in range(len(logTempGrid)):
+    specDats.append(np.genfromtxt(spec_path+'/spec_'+ \
+                    str(int(i)).zfill(2)+'.dat'))
+
+def get_PHOENIX_spec(temperature):
+    ''' Returns a matrix where the first column is the wavelength in cm
+    and the second is the stellar flux :math:`F_\\nu` in units of
+    :math:`\\rm erg/cm^2/s/Hz`, at the surface of the star.
+    The spectra are PHOENIX models from (Husser et al. 2013), the spectral
+    grid used here was described in van Boekel et al. (2012).
+    
+    Args:
+        temperature (float):
+            stellar effective temperature in K.
+    '''
+    logTemp = np.log10(temperature)
+    interpolationIndex = np.searchsorted(logTempGrid, logTemp)
+
+    if interpolationIndex == 0:
+
+        specDat = specDats[0]
+        print('Warning, input temperature is lower than minimum grid temperature.')
+        print('Taking F = F_grid(minimum grid temperature), normalized to desired')
+        print('input temperature.')
+
+    elif interpolationIndex == len(logTempGrid):
+
+        specDat = specDats[int(len(logTempGrid)-1)]
+        print('Warning, input temperature is higher than maximum grid temperature.')
+        print('Taking F = F_grid(maximum grid temperature), normalized to desired')
+        print('input temperature.')
+        
+    else:
+
+        weightHigh = (logTemp-logTempGrid[interpolationIndex-1]) / \
+          (logTempGrid[interpolationIndex]-logTempGrid[interpolationIndex-1])
+
+        weightLow = 1. - weightHigh
+
+        specDatLow = specDats[int(interpolationIndex-1)]
+
+        specDatHigh = specDats[int(interpolationIndex)]
+
+        specDat = np.zeros_like(specDatLow)
+
+        specDat[:,0] = specDatLow[:,0]
+        specDat[:,1] = weightLow * specDatLow[:,1] + \
+          weightHigh * specDatHigh[:,1]
+
+    freq = c/specDat[:,0]
+    flux = specDat[:,1]
+    norm = -np.sum((flux[1:]+flux[:-1])*np.diff(freq))/2.
+
+    specDat[:,1] = flux/norm*sigma*temperature**4.
+
+    return specDat
+
 
 ##################################################################
 ### Radtrans utility for retrieval temperature model computation

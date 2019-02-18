@@ -1,5 +1,5 @@
 Radtrans class
 ==============
 
-.. autoclass:: Radtrans
+.. autoclass:: petitRADTRANS.Radtrans
     :members:

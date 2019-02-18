@@ -49,5 +49,5 @@ following natural constants, in cgs units:
    * - r_earth = 637813660.
      - Earth radius
        
-.. automodule:: nat_cst
+.. automodule:: petitRADTRANS.nat_cst
     :members:

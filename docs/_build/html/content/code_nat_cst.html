@@ -88,8 +88,11 @@
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="code_radtrans.html">Radtrans class</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">nat_cst utility functions and constants</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">Code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="code_radtrans.html">Radtrans class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">nat_cst utility functions and constants</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -135,7 +138,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="code.html">&lt;no title&gt;</a> &raquo;</li>
+          <li><a href="code.html">Code documentation</a> &raquo;</li>
         
       <li>nat_cst utility functions and constants</li>
     
@@ -266,6 +269,24 @@ following natural constants, in cgs units:</p>
 <dd>Temperature in K.</dd>
 <dt>nu:</dt>
 <dd>numpy array containing the frequency in Hz.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="petitRADTRANS.nat_cst.get_PHOENIX_spec">
+<code class="descclassname">petitRADTRANS.nat_cst.</code><code class="descname">get_PHOENIX_spec</code><span class="sig-paren">(</span><em>temperature</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.nat_cst.get_PHOENIX_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a matrix where the first column is the wavelength in cm
+and the second is the stellar flux <span class="math notranslate nohighlight">\(F_\nu\)</span> in units of
+<span class="math notranslate nohighlight">\(\rm erg/cm^2/s/Hz\)</span>, at the surface of the star.
+The spectra are PHOENIX models from (Husser et al. 2013), the spectral
+grid used here was described in van Boekel et al. (2012).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>temperature (float):</dt>
+<dd>stellar effective temperature in K.</dd>
 </dl>
 </dd>
 </dl>

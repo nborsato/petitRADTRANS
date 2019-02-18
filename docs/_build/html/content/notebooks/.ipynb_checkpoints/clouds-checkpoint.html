@@ -87,8 +87,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../code_radtrans.html">Radtrans class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../code_nat_cst.html">nat_cst utility functions and constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Code documentation</a></li>
 </ul>
 
             
@@ -379,10 +378,6 @@ div.rendered_html tbody tr:hover {
 <h1>Including clouds<a class="headerlink" href="#Including-clouds" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="Powerlaw-cloud-models">
 <h2>Powerlaw cloud models<a class="headerlink" href="#Powerlaw-cloud-models" title="Permalink to this headline">¶</a></h2>
-<p>To be added soon.</p>
-</div>
-<div class="section" id="Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering">
-<h2>Gray cloud deck and/or scaled Rayhleigh scattering<a class="headerlink" href="#Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering" title="Permalink to this headline">¶</a></h2>
 <p>Let’s initialize an atmosphere in the usual way, see <a class="reference external" href="getting_started.html">“Getting Started”</a>:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -450,9 +445,165 @@ MMW = 2.33 * np.ones_like(temperature)
 <strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
 X_i = \frac{\mu_i}{\mu}n_i,
 \end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</div>
-<p>Let’s calculate three spectra: - A clear model - A cloudy model with a gray cloud deck at 0.01 bar - A haze-like model, mimicked by scaling the Rayleigh scattering of the gas by a factor 10 - A combination of the two above cloud models: gray cloud deck plus haze</p>
+<p>Now, let’s calculate cloudy spectra! The first available mode is the so-called power law cloud. In this case the following opacity is <em>added</em> to the scattering cross-section: <span class="math">\begin{equation}
+\kappa = \kappa_0\left(\frac{\lambda}{\lambda_0}\right)^\gamma
+\end{equation}</span> Where <span class="math notranslate nohighlight">\(\kappa_0\)</span> is the opacity in units of cm<span class="math notranslate nohighlight">\(^2\)</span>/g, at <span class="math notranslate nohighlight">\(\lambda_0=0.35 \ {\rm \mu m}\)</span>. The power law index <span class="math notranslate nohighlight">\(\gamma\)</span> fixes the wavelength dependence, Rayleigh-like scattering would be obtained for <span class="math notranslate nohighlight">\(\gamma=-4\)</span>. Hence <span class="math notranslate nohighlight">\(\kappa_0\)</span> and <span class="math notranslate nohighlight">\(\gamma\)</span> are free parameters.</p>
+<p>We now calculate a clear atmosphere, and then four power law cloudy models, with <span class="math notranslate nohighlight">\(\kappa_0 = 0.01\)</span> cm<span class="math notranslate nohighlight">\(^2\)</span>/g, and four different <span class="math notranslate nohighlight">\(\gamma\)</span> values.</p>
+<p>Clear model:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>import pylab as plt
+plt.rcParams[&#39;figure.figsize&#39;] = (10, 6)
+
+# Clear
+atmosphere.calc_transm(temperature, abundances, \
+                       gravity, MMW, R_pl=R_pl, P0_bar=P0)
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, label = &#39;Clear&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x115c1a198&gt;]
+</pre></div>
+</div>
+</div>
+<p>First, <span class="math notranslate nohighlight">\(\gamma = -4\)</span> (Rayleigh-like):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>kappa_zero = 0.01
+gamma_scat = -4.
+
+atmosphere.calc_transm(temperature, abundances, \
+                    gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                    kappa_zero = kappa_zero, gamma_scat = gamma_scat)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, \
+         label = r&#39;Powerlaw cloud, $\gamma = -4$&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x10e6a0a58&gt;]
+</pre></div>
+</div>
+</div>
+<p>Second, <span class="math notranslate nohighlight">\(\gamma = -2\)</span> (weaker scattering power law):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>kappa_zero = 0.01
+gamma_scat = -2.
+
+atmosphere.calc_transm(temperature, abundances, \
+                    gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                    kappa_zero = kappa_zero, gamma_scat = gamma_scat)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, \
+         label = r&#39;Powerlaw cloud, $\gamma = -2$&#39;)
+
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x115d8a390&gt;]
+</pre></div>
+</div>
+</div>
+<p>Third, <span class="math notranslate nohighlight">\(\gamma = 0\)</span> (flat opacity):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>kappa_zero = 0.01
+gamma_scat = 0.
+
+atmosphere.calc_transm(temperature, abundances, \
+                    gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                    kappa_zero = kappa_zero, gamma_scat = gamma_scat)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean, \
+         label = r&#39;Powerlaw cloud, $\gamma = 0$&#39;)
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none notranslate"><div class="highlight"><pre>
+<span></span>[&lt;matplotlib.lines.Line2D at 0x115d8ad30&gt;]
+</pre></div>
+</div>
+</div>
+<p>Fourth, the exoctic case of, <span class="math notranslate nohighlight">\(\gamma = 1\)</span> (positive opacity slope):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>kappa_zero = 0.01
+gamma_scat = 1.
+
+atmosphere.calc_transm(temperature, abundances, \
+                    gravity, MMW, R_pl=R_pl, P0_bar=P0, \
+                    kappa_zero = kappa_zero, gamma_scat = gamma_scat)
+
+plt.plot(nc.c/atmosphere.freq/1e-4, \
+         atmosphere.transm_rad/nc.r_jup_mean,\
+         label = r&#39;Powerlaw cloud, $\gamma = 1$&#39;)
+
+# Make plot
+
+plt.xscale(&#39;log&#39;)
+plt.xlabel(&#39;Wavelength (microns)&#39;)
+plt.ylabel(r&#39;Transit radius ($\rm R_{Jup}$)&#39;)
+plt.legend(loc = &#39;best&#39;)
+plt.show()
+plt.clf()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_19_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_19_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering">
+<h2>Gray cloud deck and/or scaled Rayhleigh scattering<a class="headerlink" href="#Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering" title="Permalink to this headline">¶</a></h2>
+<p>In addition to power law clouds, petitRADTRANS can also simply add a gray cloud deck, or scale the Rayleigh scattering opacities of the gas by a factor specified by the user. For these examples we will reuse the Radtrans object from the demonstration of the power law cloud above, there’s no need to intialize it again.</p>
+<p>Let’s calculate three spectra: - A clear model - A cloudy model with a gray cloud deck at 0.01 bar - A haze-like model, mimicked by scaling the Rayleigh scattering of the gas by a factor 10 - A combination of the two above cloud models: gray cloud deck plus haze</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -495,7 +646,7 @@ plt.clf()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_11_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_11_0.png" />
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_23_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_23_0.png" />
 </div>
 </div>
 </div>
@@ -532,7 +683,7 @@ plt.clf()
 </table>
 <p>But now, let’s start! We simply give one additional <code class="docutils literal notranslate"><span class="pre">cloud_species</span></code> list to the Radtrans object, containing the name of the opacity species we want to use.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -565,7 +716,7 @@ atmosphere.setup_opa_structure(pressures)
 <strong>Units in petitRADTRANS:</strong> remember that all units in <em>petitRADTRANS</em> are in cgs, <strong>except for pressure</strong>, which is in bars, <strong>and the mean molecular weight (MMW)</strong>, which is in units of atomic mass units.</div>
 <p>Next we set up the atmospheric parameters, with a parameter selection <em>almost</em> identical to the <a class="reference external" href="getting_started.html">“Getting Started”</a> case. We now also add the mass fraction of the cloud species we are interested in. Note that the mass fractions only contains the name <code class="docutils literal notranslate"><span class="pre">Mg2SiO4(c)</span></code> now, the <code class="docutils literal notranslate"><span class="pre">_cd</span></code> suffix has to be omitted.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -603,7 +754,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <h3>Setting the cloud particle size<a class="headerlink" href="#Setting-the-cloud-particle-size" title="Permalink to this headline">¶</a></h3>
 <p>We have to define a few additional parameters for the clouds, to start the calculation. We can give the mean particle size and width of the log-normal particle distribution:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -616,7 +767,7 @@ sigma_lnorm = 1.05
 </div>
 <p>Now, let’s calculate a clear and cloudy spectrum to compare:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -646,7 +797,7 @@ plt.clf()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_27_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_27_0.png" />
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_39_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_39_0.png" />
 </div>
 </div>
 <p>Here one sees that there is a lot of additional absorption in the optical and near-IR. Also note the silicate (Si-O stretching mode) becoming visible at 10 micron.</p>
@@ -655,7 +806,7 @@ plt.clf()
 <h3>Calculating the particle size<a class="headerlink" href="#Calculating-the-particle-size" title="Permalink to this headline">¶</a></h3>
 <p>Alternatively, one can specify an eddy diffusion parameter (<span class="math notranslate nohighlight">\(K_{zz}\)</span>, with units of cm<span class="math notranslate nohighlight">\(^2\)</span>/s), which expresses how strongly atmospheric mixing is. The cloud particle size is then controlled by specifying <span class="math notranslate nohighlight">\(K_{zz}\)</span>, and the unitless settling parameter <span class="math notranslate nohighlight">\(f_{\rm sed}\)</span>, which expresses the particles’ mass averaged settling velocity, when compared to the local atmospheric mixing speed. Also, a width for the log-normal particle size distribution must be specified:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -667,7 +818,7 @@ sigma_lnorm = 1.05
 </div>
 <p>Again, let’s calculate a clear and cloudy spectrum to compare:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -700,12 +851,12 @@ plt.clf()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_33_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_33_0.png" />
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_45_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_45_0.png" />
 </div>
 </div>
 <p>The resulting mean particle sizes can be accessed like this:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -727,7 +878,7 @@ plt.clf()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_35_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_35_0.png" />
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_47_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_47_0.png" />
 </div>
 </div>
 <div class="admonition warning">
@@ -736,30 +887,33 @@ plt.clf()
 </div>
 <div class="section" id="Emission-spectra">
 <h2>Emission spectra<a class="headerlink" href="#Emission-spectra" title="Permalink to this headline">¶</a></h2>
-<p>We can use the Radtrans object created above to calculate emission spectra as well. For better visibility of the effect of clouds, we will increase the cloud mass fraction by a factor of 10.</p>
+<p>We can use the Radtrans object created above to calculate emission spectra as well.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>abundances[&#39;Mg2SiO4(c)&#39;] = 0.000005 * np.ones_like(temperature)
+<span></span>abundances[&#39;Mg2SiO4(c)&#39;] = 0.0000005 * np.ones_like(temperature)
 
 atmosphere.calc_flux(temperature, abundances, gravity, MMW, \
                        Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm)
 
-plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, label = &#39;cloudy&#39;, zorder = 2)
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, \
+         color = &#39;black&#39;, label = &#39;cloudy&#39;, zorder = 1)
 
 atmosphere.calc_flux(temperature, abundances, gravity, MMW, \
                        Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm, \
                        add_cloud_scat_as_abs = True)
-plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, label = &#39;cloudy, add scattering to absorption&#39;, zorder = 2)
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, \
+         label = &#39;cloudy, add scattering to absorption&#39;, zorder = 2)
 
 abundances[&#39;Mg2SiO4(c)&#39;] = np.zeros_like(temperature)
 
 atmosphere.calc_flux(temperature, abundances, gravity, MMW, \
                        Kzz = Kzz, fsed=fsed, sigma_lnorm = sigma_lnorm)
 
-plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, label = &#39;clear&#39;, zorder = 1)
+plt.plot(nc.c/atmosphere.freq/1e-4, atmosphere.flux/1e-6, &#39;-&#39;, \
+         color = &#39;red&#39;, label = &#39;clear&#39;, zorder = 0)
 
 plt.legend(loc=&#39;best&#39;)
 plt.xscale(&#39;log&#39;)
@@ -774,7 +928,7 @@ plt.clf()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_39_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_39_0.png" />
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_51_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_51_0.png" />
 </div>
 </div>
 <p>Here we plotted the clear spectrum, neglecting the cloud opacity, the cloudy spectrum only considering the absorption of the cloud particles (petitRADTRANS does not include scattering in its emission spectra), and the cloudy spectrum resulting from adding 20 % of the cloud scattering opacity to the absorption opacity (toggled by setting the keyword argument <code class="docutils literal notranslate"><span class="pre">add_cloud_scat_as_abs</span> <span class="pre">=</span> <span class="pre">True</span></code>). Because the two latter cases differ quite strongly, we can see that in the case studied here,

@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="nat_cst utility functions and constants" href="code_nat_cst.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="code.html" /> 
+    <link rel="prev" title="Code documentation" href="code.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -89,8 +89,11 @@
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Radtrans class</a></li>
-<li class="toctree-l1"><a class="reference internal" href="code_nat_cst.html">nat_cst utility functions and constants</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">Code documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Radtrans class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_nat_cst.html">nat_cst utility functions and constants</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -136,7 +139,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="code.html">&lt;no title&gt;</a> &raquo;</li>
+          <li><a href="code.html">Code documentation</a> &raquo;</li>
         
       <li>Radtrans class</li>
     
@@ -229,7 +232,7 @@ treatment.</dd>
 </dl>
 <dl class="method">
 <dt id="petitRADTRANS.Radtrans.calc_flux">
-<code class="descname">calc_flux</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>contribution=False</em>, <em>gray_opacity=None</em>, <em>add_cloud_scat_as_abs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calc_flux</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>contribution=False</em>, <em>gray_opacity=None</em>, <em>Pcloud=None</em>, <em>add_cloud_scat_as_abs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to calculate the atmosphere’s emitted flux
 (emission spectrum).</p>
 <blockquote>
@@ -270,6 +273,9 @@ calculated. Default is <code class="docutils literal notranslate"><span class="p
 <dt>gray_opacity (Optional[float]):</dt>
 <dd>Gray opacity value, to be added to the opacity at all
 pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</dd>
+<dt>Pcloud (Optional[float]):</dt>
+<dd>Pressure, in bar, where opaque cloud deck is added to the
+absorption opacity.</dd>
 <dt>add_cloud_scat_as_abs (Optional[bool]):</dt>
 <dd>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, 20 % of the cloud scattering opacity will be
 added to the absorption opacity, introduced to test for the
@@ -282,7 +288,7 @@ effect of neglecting scattering.</dd>
 
 <dl class="method">
 <dt id="petitRADTRANS.Radtrans.calc_flux_transm">
-<code class="descname">calc_flux_transm</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>P0_bar</em>, <em>R_pl</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>Pcloud=None</em>, <em>contribution=False</em>, <em>gray_opacity=None</em>, <em>add_cloud_scat_as_abs=None</em>, <em>variable_gravity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux_transm" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calc_flux_transm</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>P0_bar</em>, <em>R_pl</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>Pcloud=None</em>, <em>kappa_zero=None</em>, <em>gamma_scat=None</em>, <em>contribution=False</em>, <em>gray_opacity=None</em>, <em>add_cloud_scat_as_abs=None</em>, <em>variable_gravity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux_transm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to calculate the atmosphere’s emission flux <em>and</em>
 transmission radius (for the transmission spectrum).</p>
 <blockquote>
@@ -332,7 +338,13 @@ calculated. Default is <code class="docutils literal notranslate"><span class="p
 pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</dd>
 <dt>Pcloud (Optional[float]):</dt>
 <dd>Pressure, in bar, where opaque cloud deck is added to the
-scattering opacity.</dd>
+absorption opacity.</dd>
+<dt>kappa_zero (Optional[float]):</dt>
+<dd>Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).</dd>
+<dt>gamma_scat (Optional[float]):</dt>
+<dd>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</dd>
 <dt>haze_factor (Optional[float]):</dt>
 <dd>Scalar factor, increasing the gas Rayleigh scattering
 cross-section.</dd>
@@ -348,7 +360,7 @@ radius calculation.</dd>
 
 <dl class="method">
 <dt id="petitRADTRANS.Radtrans.calc_transm">
-<code class="descname">calc_transm</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>P0_bar</em>, <em>R_pl</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>Pcloud=None</em>, <em>contribution=False</em>, <em>haze_factor=None</em>, <em>gray_opacity=None</em>, <em>variable_gravity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_transm" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calc_transm</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>P0_bar</em>, <em>R_pl</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>Pcloud=None</em>, <em>kappa_zero=None</em>, <em>gamma_scat=None</em>, <em>contribution=False</em>, <em>haze_factor=None</em>, <em>gray_opacity=None</em>, <em>variable_gravity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_transm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to calculate the atmosphere’s transmission radius
 (for the transmission spectrum).</p>
 <blockquote>
@@ -398,7 +410,13 @@ calculated. Default is <code class="docutils literal notranslate"><span class="p
 pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</dd>
 <dt>Pcloud (Optional[float]):</dt>
 <dd>Pressure, in bar, where opaque cloud deck is added to the
-scattering opacity.</dd>
+absorption opacity.</dd>
+<dt>kappa_zero (Optional[float]):</dt>
+<dd>Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).</dd>
+<dt>gamma_scat (Optional[float]):</dt>
+<dd>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</dd>
 <dt>haze_factor (Optional[float]):</dt>
 <dd>Scalar factor, increasing the gas Rayleigh scattering
 cross-section.</dd>
@@ -447,7 +465,7 @@ order), in units of bar. Will be converted to cgs internally.</dd>
         <a href="code_nat_cst.html" class="btn btn-neutral float-right" title="nat_cst utility functions and constants" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="code.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="code.html" class="btn btn-neutral" title="Code documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

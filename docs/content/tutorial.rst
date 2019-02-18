@@ -8,3 +8,4 @@ Tutorial
    notebooks/highres
    notebooks/clouds
    notebooks/analysis
+   notebooks/nat_cst_utility

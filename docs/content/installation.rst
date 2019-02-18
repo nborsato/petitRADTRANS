@@ -28,7 +28,7 @@ Download petitRADTRANS from `Gitlab <https://gitlab.com/mauricemolli/petitRADTRA
 Download opacity data
 _____________________
 
-Download the `opacity and input data <https://www.icloud.com/iclouddrive/0eDcIURxvsMg7uWSADRfo_iTA#input_data>`_ (2.3 GB),unzip them, and put the "input_data" folder into the "petitRADTRANS" folder. This contains the necessary files to run petitRADTRANS, and the low resolution (:math:`\lambda/\Delta\lambda=1000`) opacity files. The high resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data is too large to be fully store online (~100 GB). Please contact us for having the high-resolution opacity files you are interested in (see :ref:`avail_opas`) made available via ftp, upon request. We are working on a more permanent solution for sharing these data.
+Download the `opacity and input data <https://www.icloud.com/iclouddrive/0vEY-uMZYwPMX573_TFiR7t2A#input_data>`_ (2.3 GB),unzip them, and put the "input_data" folder into the "petitRADTRANS" folder. This contains the necessary files to run petitRADTRANS, and the low resolution (:math:`\lambda/\Delta\lambda=1000`) opacity files. The high resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data is too large to be fully store online (~100 GB). Please contact us for having the high-resolution opacity files you are interested in (see :ref:`avail_opas`) made available via ftp, upon request. We are working on a more permanent solution for sharing these data.
 
 Installation
 ____________

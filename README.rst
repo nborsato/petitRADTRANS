@@ -4,7 +4,7 @@ petitRADTRANS
 **An easy-to-use Python package for calculating exoplanet spectra**
 
 Welcome to the repository of petitRADTRANS, an easy-to-use code for the calculation of exoplanet spectra.
-petitRADTRANS allows to calculate emission or transmission spectra, at low or high resolution, 
+petitRADTRANS allows to calculate emission or transmission spectra, at low or high resolution, clear or cloudy
 
 Documentation
 -------------

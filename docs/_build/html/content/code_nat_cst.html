@@ -257,69 +257,7 @@ following natural constants, in cgs units:</p>
 </tr>
 </tbody>
 </table>
-<span class="target" id="module-petitRADTRANS.nat_cst"></span><dl class="function">
-<dt id="petitRADTRANS.nat_cst.b">
-<code class="descclassname">petitRADTRANS.nat_cst.</code><code class="descname">b</code><span class="sig-paren">(</span><em>T</em>, <em>nu</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.nat_cst.b" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Planck function <span class="math notranslate nohighlight">\(B_{\nu}(T)\)</span> in units of
-<span class="math notranslate nohighlight">\(\rm erg/s/cm^2/Hz/steradian\)</span>.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>T (float):</dt>
-<dd>Temperature in K.</dd>
-<dt>nu:</dt>
-<dd>numpy array containing the frequency in Hz.</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="petitRADTRANS.nat_cst.get_PHOENIX_spec">
-<code class="descclassname">petitRADTRANS.nat_cst.</code><code class="descname">get_PHOENIX_spec</code><span class="sig-paren">(</span><em>temperature</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.nat_cst.get_PHOENIX_spec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a matrix where the first column is the wavelength in cm
-and the second is the stellar flux <span class="math notranslate nohighlight">\(F_\nu\)</span> in units of
-<span class="math notranslate nohighlight">\(\rm erg/cm^2/s/Hz\)</span>, at the surface of the star.
-The spectra are PHOENIX models from (Husser et al. 2013), the spectral
-grid used here was described in van Boekel et al. (2012).</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>temperature (float):</dt>
-<dd>stellar effective temperature in K.</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="petitRADTRANS.nat_cst.guillot_global">
-<code class="descclassname">petitRADTRANS.nat_cst.</code><code class="descname">guillot_global</code><span class="sig-paren">(</span><em>P</em>, <em>kappa_IR</em>, <em>gamma</em>, <em>grav</em>, <em>T_int</em>, <em>T_equ</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.nat_cst.guillot_global" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a temperature array, in units of K,
-of the same dimensions as the pressure P
-(in bar). For this the temperature model of Guillot (2010)
-is used (his Equation 29).</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>P:</dt>
-<dd>numpy array of floats, containing the input pressure in bars.</dd>
-<dt>kappa_IR (float):</dt>
-<dd>The infrared opacity in units of <span class="math notranslate nohighlight">\(\rm cm^2/s\)</span>.</dd>
-<dt>gamma (float):</dt>
-<dd>The ratio between the visual and infrated opacity.</dd>
-<dt>grav (float):</dt>
-<dd>The planetary surface gravity in units of <span class="math notranslate nohighlight">\(\rm cm/s^2\)</span>.</dd>
-<dt>T_int (float):</dt>
-<dd>The planetary internal temperature (in units of K).</dd>
-<dt>T_equ (float):</dt>
-<dd>The planetary equilibrium temperature (in units of K).</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
+<span class="target" id="module-nat_cst"></span></div>
 
 
            </div>

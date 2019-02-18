@@ -15,7 +15,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-autodoc_mock_imports = ['petitRADTRANS.fort_input', 'petitRADTRANS.fort_spec', 'petitRADTRANS.fort_rebin']
+autodoc_mock_imports = ['petitRADTRANS.fort_input', 'petitRADTRANS.fort_spec', 'petitRADTRANS.fort_rebin', 'numpy']
 
 # -- Project information -----------------------------------------------------
 

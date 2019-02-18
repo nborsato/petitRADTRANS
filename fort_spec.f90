@@ -258,7 +258,8 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   LOGICAL                                     :: var_grav
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
   DOUBLE PRECISION                            :: t_graze(g_len,freq_len,N_species,struc_len), s_1, s_2, &
-       t_graze_wlen_int(struc_len,freq_len), alpha_t2_scat(freq_len,struc_len-1), t_graze_scat(freq_len,struc_len)
+       t_graze_wlen_int(struc_len,freq_len), &
+       alpha_t2_scat(freq_len,struc_len-1), t_graze_scat(freq_len,struc_len)
 
   total_kappa = total_kappa_in
   ! Some cloud opas can be < 0 sometimes, apparently.
@@ -1124,11 +1125,12 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
   ! Internal
   INTEGER, parameter :: N_fit = 100
   INTEGER          :: i_str, i_size, i_spec, i_rad
-  DOUBLE PRECISION :: turbulent_settling_speed_ret1, turbulent_settling_speed_ret2, zbrent_particle_rad
+  DOUBLE PRECISION :: turbulent_settling_speed_ret1, turbulent_settling_speed_ret2, &
+       bisect_particle_rad
   DOUBLE PRECISION :: w_star(struc_len), H(struc_len)
   DOUBLE PRECISION :: r_w(struc_len,N_cloud_spec), alpha(struc_len,N_cloud_spec)
   DOUBLE PRECISION :: rad(N_fit), vel(N_fit), f_fill(N_cloud_spec)
-  DOUBLE PRECISION :: a,b,siga,sigb,chi2,q
+  DOUBLE PRECISION :: a, b
 
   H = kB*temp/(MMW*amu*gravity)
   w_star = Kzz/H
@@ -1137,7 +1139,7 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
   
   do i_str = 1, struc_len
      do i_spec = 1, N_cloud_spec
-        r_w(i_str,i_spec) = zbrent_particle_rad(1d-16,1d2,1d-12,gravity,rho(i_str), &
+        r_w(i_str,i_spec) = bisect_particle_rad(1d-16,1d2,gravity,rho(i_str), &
              rho_p(i_spec),temp(i_str),MMW(i_str),w_star(i_str))
         if (r_w(i_str,i_spec) > 1d-16) then
            if (frain > 1d0) then
@@ -1157,7 +1159,9 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
                       MMW(i_str),vel(i_rad))
               end do
            end if
-           call fit(log(rad),log(vel/w_star(i_str)),N_fit,w_star,0,a,b,siga,sigb,chi2,q)
+
+           call fit_linear(log(rad), log(vel/w_star(i_str)), N_fit, a, b)
+           
            alpha(i_str,i_spec) = b
            r_w(i_str,i_spec) = exp(-a/b)
            r_g(i_str,i_spec) = r_w(i_str,i_spec) * frain**(1d0/alpha(i_str,i_spec))* &
@@ -1208,19 +1212,16 @@ end subroutine turbulent_settling_speed
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-!  (C) Copr. 1986-92 Numerical Recipes Software =v1.9"217..
-!  modified by me
+! Function to find the particle radius, using a simple bisection method.
 
-! zbrent root finder, taken from Numerical Recipes
+function bisect_particle_rad(x1,x2,gravity,rho,rho_p,temp,MMW,w_star)
 
-function zbrent_particle_rad(x1,x2,tol,gravity,rho,rho_p,temp,MMW,w_star)
-
-  INTEGER, parameter :: ITMAX = 100
+  implicit none
+  INTEGER, parameter :: ITMAX = 1000
   DOUBLE PRECISION :: gravity,rho,rho_p,temp,MMW,w_star  
-  DOUBLE PRECISION :: zbrent_particle_rad,tol,x1,x2,func
-  DOUBLE PRECISION, parameter :: EPS = 3.d-8
+  DOUBLE PRECISION :: bisect_particle_rad,x1,x2
   INTEGER :: iter
-  DOUBLE PRECISION :: a,b,c,d,e,fa,fb,fc,p,q,r,s,tol1,xm
+  DOUBLE PRECISION :: a,b,c,fa,fb,fc,del
 
   a=x1
   b=x2
@@ -1228,229 +1229,68 @@ function zbrent_particle_rad(x1,x2,tol,gravity,rho,rho_p,temp,MMW,w_star)
   fa = fa - w_star
   call turbulent_settling_speed(b,gravity,rho,rho_p,temp,MMW,fb)
   fb = fb - w_star
+  
   if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.)) then
      write(*,*) 'warning: root must be bracketed for zbrent'
-     zbrent_particle_rad = 1d-17
+     bisect_particle_rad = 1d-17
      return 
   end if
-  c=b
-  fc=fb
+
   do iter=1,ITMAX
-     if((fb.gt.0..and.fc.gt.0.).or.(fb.lt.0..and.fc.lt.0.))then
-        c=a
-        fc=fa
-        d=b-a
-        e=d
-     end if
-     if(abs(fc).lt.abs(fb)) then
-        a=b
-        b=c
-        c=a
-        fa=fb
-        fb=fc
-        fc=fa
-     end if
-     tol1=2.*EPS*abs(b)+0.5*tol
-     xm=.5*(c-b)
-     if(abs(xm).le.tol1 .or. fb.eq.0.)then
-        zbrent_particle_rad=b
-        return
-     end if
-     if(abs(e).ge.tol1 .and. abs(fa).gt.abs(fb)) then
-        s=fb/fa
-        if(a.eq.c) then
-           p=2.*xm*s
-           q=1.-s
-        else
-           q=fa/fc
-           r=fb/fc
-           p=s*(2.*xm*q*(q-r)-(b-a)*(r-1.))
-           q=(q-1.)*(r-1.)*(s-1.)
-        end if
-        if(p.gt.0.) q=-q
-        p=abs(p)
-        if(2.*p .lt. min(3.*xm*q-abs(tol1*q),abs(e*q))) then
-           e=d
-           d=p/q
-        else
-           d=xm
-           e=d
-        end if
+
+     if (abs(log10(a/b)) > 1d0) then
+        c = 1e1**(log10(a*b)/2d0)
      else
-        d=xm
-        e=d
+        c = (a+b)/2d0
      end if
-     a=b
-     fa=fb
-     if(abs(d) .gt. tol1) then
-        b=b+d
+     
+     call turbulent_settling_speed(c,gravity,rho,rho_p,temp,MMW,fc)
+     fc = fc - w_star
+     
+     if (((fc > 0d0) .and. (fa > 0d0)) .OR. ((fc < 0d0) .and. (fa < 0d0))) then
+        del = 2d0*abs(a-c)/(a+b)
+        a = c
+        fa = fc
      else
-        b=b+sign(tol1,xm)
+        del = 2d0*abs(b-c)/(a+b)
+        b = c
+        fb = fc
      end if
-     call turbulent_settling_speed(b,gravity,rho,rho_p,temp,MMW,fb)
-     fb = fb - w_star
+
+     if (abs(del) .lt. 1d-9) then
+        exit
+     end if
+
   end do
-  stop 'zbrent exceeding maximum iterations'
-  zbrent_particle_rad=b
-  return
-end function zbrent_particle_rad
 
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-!  (C) Copr. 1986-92 Numerical Recipes Software =v1.9"217..
-!  modified by me
-
-SUBROUTINE fit(x,y,ndata,sig,mwt,a,b,siga,sigb,chi2,q)
-  INTEGER :: mwt,ndata
-  DOUBLE PRECISION :: a,b,chi2,q,siga,sigb,sig(ndata),x(ndata),y(ndata)
-  INTEGER :: i
-  DOUBLE PRECISION :: sigdat,ss,st2,sx,sxoss,sy,t,wt,gammq
-  sx=0.
-  sy=0.
-  st2=0.
-  b=0.
-  if(mwt.ne.0) then
-     ss=0.
-     do i=1,ndata
-        wt=1./(sig(i)**2)
-        ss=ss+wt
-        sx=sx+x(i)*wt
-        sy=sy+y(i)*wt
-     end do
-  else
-     do i=1,ndata
-        sx=sx+x(i)
-        sy=sy+y(i)
-     end do
-     ss=float(ndata)
-  endif
-  sxoss=sx/ss
-  if(mwt.ne.0) then
-     do i=1,ndata
-        t=(x(i)-sxoss)/sig(i)
-        st2=st2+t*t
-        b=b+t*y(i)/sig(i)
-     end do
-  else
-     do i=1,ndata
-        t=x(i)-sxoss
-        st2=st2+t*t
-        b=b+t*y(i)
-     end do
-  endif
-  b=b/st2
-  a=(sy-sx*b)/ss
-  siga=sqrt((1.+sx*sx/(ss*st2))/ss)
-  sigb=sqrt(1./st2)
-  chi2=0.
-  if(mwt.eq.0) then
-     do i=1,ndata
-        chi2=chi2+(y(i)-a-b*x(i))**2
-     end do
-     q=1.
-     sigdat=sqrt(chi2/(ndata-2))
-     siga=siga*sigdat
-     sigb=sigb*sigdat
-  else
-     do i=1,ndata
-        chi2=chi2+((y(i)-a-b*x(i))/sig(i))**2
-     end do
-     q=gammq(0.5d0*(ndata-2),0.5d0*chi2)
-  endif
-END SUBROUTINE fit
-
-FUNCTION gammq(a,x)
-  DOUBLE PRECISION :: a,gammq,x
-  DOUBLE PRECISION :: gammcf,gamser,gln
-  if(x.lt.0..or.a.le.0.)stop 'bad arguments in gammq'
-  if(x.lt.a+1.)then
-     call gser(gamser,a,x,gln)
-     gammq=1.-gamser
-  else
-     call gcf(gammcf,a,x,gln)
-     gammq=gammcf
-  endif
-  return
-END FUNCTION gammq
-
-SUBROUTINE gcf(gammcf,a,x,gln)
-  INTEGER, parameter :: ITMAX=100
-  DOUBLE PRECISION :: a,gammcf,gln,x
-  DOUBLE PRECISION, parameter :: EPS=3.d-7,FPMIN=1.d-30
-  INTEGER :: i
-  DOUBLE PRECISION :: an,b,c,d,del,h,gammln
-  gln=gammln(a)
-  b=x+1.-a
-  c=1./FPMIN
-  d=1./b
-  h=d
-  do i=1,ITMAX
-     an=-i*(i-a)
-     b=b+2.
-     d=an*d+b
-     if(abs(d).lt.FPMIN)d=FPMIN
-     c=b+an/c
-     if(abs(c).lt.FPMIN)c=FPMIN
-     d=1./d
-     del=d*c
-     h=h*del
-     if(abs(del-1.).lt.EPS) exit
-  end do
-  if (abs(del-1.).lt.EPS) then
-     gammcf=exp(-x+a*log(x)-gln)*h
-  else
-     stop 'a too large, ITMAX too small in gcf'
+  if (iter == ITMAX) then
+     write(*,*) 'warning: maximum number of bisection root iterations reached!'
   end if
-END SUBROUTINE gcf
 
-FUNCTION gammln(xx)
-  DOUBLE PRECISION :: gammln,xx
-  INTEGER :: j
-  DOUBLE PRECISION :: ser,stp,tmp,x,y,cof(6)
-  SAVE cof,stp
-  DATA cof,stp/76.18009172947146d0,-86.50532032941677d0, &
-       24.01409824083091d0,-1.231739572450155d0,.1208650973866179d-2, &
-       -.5395239384953d-5,2.5066282746310005d0/
-  x=xx
-  y=x
-  tmp=x+5.5d0
-  tmp=(x+0.5d0)*log(tmp)-tmp
-  ser=1.000000000190015d0
-  do j=1,6
-     y=y+1.d0
-     ser=ser+cof(j)/y
-  end do
-  gammln=tmp+log(stp*ser/x)
-END FUNCTION gammln
+  bisect_particle_rad = c
+  return
 
-SUBROUTINE gser(gamser,a,x,gln)
-  INTEGER, parameter :: ITMAX = 100
-  DOUBLE PRECISION :: a,gamser,gln,x
-  DOUBLE PRECISION, parameter :: EPS=3.d-7
-  INTEGER :: n
-  DOUBLE PRECISION :: ap,del,sum,gammln
-  gln=gammln(a)
-  if(x.le.0.)then
-     if(x.lt.0.)stop 'x < 0 in gser'
-     gamser=0.
-     return
-  endif
-  ap=a
-  sum=1./a
-  del=sum
-  do n=1,ITMAX
-     ap=ap+1.
-     del=del*x/ap
-     sum=sum+del
-     if(abs(del).lt.abs(sum)*EPS) exit
-  end do
-  if(abs(del).lt.abs(sum)*EPS) then
-     gamser=sum*exp(-x+a*log(x)-gln)
-  else
-     stop 'a too large, ITMAX too small in gser'
-  end if
-END SUBROUTINE gser
+end function bisect_particle_rad
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+! Subroutine to calculate slope and y-axis intercept of x,y data,
+! assuming zero error on data.
+
+SUBROUTINE fit_linear(x, y, ndata, a, b)
+
+  implicit none
+  INTEGER :: ndata
+  DOUBLE PRECISION :: x(ndata), y(ndata)
+  DOUBLE PRECISION :: a, b
+
+  b = (sum(x)*sum(y)/dble(ndata) - sum(x*y))/ &
+       (sum(x)**2d0/dble(ndata) - sum(x**2d0))
+  a = sum(y-b*x)/dble(ndata)
+
+end SUBROUTINE fit_linear
+

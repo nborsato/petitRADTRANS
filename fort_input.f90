@@ -160,12 +160,6 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
                 adjustl(trim(path_names(i_file)))
            call read_kappa(arr_min, arr_max, freq_len, &
                 path_read_stream, opa_grid_kappas(1,:,i_spec,i_file))
-
-!!$           write(*,*) minval(opa_grid_kappas(1,:,i_spec,i_file)), minval(opa_grid_kappas(1,:,i_spec,i_file))
-
-!!$           !!!!! TAKE THE FOLLOWING TWO LINES OUT AS SOON AS HR-OPAS ARE MASS CORRECTED!
-!!$           opa_grid_kappas(1,:,i_spec,i_file) = opa_grid_kappas(1,:,i_spec,i_file) / &
-!!$                (18.015d0*1.66053892d-24)
            
         end if
         ! ...for every frequency point.
@@ -272,7 +266,8 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
 199  close(10)
      close(11)
      IF (rho_cloud_particles(i_cloud) < 0d0) THEN
-        WRITE(*,*) 'ERROR! DENSITY FOR CLOUD SPECIES '//trim(adjustl(cloud_opa_names(i_cloud))) &
+        WRITE(*,*) 'ERROR! DENSITY FOR CLOUD SPECIES '//trim( &
+             adjustl(cloud_opa_names(i_cloud))) &
              //'NOT FOUND!'
         STOP
      END IF
@@ -399,10 +394,12 @@ subroutine interpol_opa_ck(press,temp,struc_len,opa_TP_grid, &
   DOUBLE PRECISION, intent(out)         :: opa_struc_kappas(g_len,freq_len,N_species,struc_len)
   ! internal
   INTEGER                               :: i_str, s_temp_ind
-  INTEGER                               :: press_s_t_s_ind, press_s_t_l_ind, s_temp_ind_own, press_ind_own
+  INTEGER                               :: press_s_t_s_ind, press_s_t_l_ind, &
+       s_temp_ind_own, press_ind_own
   INTEGER                               :: PT_ind_Ts_Ps, PT_ind_Ts_Pl,PT_ind_Tl_Ps, &
        PT_ind_Tl_Pl
-  DOUBLE PRECISION                      :: PorT(g_len,freq_len,N_species),slopes(g_len,freq_len,N_species), &
+  DOUBLE PRECISION                      :: PorT(g_len,freq_len,N_species), &
+       slopes(g_len,freq_len,N_species), &
        buffer1(g_len,freq_len,N_species),buffer2(g_len,freq_len,N_species)
   DOUBLE PRECISION                      :: buffer_Ts(g_len,freq_len,N_species), &
        buffer_Tl(g_len,freq_len,N_species),temp_min, temp_max
@@ -511,7 +508,8 @@ end subroutine interpol_opa_ck
 
 !!$ Subroutine to get the abundance weightes opas for ck, and for adding the continuum opas. 
 
-subroutine mix_opas_ck(abundances,opa_struc_kappas,continuum_opa,N_species,freq_len,struc_len,g_len,opa_struc_kappas_out)
+subroutine mix_opas_ck(abundances,opa_struc_kappas,continuum_opa, &
+     N_species,freq_len,struc_len,g_len,opa_struc_kappas_out)
 
   implicit none
   ! I/O
@@ -619,7 +617,8 @@ subroutine CIA_interpol(freq,temp,CIA_cpair_lambda,CIA_cpair_temp,CIA_cpair_alph
                 (CIA_cpair_temp(temp_ind_lower+1)-CIA_cpair_temp(temp_ind_lower)) * &
                 (temp(i_struc) - CIA_cpair_temp(temp_ind_lower))
 
-           CIA_cpair_intp_out(i_lamb,i_struc) = buff1 + (buff2-buff1)/(CIA_cpair_lambda(lamb_ind_lower+1) - &
+           CIA_cpair_intp_out(i_lamb,i_struc) = buff1 + &
+                (buff2-buff1)/(CIA_cpair_lambda(lamb_ind_lower+1) - &
                 CIA_cpair_lambda(lamb_ind_lower)) * &
                 (lambda(i_lamb)-CIA_cpair_lambda(lamb_ind_lower))
 
@@ -652,7 +651,8 @@ end subroutine CIA_interpol
 
 !!$ Subroutine to read the CIA opacities
 
-subroutine CIA_read(cpair,opacity_path_str,CIA_cpair_lambda,CIA_cpair_temp,CIA_cpair_alpha_grid)
+subroutine CIA_read(cpair,opacity_path_str,CIA_cpair_lambda, &
+     CIA_cpair_temp,CIA_cpair_alpha_grid)
 
   implicit none
   ! I/O
@@ -674,7 +674,8 @@ subroutine CIA_read(cpair,opacity_path_str,CIA_cpair_lambda,CIA_cpair_temp,CIA_c
   close(10)
 
   open(unit=11,file=trim(adjustl(opacity_path_str)) &
-       //'/opacities/continuum/CIA/'//trim(adjustl(cpair))//'/CIA_'//trim(adjustl(cpair))//'_final.dat')
+       //'/opacities/continuum/CIA/'//trim(adjustl(cpair)) &
+       //'/CIA_'//trim(adjustl(cpair))//'_final.dat')
   read(11,*)
   read(11,*)
   do i = 1, 5000

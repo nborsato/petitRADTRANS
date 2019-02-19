@@ -5,8 +5,7 @@
 !!$ depths, spectra, and spectral contribution functions for the petitRADTRANS
 !!$ radiative transfer package.
 !!$
-!!$ Copyright 2016-2018, Paul Molliere, except for the numerical
-!!$ recipes functions at the bottom (individual copyright is indicated there).
+!!$ Copyright 2016-2018, Paul Molliere
 !!$ Maintained by Paul Molliere, molliere@strw.leidenunivl.nl
 !!$ Status: under development
 !!$*****************************************************************************

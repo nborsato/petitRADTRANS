@@ -232,7 +232,7 @@ treatment.</dd>
 </dl>
 <dl class="method">
 <dt id="petitRADTRANS.Radtrans.calc_flux">
-<code class="descname">calc_flux</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>contribution=False</em>, <em>gray_opacity=None</em>, <em>Pcloud=None</em>, <em>add_cloud_scat_as_abs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calc_flux</code><span class="sig-paren">(</span><em>temp</em>, <em>abunds</em>, <em>gravity</em>, <em>mmw</em>, <em>sigma_lnorm=None</em>, <em>fsed=None</em>, <em>Kzz=None</em>, <em>radius=None</em>, <em>contribution=False</em>, <em>gray_opacity=None</em>, <em>Pcloud=None</em>, <em>kappa_zero=None</em>, <em>gamma_scat=None</em>, <em>add_cloud_scat_as_abs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to calculate the atmosphere’s emitted flux
 (emission spectrum).</p>
 <blockquote>
@@ -276,6 +276,12 @@ pressures and wavelengths (units <span class="math notranslate nohighlight">\(\r
 <dt>Pcloud (Optional[float]):</dt>
 <dd>Pressure, in bar, where opaque cloud deck is added to the
 absorption opacity.</dd>
+<dt>kappa_zero (Optional[float]):</dt>
+<dd>Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).</dd>
+<dt>gamma_scat (Optional[float]):</dt>
+<dd>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</dd>
 <dt>add_cloud_scat_as_abs (Optional[bool]):</dt>
 <dd>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, 20 % of the cloud scattering opacity will be
 added to the absorption opacity, introduced to test for the

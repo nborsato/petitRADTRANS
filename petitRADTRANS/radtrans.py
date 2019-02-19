@@ -554,6 +554,8 @@ class Radtrans:
                       fsed = None, Kzz = None, radius = None, \
                       contribution=False, \
                       gray_opacity = None, Pcloud = None, \
+                      kappa_zero = None, \
+                      gamma_scat = None, \
                       add_cloud_scat_as_abs = None):
         ''' Method to calculate the atmosphere's emitted flux
         (emission spectrum).
@@ -596,6 +598,12 @@ class Radtrans:
                 Pcloud (Optional[float]):
                     Pressure, in bar, where opaque cloud deck is added to the
                     absorption opacity.
+                kappa_zero (Optional[float]):
+                    Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).
+                gamma_scat (Optional[float]):
+                    Has to be given if kappa_zero is definded, this is the
+                    wavelength powerlaw index of the parametrized scattering
+                    opacity.
                 add_cloud_scat_as_abs (Optional[bool]):
                     If ``True``, 20 % of the cloud scattering opacity will be
                     added to the absorption opacity, introduced to test for the
@@ -603,6 +611,8 @@ class Radtrans:
         '''
 
         self.Pcloud = Pcloud
+        self.kappa_zero = kappa_zero
+        self.gamma_scat = gamma_scat
         self.gray_opacity = gray_opacity
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \

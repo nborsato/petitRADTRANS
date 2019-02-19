@@ -28,7 +28,12 @@ Download petitRADTRANS from `Gitlab <https://gitlab.com/mauricemolli/petitRADTRA
 Download opacity data
 _____________________
 
-Download the `opacity and input data <https://www.icloud.com/iclouddrive/0vEY-uMZYwPMX573_TFiR7t2A#input_data>`_ (2.3 GB),unzip them, and put the "input_data" folder into the "petitRADTRANS" folder. This contains the necessary files to run petitRADTRANS, and the low resolution (:math:`\lambda/\Delta\lambda=1000`) opacity files. The high resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data is too large to be fully store online (~100 GB). Please contact us for having the high-resolution opacity files you are interested in (see :ref:`avail_opas`) made available via ftp, upon request. We are working on a more permanent solution for sharing these data.
+Download the `opacity and input data
+<https://www.icloud.com/iclouddrive/0vEY-uMZYwPMX573_TFiR7t2A#input_data>`_
+(2.3 GB), unzip them, and put the "input_data" folder into the
+"petitRADTRANS" folder (i.e. the same folder where the source is, if
+you clone from gitlab, this should be the
+petitRADTRANS folder *in* the petitRADTRANS folder). This contains the necessary files to run petitRADTRANS, and the low resolution (:math:`\lambda/\Delta\lambda=1000`) opacity files. The high resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data is too large to be fully store online (~100 GB). Please contact us for having the high-resolution opacity files you are interested in (see :ref:`avail_opas`) made available via ftp, upon request. We are working on a more permanent solution for sharing these data.
 
 Installation
 ____________
@@ -44,7 +49,13 @@ ____________
    export PYTHONPATH=Path to the folder containing petitRADTRANS/:$PYTHONPATH
 
 .. attention::
-   Don’t forget to adapt the path in the line above :) ! If you are uncertain what the absolute path of the folder containing the petitRADTRANS folder is, then switch to that folder in the terminal, type “pwd”, and press Enter. Don’t forget the dash “/“ behind the path. Close and reopen the terminal such that it will set the Python path correctly.
+   Don’t forget to adapt the path in the line above :) ! If you clone petitRADTRANS from gitlab, this
+   should be the path of the petitRADTRANS folder *in* the petitRADTRANS folder. If you are
+   uncertain what the absolute path of the folder containing the
+   petitRADTRANS folder is, then switch to that folder in the
+   terminal, type “pwd”, and press Enter. Don’t forget the dash “/“
+   behind the path.
+   Close and reopen the terminal such that it will set the Python path correctly.
 
 Installation tips
 _________________

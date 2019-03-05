@@ -34,6 +34,7 @@ This documentation webpage currently contains an installation guide, a tutorial,
    content/installation
    content/tutorial
    content/available_opacities
+   content/retrieval_examples
 
 .. toctree::
    :maxdepth: 2

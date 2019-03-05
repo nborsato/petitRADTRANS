@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Analysis tools &mdash; petitRADTRANS 1.0.0 documentation</title>
+  <title>Corner plots &mdash; petitRADTRANS 1.0.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Utility functions" href="nat_cst_utility.html" />
-    <link rel="prev" title="Including clouds" href="clouds.html" /> 
+    <link rel="next" title="Plotting temperature envelopes" href="plot_temp_enve.html" />
+    <link rel="prev" title="Analysis of results" href="../ret_analysis.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -84,20 +84,16 @@
               <p class="caption"><span class="caption-text">Guide:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="highres.html">High-resolution spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clouds.html">Including clouds</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Analysis tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Transmission-contribution-functions">Transmission contribution functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Emission-contribution-functions">Emission contribution functions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="nat_cst_utility.html">Utility functions</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../ret_analysis.html">Analysis of results</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Corner plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_temp_enve.html">Plotting temperature envelopes</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul>
@@ -147,15 +143,17 @@
     
       <li><a href="../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../tutorial.html">Tutorial</a> &raquo;</li>
+          <li><a href="../retrieval_examples.html">Retrieval Examples</a> &raquo;</li>
         
-      <li>Analysis tools</li>
+          <li><a href="../ret_analysis.html">Analysis of results</a> &raquo;</li>
+        
+      <li>Corner plots</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/content/notebooks/analysis.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/content/notebooks/corner_plots.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -390,167 +388,162 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Analysis-tools">
-<h1>Analysis tools<a class="headerlink" href="#Analysis-tools" title="Permalink to this headline">¶</a></h1>
-<p>Before we start, we copy the atmospheric setup case from the <a class="reference external" href="getting_started.html">“Getting Started”</a> example:</p>
-<p>First setting up the Radtrans object:</p>
-<div class="nbinput docutils container">
+<div class="section" id="Corner-plots">
+<h1>Corner plots<a class="headerlink" href="#Corner-plots" title="Permalink to this headline">¶</a></h1>
+<p>This section shows an example for producing a corner plot from a multidimensional array containing the samples of a retrieval run. One option is to use <a class="reference external" href="https://corner.readthedocs.io">the corner package</a>, see <a class="reference external" href="http://joss.theoj.org/papers/10.21105/joss.00024">Foreman-Mackey (2016)</a>. Here we use our quickly self-written (so don’t judge :) !) <code class="docutils literal notranslate"><span class="pre">nice_corner.py</span></code> package which can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/analysis</span></code>. It requires
+<a class="reference external" href="https://seaborn.pydata.org">seaborn</a>.</p>
+<p>We start by loading the relevant packages:</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>import numpy as np
-from petitRADTRANS import Radtrans
+import pylab as plt
+import pickle
 
-atmosphere = Radtrans(line_species = [&#39;H2O&#39;, &#39;CO_all_iso&#39;, &#39;CH4&#39;, &#39;CO2&#39;, &#39;Na&#39;, &#39;K&#39;], \
-      rayleigh_species = [&#39;H2&#39;, &#39;He&#39;], \
-      continuum_opacities = [&#39;H2-H2&#39;, &#39;H2-He&#39;], \
-      wlen_bords_micron = [0.3, 15])
-
-pressures = np.logspace(-6, 2, 100)
-atmosphere.setup_opa_structure(pressures)
+# nice_corner source can be found in the petitRADTRANS gitlab repository,
+# requires seaborn
+from nice_corner import nice_corner
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-  Read CIA opacities for H2-H2...
-  Read CIA opacities for H2-He...
- Done.
-
-</pre></div></div>
-</div>
-<div class="admonition warning">
-<strong>Units in petitRADTRANS:</strong> remember that all units in <em>petitRADTRANS</em> are in cgs, <strong>except for pressure</strong>, which is in bars, <strong>and the mean molecular weight (MMW)</strong>, which is in units of atomic mass units.</div>
-<p>And the atmospheric parameters:</p>
+<p>Next we read the pickle files of the retrieval, in this case as produced for the transmission retrieval example (see the source in <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission_case</span></code>, and the documentation thereof <a href="#id1"><span class="problematic" id="id2">`here &lt;&gt;`__</span></a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>from petitRADTRANS import nat_cst as nc
-R_pl = 1.838*nc.r_jup_mean
-gravity = 1e1**2.45
-P0 = 0.01
+<span></span># Paths to pickle files
+samples_path = &#39;chain_pos.pickle&#39;
+probabilities_path = &#39;chain_lnprob.pickle&#39;
 
-kappa_IR = 0.01
-gamma = 0.4
-T_int = 200.
-T_equ = 1500.
-temperature = nc.guillot_global(pressures, kappa_IR, gamma, gravity, T_int, T_equ)
+# Load samples
+f = open(samples_path,&#39;rb&#39;)
+pos = pickle.load(f, encoding=&#39;latin1&#39;)
+prob = pickle.load(f, encoding=&#39;latin1&#39;)
+state = pickle.load(f, encoding=&#39;latin1&#39;)
+samples = pickle.load(f, encoding=&#39;latin1&#39;)
+f.close()
 
-abundances = {}
-abundances[&#39;H2&#39;] = 0.74 * np.ones_like(temperature)
-abundances[&#39;He&#39;] = 0.24 * np.ones_like(temperature)
-abundances[&#39;H2O&#39;] = 0.001 * np.ones_like(temperature)
-abundances[&#39;CO_all_iso&#39;] = 0.01 * np.ones_like(temperature)
-abundances[&#39;CO2&#39;] = 0.00001 * np.ones_like(temperature)
-abundances[&#39;CH4&#39;] = 0.000001 * np.ones_like(temperature)
-abundances[&#39;Na&#39;] = 0.00001 * np.ones_like(temperature)
-abundances[&#39;K&#39;] = 0.000001 * np.ones_like(temperature)
-
-MMW = 2.33 * np.ones_like(temperature)
+# Load probabilities
+f = open(probabilities_path,&#39;rb&#39;)
+lnprob_2D,acc_frac,aut_corr_time = pickle.load(f, encoding=&#39;latin1&#39;)
+f.close()
+lnprob = lnprob_2D.reshape(np.shape(lnprob_2D)[0]*np.shape(lnprob_2D)[1])
+indmax = np.argmax(lnprob) # index with highest probability
+params_best = samples[indmax] # best-fit parameters from retrieval
 </pre></div>
 </div>
 </div>
-<div class="admonition warning">
-<strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
-X_i = \frac{\mu_i}{\mu}n_i,
-\end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</div>
-<div class="section" id="Transmission-contribution-functions">
-<h2>Transmission contribution functions<a class="headerlink" href="#Transmission-contribution-functions" title="Permalink to this headline">¶</a></h2>
-<p>We calculate the transmission spectrum in the usual way, this time setting the <code class="docutils literal notranslate"><span class="pre">contribution</span> <span class="pre">=</span> <span class="pre">True</span></code> keyword argument, however. This will additionally measure the contribution of the different layers, by calculating as many transmission spectra as there are layers, iteratively turning off the opacity in one layer only. The difference to the nominal transmission spectrum then measures the influence of the respective layers. Note that calculating the contribution function will increase the
-computation time considerably. We plan to improve the calculation speed of the contribution function soon. The formal definition of the contribution function is (also see Mollière et al., in prep.):</p>
-<p><span class="math">\begin{equation}
-C_{\rm tr}^{i} = \frac{R_{\rm nom}^2-R^2(\kappa_i=0)}{\sum_{j=1}^{N_{\rm L}}\left[R_{\rm nom}^2-R^2(\kappa_j=0)\right]},
-\end{equation}</span></p>
-<p>where <span class="math notranslate nohighlight">\(R_{\rm nom}\)</span> is the nominal transmission radius of the planet and <span class="math notranslate nohighlight">\(R(\kappa_i=0)\)</span> is the transmission radius obtained from setting the opacity in the <span class="math notranslate nohighlight">\(i\)</span>th layer to zero. <span class="math notranslate nohighlight">\(N_{\rm L}\)</span> is the number of atmospheric layers.</p>
-<p>Now, to the contribution function calculation:</p>
+<p>Next, we specify some required information: what are the names of the parameters, and where do we want to save the resulting corner plot:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>atmosphere.calc_transm(temperature, abundances, \
-                       gravity, MMW, R_pl=R_pl, P0_bar=P0, \
-                       contribution = True)
+<span></span>parameter_names = {0: r&quot;$\rm log(delta)$&quot;, \
+              1: r&quot;$\rm log(gamma)$&quot;, \
+              2: r&quot;$\rm T_{int}$&quot;, \
+              3: r&quot;$\rm T_{equ}$&quot;, \
+              4: r&quot;$\rm log(P_{tr})$&quot;, \
+              5: r&quot;$\rm alpha$&quot;, \
+              6: r&quot;$\rm log(g)$&quot;, \
+              7: r&quot;$\rm log(P_0)$&quot;, \
+              8: r&quot;$\rm CO$&quot;, \
+              9: r&quot;$\rm H_2O$&quot;, \
+              10: r&quot;$\rm CH_4$&quot;, \
+              11: r&quot;$\rm NH_3$&quot;, \
+              12: r&quot;$\rm CO_2$&quot;, \
+              13: r&quot;$\rm H_2S$&quot;, \
+              14: r&quot;$\rm Na$&quot;, \
+              15: r&quot;$\rm K$&quot;}
+
+output_file = &#39;test.pdf&#39;
 </pre></div>
 </div>
 </div>
-<p>The transmission contribution function is plotted below, one can see that pressures above 0.5 bar cannot be probed in the wavelength range studied here.</p>
-<div class="nbinput docutils container">
+<p>In principle we are done now, but we specify a few more optional parameters:</p>
+<p>Only plot the last 700,000 samples, to discard the burn-in phase:</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>import pylab as plt
-plt.rcParams[&#39;figure.figsize&#39;] = (10, 6)
-
-wlen_mu = nc.c/atmosphere.freq/1e-4
-X, Y = np.meshgrid(wlen_mu, pressures)
-plt.contourf(X,Y,atmosphere.contr_tr,30,cmap=plt.cm.bone_r)
-
-plt.yscale(&#39;log&#39;)
-plt.xscale(&#39;log&#39;)
-plt.ylim([1e2,1e-6])
-plt.xlim([np.min(wlen_mu),np.max(wlen_mu)])
-
-plt.xlabel(&#39;Wavelength (microns)&#39;)
-plt.ylabel(&#39;P (bar)&#39;)
-plt.title(&#39;Transmission contribution function&#39;)
-plt.show()
-plt.clf()
+<span></span>N_samples = 700000
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_analysis_15_0.png" src="../../_images/content_notebooks_analysis_15_0.png" />
-</div>
-</div>
-</div>
-<div class="section" id="Emission-contribution-functions">
-<h2>Emission contribution functions<a class="headerlink" href="#Emission-contribution-functions" title="Permalink to this headline">¶</a></h2>
-<p>Below, we show the same for the emission contribution functions, which are defined in the usual way, that is measuring the fraction of flux a layer contributes to the total flux, at a given wavelength. The computational time is comparable to a normal emission spectrum.</p>
+<p>If we want we can also give the ranges from where to where to plot the parameter distribution. Here we do this for the log mass fraction of the absorbers for which we only find upper limits. Otherwise the prior cut at -10 for the parameters would become visible, which does not look too nice:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>atmosphere.calc_flux(temperature, abundances, \
-                       gravity, MMW, \
-                       contribution = True)
+<span></span>parameter_ranges = {0: None, \
+             1: None, \
+             2: None, \
+             3: None, \
+             4: None, \
+             5: None, \
+             6: None, \
+             7: None, \
+             8: None, \
+             9: None, \
+             10: (-10., 0.), \
+             11: (-10, 0.), \
+             12: None, \
+             13: (-10, 0.), \
+             14: None, \
+             15: None}
 </pre></div>
 </div>
 </div>
-<p>The emission contribution function is plotted below, one can see that pressures that pressures larger than 1 bar can now be probed.</p>
-<div class="nbinput docutils container">
+<p>By not specifying ranges for most of the parameters, they will then be defined by using the 1-d parameter distribution, and plotting <span class="math notranslate nohighlight">\(\pm\)</span> 4 standard deviations around their mean value.</p>
+<p>We also do not want to plot all parameters: we won’t plot the first 6 parameters, which are nuisance parameters, used to generate the P-T profiles. The 7th parameter contains <span class="math notranslate nohighlight">\({\rm log}(g)\)</span> at <span class="math notranslate nohighlight">\(P_0\)</span>, which is fixed (instead, <span class="math notranslate nohighlight">\(P_0\)</span> is a free parameter). So we only plot from the 8th parameter on.</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>import pylab as plt
-plt.rcParams[&#39;figure.figsize&#39;] = (10, 6)
-
-wlen_mu = nc.c/atmosphere.freq/1e-4
-X, Y = np.meshgrid(wlen_mu, pressures)
-plt.contourf(X,Y,atmosphere.contr_em,30,cmap=plt.cm.bone_r)
-
-plt.yscale(&#39;log&#39;)
-plt.xscale(&#39;log&#39;)
-plt.ylim([1e2,1e-6])
-plt.xlim([np.min(wlen_mu),np.max(wlen_mu)])
-
-plt.xlabel(&#39;Wavelength (microns)&#39;)
-plt.ylabel(&#39;P (bar)&#39;)
-plt.title(&#39;Emission contribution function&#39;)
-plt.show()
-plt.clf()
+<span></span>parameter_plot_indices = [7, 8, 9, 10, 11, 12, 13, 14, 15]
+</pre></div>
+</div>
+</div>
+<p>We also load an array that contains the input parameters, in this way we can see how well we retrieve what we put in in our synthetic observation (these values one does not have for real observations):</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>true_values = np.genfromtxt(&#39;input_params.dat&#39;)
+</pre></div>
+</div>
+</div>
+<p>Finally, the hex bin plots of the 2-d projections of the posterior will be normalized such that the darkest color corresponds to values equal to, or larger than, 5 times the value that is expected for a uniform distribution:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>max_val_ratio = 5.
+</pre></div>
+</div>
+</div>
+<p>Let’s plot!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>nice_corner(samples, \
+            parameter_names, \
+            output_file, \
+            N_samples = N_samples, \
+            parameter_plot_indices = parameter_plot_indices, \
+            true_values = true_values, \
+            max_val_ratio = max_val_ratio, \
+            parameter_ranges = parameter_ranges)
 </pre></div>
 </div>
 </div>
@@ -558,13 +551,10 @@ plt.clf()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_analysis_20_0.png" src="../../_images/content_notebooks_analysis_20_0.png" />
+<img alt="../../_images/content_notebooks_corner_plots_21_0.png" src="../../_images/content_notebooks_corner_plots_21_0.png" />
 </div>
 </div>
-<p>One also sees that scattering is not included in petitRADTRANS emission spectra yet, blueward of the strong alkali lines in the optical, quite large pressures can be probed (although the total flux emanating from the atmosphere at these wavelengths is small, see the spectrum in the <a class="reference external" href="getting_started.html">“Getting Started”</a> example). Conversely, in the transmission contribution plot above, the Rayleigh scattering is clearly visible.</p>
-<div class="admonition warning">
-<strong>Scattering and petitRADTRANS:</strong> remember that scattering is not included for emission spectra in petitRADTRANS (but it is for the transmission spectra). We plan to migrate the scattering implementation of <a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/#petitcode">petitCODE</a> to petitRADTRANS soon.</div>
-</div>
+<p>Note that the lower log mass fraction range as defined by the priors (-10) is clearly visible in the plots where only an upper limit on the mass fraction is retrieved.</p>
 </div>
 
 
@@ -575,10 +565,10 @@ plt.clf()
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="nat_cst_utility.html" class="btn btn-neutral float-right" title="Utility functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="plot_temp_enve.html" class="btn btn-neutral float-right" title="Plotting temperature envelopes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="clouds.html" class="btn btn-neutral" title="Including clouds" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../ret_analysis.html" class="btn btn-neutral" title="Analysis of results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -43,7 +43,7 @@ def nice_corner(samples, \
         labels_list.append(parameter_names[i])
 
         try:
-            if parameter_ranges == None:
+            if parameter_ranges[i] == None:
                 range_mean = np.mean(samples[len(samples)-S:,i])
                 range_std = np.std(samples[len(samples)-S:,i])
                 range_take = (range_mean-4*range_std, range_mean+4*range_std)
@@ -51,7 +51,10 @@ def nice_corner(samples, \
             else:
                 range_list.append(parameter_ranges[i])
         except:
-            range_list.append(parameter_ranges[i])
+            range_mean = np.mean(samples[len(samples)-S:,i])
+            range_std = np.std(samples[len(samples)-S:,i])
+            range_take = (range_mean-4*range_std, range_mean+4*range_std)
+            range_list.append(range_take)
             
     try:
         truths_list = []
@@ -102,8 +105,7 @@ def nice_corner(samples, \
             up = up.split('.')[0]+'.'+up.split('.')[1].ljust(2, '0')
             do = do.split('.')[0]+'.'+do.split('.')[1].ljust(2, '0')
             
-            ax.set_title(labels_list[i_col]+' = '+ \
-                             med+r'$^{+'+up+'}_{-'+do+'}$', \
+            ax.set_title(med+r'$^{+'+up+'}_{-'+do+'}$', \
                              fontdict=font, fontsize = 10)
             sns.distplot(data_list[i_col], bins=20, kde=False, \
                              rug=False, ax=ax, color = 'gray')

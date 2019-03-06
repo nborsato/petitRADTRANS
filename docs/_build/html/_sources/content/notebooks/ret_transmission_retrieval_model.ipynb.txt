@@ -1,0 +1,145 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Master retrieval model: transmission case"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This section shows the retrieval model used by the main retrieval script of the transmission spectrum. The source `master_retrieval_model.py` can be found in the `petitRADTRANS` source folder, in the sub folder `retrieval_examples/transmission`. This is the implementation used for the transmission retrieval case of the petitRADTRANS paper."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "First we load all required packages:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import sys\n",
+    "from petitRADTRANS import Radtrans\n",
+    "from petitRADTRANS import nat_cst as nc"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we define the function to calculate the mean molecular weight from the abundance dictionary, as described in the petitRADTRANS paper:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def calc_MMW(abundances):\n",
+    "\n",
+    "    MMWs = {}\n",
+    "    MMWs['H2'] = 2.\n",
+    "    MMWs['He'] = 4.\n",
+    "    MMWs['H2O'] = 18.\n",
+    "    MMWs['CH4'] = 16.\n",
+    "    MMWs['CO2'] = 44.\n",
+    "    MMWs['CO'] = 28.\n",
+    "    MMWs['Na'] = 23.\n",
+    "    MMWs['K'] = 39.\n",
+    "    MMWs['NH3'] = 17.\n",
+    "    MMWs['HCN'] = 27.\n",
+    "    MMWs['C2H2,acetylene'] = 26.\n",
+    "    MMWs['PH3'] = 34.\n",
+    "    MMWs['H2S'] = 34.\n",
+    "    MMWs['VO'] = 67.\n",
+    "    MMWs['TiO'] = 64.\n",
+    "\n",
+    "    MMW = 0.\n",
+    "    for key in abundances.keys():\n",
+    "        if key == 'CO_all_iso':\n",
+    "            MMW += abundances[key]/MMWs['CO']\n",
+    "        else:\n",
+    "            MMW += abundances[key]/MMWs[key]\n",
+    "    \n",
+    "    return 1./MMW\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Finally, we define the function to calculate and return the emission spectrum:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def retrieval_model_plain(rt_object, temperature_parameters, log_g, log_P0, \\\n",
+    "                          R_pl, ab_metals):\n",
+    "\n",
+    "    gravity = 1e1**log_g    \n",
+    "    \n",
+    "    # Create temperature model\n",
+    "    press, temp = nc.make_press_temp(temperature_parameters) # pressures from low to high\n",
+    "\n",
+    "    abundances = {}\n",
+    "    metal_sum = 0.\n",
+    "    for name in ab_metals.keys():\n",
+    "        abundances[name] = np.ones_like(press)*1e1**ab_metals[name]\n",
+    "        metal_sum += 1e1**ab_metals[name]\n",
+    "\n",
+    "    abH2He = 1. - metal_sum\n",
+    "    abundances['H2'] = np.ones_like(press)*abH2He*0.75\n",
+    "    abundances['He'] = np.ones_like(press)*abH2He*0.25\n",
+    "            \n",
+    "    MMW = calc_MMW(abundances)\n",
+    "        \n",
+    "    rt_object.calc_transm(temp, abundances, gravity, MMW, \\\n",
+    "                              R_pl = R_pl, P0_bar = 1e1**log_P0)\n",
+    "        \n",
+    "    return nc.c/rt_object.freq, rt_object.transm_rad/nc.r_jup_mean"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:miniconda3]",
+   "language": "python",
+   "name": "conda-env-miniconda3-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

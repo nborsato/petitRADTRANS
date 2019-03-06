@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Plotting temperature envelopes &mdash; petitRADTRANS 1.0.0 documentation</title>
+  <title>Master retrieval model: transmission case &mdash; petitRADTRANS 1.0.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Code documentation" href="../code.html" />
-    <link rel="prev" title="Corner plots" href="corner_plots.html" /> 
+    <link rel="next" title="Emission spectrum retrieval" href="../ret_emission.html" />
+    <link rel="prev" title="Transmission spectrum retrieval: main script" href="ret_transmission_master.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -87,13 +87,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../ret_transmission.html">Transmission spectrum retrieval</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ret_emission.html">Emission spectrum retrieval</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../ret_analysis.html">Analysis of results</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="corner_plots.html">Corner plots</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Plotting temperature envelopes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../ret_transmission.html">Transmission spectrum retrieval</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ret_transmission_master.html">Transmission spectrum retrieval: main script</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Master retrieval model: transmission case</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../ret_emission.html">Emission spectrum retrieval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ret_analysis.html">Analysis of results</a></li>
 </ul>
 </li>
 </ul>
@@ -147,15 +147,15 @@
         
           <li><a href="../retrieval_examples.html">Retrieval Examples</a> &raquo;</li>
         
-          <li><a href="../ret_analysis.html">Analysis of results</a> &raquo;</li>
+          <li><a href="../ret_transmission.html">Transmission spectrum retrieval</a> &raquo;</li>
         
-      <li>Plotting temperature envelopes</li>
+      <li>Master retrieval model: transmission case</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/content/notebooks/plot_temp_enve.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/content/notebooks/ret_transmission_retrieval_model.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -390,125 +390,90 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Plotting-temperature-envelopes">
-<h1>Plotting temperature envelopes<a class="headerlink" href="#Plotting-temperature-envelopes" title="Permalink to this headline">¶</a></h1>
-<p>Here we show how to plot temperature envelopes. For this we use the <code class="docutils literal notranslate"><span class="pre">PT_envelopes.py</span></code> package which can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/analysis</span></code>.</p>
-<p>We start by loading the relevant packages:</p>
+<div class="section" id="Master-retrieval-model:-transmission-case">
+<h1>Master retrieval model: transmission case<a class="headerlink" href="#Master-retrieval-model:-transmission-case" title="Permalink to this headline">¶</a></h1>
+<p>This section shows the retrieval model used by the main retrieval script of the transmission spectrum. The source <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code>. This is the implementation used for the transmission retrieval case of the petitRADTRANS paper.</p>
+<p>First we load all required packages:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>import numpy as np
-import pylab as plt
-import pickle
-
-from PT_envelopes import return_PT_envelopes
+import sys
+from petitRADTRANS import Radtrans
+from petitRADTRANS import nat_cst as nc
 </pre></div>
 </div>
 </div>
-<p>Next we read the pickle files of the retrieval, in this case as produced for the transmission retrieval example (see the source in <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission_case</span></code>, and the documentation thereof <a href="#id1"><span class="problematic" id="id2">`here &lt;&gt;`__</span></a>.</p>
+<p>Next we define the function to calculate the mean molecular weight from the abundance dictionary, as described in the petitRADTRANS paper:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Paths to pickle files
-samples_path = &#39;chain_pos.pickle&#39;
-probabilities_path = &#39;chain_lnprob.pickle&#39;
+<span></span>def calc_MMW(abundances):
 
-# Load samples
-f = open(samples_path,&#39;rb&#39;)
-pos = pickle.load(f, encoding=&#39;latin1&#39;)
-prob = pickle.load(f, encoding=&#39;latin1&#39;)
-state = pickle.load(f, encoding=&#39;latin1&#39;)
-samples = pickle.load(f, encoding=&#39;latin1&#39;)
-f.close()
+    MMWs = {}
+    MMWs[&#39;H2&#39;] = 2.
+    MMWs[&#39;He&#39;] = 4.
+    MMWs[&#39;H2O&#39;] = 18.
+    MMWs[&#39;CH4&#39;] = 16.
+    MMWs[&#39;CO2&#39;] = 44.
+    MMWs[&#39;CO&#39;] = 28.
+    MMWs[&#39;Na&#39;] = 23.
+    MMWs[&#39;K&#39;] = 39.
+    MMWs[&#39;NH3&#39;] = 17.
+    MMWs[&#39;HCN&#39;] = 27.
+    MMWs[&#39;C2H2,acetylene&#39;] = 26.
+    MMWs[&#39;PH3&#39;] = 34.
+    MMWs[&#39;H2S&#39;] = 34.
+    MMWs[&#39;VO&#39;] = 67.
+    MMWs[&#39;TiO&#39;] = 64.
 
-# Load probabilities
-f = open(probabilities_path,&#39;rb&#39;)
-lnprob_2D,acc_frac,aut_corr_time = pickle.load(f, encoding=&#39;latin1&#39;)
-f.close()
-lnprob = lnprob_2D.reshape(np.shape(lnprob_2D)[0]*np.shape(lnprob_2D)[1])
-indmax = np.argmax(lnprob) # index with highest probability
-params_best = samples[indmax] # best-fit parameters from retrieval
+    MMW = 0.
+    for key in abundances.keys():
+        if key == &#39;CO_all_iso&#39;:
+            MMW += abundances[key]/MMWs[&#39;CO&#39;]
+        else:
+            MMW += abundances[key]/MMWs[key]
+
+    return 1./MMW
+
 </pre></div>
 </div>
 </div>
-<p>Next we specify some parameters: the number of samples to be used (smaller than the total number of samples, to cut off the burn-in phase), the name of the pickle file to save the envelope arrays, and, optionally, the parameters used to generate the synthetic observations. The latter will be missing for a real observation.</p>
+<p>Finally, we define the function to calculate and return the emission spectrum:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>envelope_file = &#39;T_enve.pickle&#39;
-N_samples = 700000
-true_values = np.genfromtxt(&#39;input_params.dat&#39;)
-</pre></div>
-</div>
-</div>
-<p>Next we get the P-T envelopes. If <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">=</span> <span class="pre">True</span></code>, they will be read from the path specified in <code class="docutils literal notranslate"><span class="pre">envelope_file</span></code>. If it is <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">=</span> <span class="pre">False</span></code>, they will be calculated from the sample array and saved to the path specified in <code class="docutils literal notranslate"><span class="pre">envelope_file</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>envelopes = return_PT_envelopes(samples, \
-                    envelope_file, \
-                    N_samples = N_samples, \
-                    read = False, \
-                    true_values = true_values)
-</pre></div>
-</div>
-</div>
-<p>The function <code class="docutils literal notranslate"><span class="pre">return_PT_envelopes()</span></code> returns a list with the following content:</p>
-<p><code class="docutils literal notranslate"><span class="pre">[[p,</span> <span class="pre">temp_input],</span> <span class="pre">[5,</span> <span class="pre">15,</span> <span class="pre">25,</span> <span class="pre">35],</span> <span class="pre">[temp_left_1,</span> <span class="pre">temp_left_2,</span> <span class="pre">temp_left_3,</span> <span class="pre">temp_left_4],</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">[temp_right_1,</span> <span class="pre">temp_right_2,</span> <span class="pre">temp_right_3,</span> <span class="pre">temp_right_4]]</span></code></p>
-<p>Where <code class="docutils literal notranslate"><span class="pre">p</span></code> is the pressure array, <code class="docutils literal notranslate"><span class="pre">temp_input</span></code> will only not be <code class="docutils literal notranslate"><span class="pre">None</span></code> if <code class="docutils literal notranslate"><span class="pre">true_values</span></code> were given to the <code class="docutils literal notranslate"><span class="pre">return_PT_envelopes()</span></code> function, this is the input P-T profile. The <code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">15,</span> <span class="pre">25,</span> <span class="pre">35]</span></code> specifies how far the left envelope boundaries are from the zeroth percentile. This is identical to how far the right envelope boundaries are from the 100th percentile.</p>
-<p>Finally, let’s plot the envelope and input P-T profile:</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>plt.gcf().set_size_inches(10., 6.)
-plt.gca().minorticks_on()
-plt.gca().tick_params(axis=&#39;y&#39;,which=&#39;major&#39;,length=6.,width=1)
-plt.gca().tick_params(axis=&#39;y&#39;,which=&#39;minor&#39;,length=3.,width=1)
-plt.gca().tick_params(axis=&#39;x&#39;,which=&#39;major&#39;,length=6.,width=1)
-plt.gca().tick_params(axis=&#39;x&#39;,which=&#39;minor&#39;,length=3.,width=1)
+<span></span>def retrieval_model_plain(rt_object, temperature_parameters, log_g, log_P0, \
+                          R_pl, ab_metals):
 
-plt.fill_betweenx(envelopes[0][0], envelopes[2][0], envelopes[3][0], \
-                      facecolor=&#39;lightgrey&#39;, label=&#39;5%$-$95%&#39;, zorder=-10)
-plt.fill_betweenx(envelopes[0][0], envelopes[2][1], envelopes[3][1], \
-                      facecolor=&#39;skyblue&#39;, label=&#39;15%$-$85%&#39;, zorder=-10)
-plt.fill_betweenx(envelopes[0][0], envelopes[2][2], envelopes[3][2], \
-                      facecolor=&#39;dodgerblue&#39;, label=&#39;25%$-$75%&#39;, zorder=-10)
-plt.fill_betweenx(envelopes[0][0], envelopes[2][3], envelopes[3][3], \
-                      facecolor=&#39;b&#39;, label=&#39;35%$-$65%&#39;, zorder=-10)
+    gravity = 1e1**log_g
 
-plt.plot(envelopes[0][1], envelopes[0][0], color=&#39;red&#39;, linewidth=2, \
-             zorder=10, label=&#39;Input profile&#39;)
+    # Create temperature model
+    press, temp = nc.make_press_temp(temperature_parameters) # pressures from low to high
 
-plt.xlabel(&#39;Temperature (K)&#39;, fontsize = 18, color = &#39;k&#39;)
-plt.ylabel(&#39;Pressure (bar)&#39;, fontsize = 18, color = &#39;k&#39;)
-plt.ylim([1e3,1e-6])
-plt.xlim([500.,3000.])
-plt.xticks(fontsize=15)
-plt.yticks(fontsize=15)
-plt.yscale(&#39;log&#39;)
-plt.legend(loc=&#39;best&#39;,frameon=False, fontsize=13)
-plt.tight_layout()
-plt.show()
-plt.clf()
+    abundances = {}
+    metal_sum = 0.
+    for name in ab_metals.keys():
+        abundances[name] = np.ones_like(press)*1e1**ab_metals[name]
+        metal_sum += 1e1**ab_metals[name]
+
+    abH2He = 1. - metal_sum
+    abundances[&#39;H2&#39;] = np.ones_like(press)*abH2He*0.75
+    abundances[&#39;He&#39;] = np.ones_like(press)*abH2He*0.25
+
+    MMW = calc_MMW(abundances)
+
+    rt_object.calc_transm(temp, abundances, gravity, MMW, \
+                              R_pl = R_pl, P0_bar = 1e1**log_P0)
+
+    return nc.c/rt_object.freq, rt_object.transm_rad/nc.r_jup_mean
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_plot_temp_enve_15_0.png" src="../../_images/content_notebooks_plot_temp_enve_15_0.png" />
 </div>
 </div>
 </div>
@@ -521,10 +486,10 @@ plt.clf()
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../code.html" class="btn btn-neutral float-right" title="Code documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../ret_emission.html" class="btn btn-neutral float-right" title="Emission spectrum retrieval" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="corner_plots.html" class="btn btn-neutral" title="Corner plots" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="ret_transmission_master.html" class="btn btn-neutral" title="Transmission spectrum retrieval: main script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

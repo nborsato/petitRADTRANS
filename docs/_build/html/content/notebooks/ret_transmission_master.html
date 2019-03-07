@@ -402,7 +402,8 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Transmission-spectrum-retrieval:-main-script">
 <h1>Transmission spectrum retrieval: main script<a class="headerlink" href="#Transmission-spectrum-retrieval:-main-script" title="Permalink to this headline">¶</a></h1>
-<p>This section shows the main script of the implementation of the transmission spectrum retrieval. The source <code class="docutils literal notranslate"><span class="pre">retrieve_transmission_paper.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code>. This is the implementation used for the transmission retrieval case of the petitRADTRANS paper.</p>
+<p>This section shows the main script of the implementation of the transmission spectrum retrieval. The source <code class="docutils literal notranslate"><span class="pre">retrieve_transmission_paper.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code>. This is the implementation used for the transmission retrieval case of the <a href="#id1"><span class="problematic" id="id2">`petitRADTRANS paper &lt;&gt;`__</span></a>. In this retrieval we make use of the <a class="reference external" href="https://emcee.readthedocs.io">emcee</a> package, see <a class="reference external" href="https://arxiv.org/abs/1202.3665">Foreman-Mackey et al.
+(2012)</a>.</p>
 <div class="section" id="General-setup">
 <h2>General setup<a class="headerlink" href="#General-setup" title="Permalink to this headline">¶</a></h2>
 <p>First we load all outside packages:</p>
@@ -420,7 +421,7 @@ from emcee.utils import MPIPool
 </pre></div>
 </div>
 </div>
-<p>Importing <code class="docutils literal notranslate"><span class="pre">MPIPool</span></code> allows to use <code class="docutils literal notranslate"><span class="pre">mpirun</span></code> on the cluster for parallelization, in practise we always used multiprocessing, however, also on the cluster (see below).</p>
+<p>Importing <code class="docutils literal notranslate"><span class="pre">MPIPool</span></code> allows to use <code class="docutils literal notranslate"><span class="pre">mpirun</span></code> on the cluster for parallelization. In practise we always used multiprocessing, however, also on the cluster (see below).</p>
 <p>Next we load petitRADTRANS and other packages written for this retrieval setup:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -435,7 +436,7 @@ import rebin_give_width as rgw
 </div>
 </div>
 <p>The package <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> contains the function that returns the model spectrum, given the input parameters. It can be found in <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code> as well, and is explained <a class="reference external" href="ret_transmission_retrieval_model.html">here</a>.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">rebin_give_width.so</span></code> package is a Fortran binary compiled for use in Python, written specifically for this retrieval example. It is written in Fortran to increase speed. It rebins the observation to a different wavelength grid, with the width of the wavelength given for every grid point. It is compiled by typing:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rebin_give_width.so</span></code> package is a Fortran binary compiled for use in Python, written specifically for this retrieval example. It is written in Fortran to increase speed. It rebins the forward model to the observational wavelength grid, with the width of the wavelength bin given for every grid point. It is compiled by typing:</p>
 <p><code class="docutils literal notranslate"><span class="pre">f2py</span> <span class="pre">-c</span> <span class="pre">--opt='-O3</span> <span class="pre">-funroll-loops</span> <span class="pre">-ftree-vectorize</span> <span class="pre">-ftree-loop-optimize</span> <span class="pre">-msse</span> <span class="pre">-msse2</span> <span class="pre">-m3dnow'</span> <span class="pre">-m</span> <span class="pre">rebin_give_width</span> <span class="pre">rebin_give_width.f90</span></code></p>
 <p>If it won’t run, also see the general installation tips of petitRADTRANS, when building <code class="docutils literal notranslate"><span class="pre">.so</span></code> files, <a class="reference external" href="../installation.html">here</a>.</p>
 <p>Next we specify the observation paths:</p>
@@ -453,7 +454,7 @@ observation_files[&#39;MIRI LRS&#39;] = &#39;MIRI_LRS.dat&#39;
 </pre></div>
 </div>
 </div>
-<p>If you want to plot the spectra for testing purposes (i.e.&nbsp;when running locally on your machine, on a single core), don’t do when you run the actual retrieval:</p>
+<p>If you want to plot the spectra for testing purposes (i.e.&nbsp;when running locally on your machine, on a single core), set <code class="docutils literal notranslate"><span class="pre">plotting</span> <span class="pre">=</span> <span class="pre">True</span></code>. Don’t do this when you run the actual retrieval:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -536,7 +537,7 @@ for name in observation_files.keys():
 </div>
 <div class="section" id="Creating-the-radiative-transfer-object">
 <h2>Creating the radiative transfer object<a class="headerlink" href="#Creating-the-radiative-transfer-object" title="Permalink to this headline">¶</a></h2>
-<p>This objet will later be used by the <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> package.</p>
+<p>This object will later be used by the <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> package.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -714,14 +715,14 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
     log_likelihood = 0.
 
     # Calculate the forward model, this
-    # returns the wavelengths in cm and the flux F_nu
-    # in erg/cm^2/s/Hz
+    # returns the wavelengths in cm and the planet radius
+    # in R_jup.
     wlen, flux_lambda = \
             rm.retrieval_model_plain(rt_object, temp_params, log_g, \
                                          log_P0, R_pl, ab_metals)
 
     # Just to make sure that a long chain does not die
-    # Unexpectedly:
+    # unexpectedly:
     # Return -inf if retrieval model returns NaN values
     if np.sum(np.isnan(flux_lambda)) &gt; 0:
         print(&quot;NaN spectrum encountered&quot;)

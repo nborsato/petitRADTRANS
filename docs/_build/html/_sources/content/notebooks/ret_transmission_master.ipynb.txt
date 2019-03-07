@@ -11,7 +11,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "This section shows the main script of the implementation of the transmission spectrum retrieval. The source `retrieve_transmission_paper.py` can be found in the `petitRADTRANS` source folder, in the sub folder `retrieval_examples/transmission`. This is the implementation used for the transmission retrieval case of the petitRADTRANS paper."
+    "This section shows the main script of the implementation of the transmission spectrum retrieval. The source `retrieve_transmission_paper.py` can be found in the `petitRADTRANS` source folder, in the sub folder `retrieval_examples/transmission`. This is the implementation used for the transmission retrieval case of the [petitRADTRANS paper](). In this retrieval we make use of the [emcee](https://emcee.readthedocs.io) package, see [Foreman-Mackey et al. (2012)](https://arxiv.org/abs/1202.3665)."
    ]
   },
   {
@@ -48,7 +48,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Importing `MPIPool` allows to use `mpirun` on the cluster for parallelization, in practise we always used multiprocessing, however, also on the cluster (see below)."
+    "Importing `MPIPool` allows to use `mpirun` on the cluster for parallelization. In practise we always used multiprocessing, however, also on the cluster (see below)."
    ]
   },
   {
@@ -83,7 +83,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "The `rebin_give_width.so` package is a Fortran binary compiled for use in Python, written specifically for this retrieval example. It is written in Fortran to increase speed. It rebins the observation to a different wavelength grid, with the width of the wavelength given for every grid point. It is compiled by typing:"
+    "The `rebin_give_width.so` package is a Fortran binary compiled for use in Python, written specifically for this retrieval example. It is written in Fortran to increase speed. It rebins the forward model to the observational wavelength grid, with the width of the wavelength bin given for every grid point. It is compiled by typing:"
    ]
   },
   {
@@ -127,7 +127,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "If you want to plot the spectra for testing purposes (i.e. when running locally on your machine, on a single core), don't do when you run the actual retrieval:"
+    "If you want to plot the spectra for testing purposes (i.e. when running locally on your machine, on a single core), set `plotting = True`. Don't do this when you run the actual retrieval:"
    ]
   },
   {
@@ -264,7 +264,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "This objet will later be used by the `master_retrieval_model.py` package."
+    "This object will later be used by the `master_retrieval_model.py` package."
    ]
   },
   {
@@ -477,14 +477,14 @@
     "    log_likelihood = 0.\n",
     "\n",
     "    # Calculate the forward model, this\n",
-    "    # returns the wavelengths in cm and the flux F_nu\n",
-    "    # in erg/cm^2/s/Hz\n",
+    "    # returns the wavelengths in cm and the planet radius\n",
+    "    # in R_jup.\n",
     "    wlen, flux_lambda = \\\n",
     "            rm.retrieval_model_plain(rt_object, temp_params, log_g, \\\n",
     "                                         log_P0, R_pl, ab_metals)\n",
     "\n",
     "    # Just to make sure that a long chain does not die\n",
-    "    # Unexpectedly:\n",
+    "    # unexpectedly:\n",
     "    # Return -inf if retrieval model returns NaN values\n",
     "    if np.sum(np.isnan(flux_lambda)) > 0:\n",
     "        print(\"NaN spectrum encountered\")\n",

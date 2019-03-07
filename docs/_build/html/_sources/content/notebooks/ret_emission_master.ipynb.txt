@@ -1,0 +1,809 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Emission spectrum retrieval: main script"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This section shows the main script of the implementation of the emission spectrum retrieval. The source `retrieve_emission_paper.py` can be found in the `petitRADTRANS` source folder, in the sub folder `retrieval_examples/emission`. This is the implementation used for the emission retrieval case of the [petitRADTRANS paper](). In this retrieval we make use of the [emcee](https://emcee.readthedocs.io) package, see [Foreman-Mackey et al. (2012)](https://arxiv.org/abs/1202.3665)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## General setup"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "First we load all outside packages:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import sys\n",
+    "import emcee\n",
+    "import pickle as pickle\n",
+    "import time\n",
+    "from emcee.utils import MPIPool\n",
+    "from scipy.interpolate import interp1d"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Importing `MPIPool` allows to use `mpirun` on the cluster for parallelization. In practise we always used multiprocessing, however, also on the cluster (see below)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we load petitRADTRANS and other packages written for this retrieval setup:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from petitRADTRANS import Radtrans\n",
+    "import master_retrieval_model as rm\n",
+    "from petitRADTRANS import nat_cst as nc\n",
+    "import rebin_give_width as rgw"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The package `master_retrieval_model.py` contains the function that returns the model spectrum, given the input parameters. It can be found in `retrieval_examples/emission` as well, and is explained [here](ret_emission_retrieval_model.html)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `rebin_give_width.so` package is a Fortran binary compiled for use in Python, written specifically for this retrieval example. It is written in Fortran to increase speed. It rebins the forward model to the observational wavelength grid, with the width of the wavelength bin given for every grid point. It is compiled by typing:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`f2py -c --opt='-O3 -funroll-loops -ftree-vectorize -ftree-loop-optimize -msse -msse2 -m3dnow' -m rebin_give_width rebin_give_width.f90`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If it won't run, also see the general installation tips of petitRADTRANS, when building `.so` files, [here](../installation.html)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we specify the observation paths:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "retrieval_name = 'JWST_emission_petitRADTRANSpaper'\n",
+    "absolute_path = '' # end with forward slash!\n",
+    "observation_files = {}\n",
+    "observation_files['NIRISS SOSS'] = 'NIRISS_SOSS_flux.dat'\n",
+    "observation_files['NIRSpec G395M'] = 'NIRSpec_G395M_flux.dat'\n",
+    "observation_files['MIRI LRS'] = 'MIRI_LRS_flux.dat'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you want to plot the spectra for testing purposes (i.e. when running locally on your machine, on a single core), set `plotting = True`. Don't do this when you run the actual retrieval:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# For testing purposes only\n",
+    "plotting = False\n",
+    "if plotting:\n",
+    "    import pylab as plt"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we setup the hyperparameters of the emcee MCMC sampler:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Retrieval hyperparameters\n",
+    "stepsize = 1.75\n",
+    "n_walkers = 240\n",
+    "n_iter = 5000"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The 240 walkers will carry out 4200 steps, that is we will draw 1,200,000 samples."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Put `cluster` to `True` if you want to run with `mpirun` on the cluster. We only used multiprocessing in our cases, that is leaving `cluster = False` and setting `n_threads = 40` when running on, for example, 40 cores."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "cluster = False       # Submit to cluster\n",
+    "n_threads = 1         # Use mutliprocessing (local = 1)\n",
+    "write_threshold = 200 # number of iterations after which diagnostics are updated"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we specify the wavelength range of the models (a bit larger than that of the observations), and fixed parameters that will not be retrieved for the transmission spectrum case. Don't make the wavelength range larger than needed, it will decrease the forward modeling speed. We also get the stellar spectrum, to be used for the calculation of $F_{\\rm Pl}/F_*$ later."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Wavelength range of observations, fixed parameters that will not be retrieved\n",
+    "WLEN = [0.8, 14.0]\n",
+    "LOG_G =  2.58\n",
+    "R_pl =   1.84*nc.r_jup_mean\n",
+    "R_star = 1.81*nc.r_sun\n",
+    "# Get host star spectrum to calculate F_pl / F_star later.\n",
+    "T_star = 6295.\n",
+    "x = nc.get_PHOENIX_spec(T_star)\n",
+    "fstar = interp1d(x[:,0], x[:,1])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Reading the observational data in"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "See the headers of the data files for the units. We read in the wavelength, the relative flux decrease $(R_{\\rm planet}/R_*)^2$, and its error."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "data_wlen = {}\n",
+    "data_flux_nu = {}\n",
+    "data_flux_nu_error = {}\n",
+    "data_wlen_bins = {}\n",
+    "\n",
+    "for name in observation_files.keys():\n",
+    "\n",
+    "    dat_obs = np.genfromtxt(observation_files[name])\n",
+    "    data_wlen[name] = dat_obs[:,0]*1e-4\n",
+    "    data_flux_nu[name] = dat_obs[:,1]\n",
+    "    data_flux_nu_error[name] = dat_obs[:,2]\n",
+    "    \n",
+    "    data_wlen_bins[name] = np.zeros_like(data_wlen[name])\n",
+    "    data_wlen_bins[name][:-1] = np.diff(data_wlen[name])\n",
+    "    data_wlen_bins[name][-1] = data_wlen_bins[name][-2]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Creating the radiative transfer object"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "This object will later be used by the `master_retrieval_model.py` package."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "  Read CIA opacities for H2-H2...\n",
+      "  Read CIA opacities for H2-He...\n",
+      " Done.\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "### Create and setup radiative transfer object\n",
+    "# Create random P-T profile to create RT arrays of the Radtrans object.\n",
+    "temp_params = {}\n",
+    "temp_params['log_delta'] = -6.\n",
+    "temp_params['log_gamma'] = np.log10(0.4)\n",
+    "temp_params['t_int'] = 750.\n",
+    "temp_params['t_equ'] = 0.\n",
+    "temp_params['log_p_trans'] = -3.\n",
+    "temp_params['alpha'] = 0.\n",
+    "p, t = nc.make_press_temp(temp_params)\n",
+    "\n",
+    "# Create the Ratrans object here\n",
+    "rt_object = Radtrans(line_species=['H2', 'CO_all_iso', 'H2O', \\\n",
+    "                                  'CH4', 'NH3', 'CO2', 'H2S', \\\n",
+    "                                  'Na', 'K'], \\\n",
+    "                    rayleigh_species=['H2','He'], \\\n",
+    "                    continuum_opacities = ['H2-H2','H2-He'], \\\n",
+    "                    mode='c-k', \\\n",
+    "                    wlen_bords_micron=WLEN)\n",
+    "\n",
+    "# Create the RT arrays of appropriate lengths\n",
+    "rt_object.setup_opa_structure(p)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Prior setup for retrieval"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Here we set up the priors for the temperature profile parameters, abundances, and other free parameters, as described in the petitRADTRANS paper."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def b_range(x, b):\n",
+    "    if x > b:\n",
+    "        return -np.inf\n",
+    "    else:\n",
+    "        return 0.\n",
+    "\n",
+    "def a_b_range(x, a, b):\n",
+    "    if x < a:\n",
+    "        return -np.inf\n",
+    "    elif x > b:\n",
+    "        return -np.inf\n",
+    "    else:\n",
+    "        return 0.\n",
+    "\n",
+    "log_priors = {}\n",
+    "log_priors['log_delta']      = lambda x: -((x-(-5.5))/2.5)**2./2.                           \n",
+    "log_priors['log_gamma']      = lambda x: -((x-(-0.0))/2.)**2./2. \n",
+    "log_priors['t_int']          = lambda x: a_b_range(x, 0., 1500.)\n",
+    "log_priors['t_equ']          = lambda x: a_b_range(x, 0., 4000.)\n",
+    "log_priors['log_p_trans']    = lambda x: -((x-(-3))/3.)**2./2.\n",
+    "log_priors['alpha']          = lambda x: -((x-0.25)/0.4)**2./2.\n",
+    "log_priors['log_g']          = lambda x: a_b_range(x, 2.0, 3.7) \n",
+    "log_priors['log_P0']         = lambda x: a_b_range(x, -4, 2.)\n",
+    "\n",
+    "# Priors for log mass fractions\n",
+    "log_priors['CO_all_iso']     = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['H2O']            = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['CH4']            = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['NH3']            = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['CO2']            = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['H2S']            = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['Na']             = lambda x: a_b_range(x, -10., 0.)\n",
+    "log_priors['K']              = lambda x: a_b_range(x, -10., 0.)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Define the log-probability function"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "First we set up the variables that will be changed and be written into the diagnostice file, during the retrieval run:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Declare diagnostics\n",
+    "function_calls = 0\n",
+    "computed_spectra = 0\n",
+    "NaN_spectra = 0\n",
+    "delta_wt = write_threshold\n",
+    "\n",
+    "start_time = time.time()\n",
+    "file_object = open(absolute_path + 'diag_' + \\\n",
+    "                       retrieval_name + '.dat', 'w').close()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Here it comes.... the log-probability function! I tried to comment it sufficiently, shoot me an email if something is unclear."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def calc_log_prob(params):\n",
+    "\n",
+    "    log_delta, log_gamma, t_int, t_equ, log_p_trans, alpha, \\\n",
+    "      log_g, log_P0 = params[:-8]\n",
+    "\n",
+    "    # Make dictionary for modified Guillot parameters\n",
+    "    temp_params = {}\n",
+    "    temp_params['log_delta'] = log_delta\n",
+    "    temp_params['log_gamma'] = log_gamma\n",
+    "    temp_params['t_int'] = t_int\n",
+    "    temp_params['t_equ'] = t_equ\n",
+    "    temp_params['log_p_trans'] = log_p_trans\n",
+    "    temp_params['alpha'] = alpha\n",
+    "\n",
+    "    # Make dictionary for log 'metal' abundances\n",
+    "    ab_metals = {}\n",
+    "    ab_metals['CO_all_iso']     = params[-8:][0]\n",
+    "    ab_metals['H2O']            = params[-8:][1]\n",
+    "    ab_metals['CH4']            = params[-8:][2]\n",
+    "    ab_metals['NH3']            = params[-8:][3]\n",
+    "    ab_metals['CO2']            = params[-8:][4]\n",
+    "    ab_metals['H2S']            = params[-8:][5]\n",
+    "    ab_metals['Na']             = params[-8:][6]\n",
+    "    ab_metals['K']              = params[-8:][7]\n",
+    "    \n",
+    "    global function_calls\n",
+    "    global computed_spectra\n",
+    "    global NaN_spectra\n",
+    "    global write_threshold\n",
+    "    \n",
+    "    function_calls += 1\n",
+    "\n",
+    "    # Prior calculation of all input parameters\n",
+    "    log_prior = 0.\n",
+    "\n",
+    "    # Alpha should not be smaller than -1, this\n",
+    "    # would lead to negative temperatures!\n",
+    "    if alpha < -1:\n",
+    "        return -np.inf\n",
+    "    \n",
+    "    for key in temp_params.keys():\n",
+    "        log_prior += log_priors[key](temp_params[key])\n",
+    "        \n",
+    "    log_prior += log_priors['log_g'](log_g)\n",
+    "    log_prior += log_priors['log_P0'](log_P0)\n",
+    "\n",
+    "    # Metal abundances: check that their\n",
+    "    # summed mass fraction is below 1.\n",
+    "    metal_sum = 0.\n",
+    "    for name in ab_metals.keys():\n",
+    "        log_prior += log_priors[name](ab_metals[name])\n",
+    "        metal_sum += 1e1**ab_metals[name]\n",
+    "\n",
+    "    if metal_sum > 1.:\n",
+    "        log_prior += -np.inf\n",
+    "\n",
+    "    # Return -inf if parameters fall outside prior distribution\n",
+    "    if (log_prior == -np.inf):\n",
+    "        return -np.inf\n",
+    "    \n",
+    "    # Calculate the log-likelihood\n",
+    "    log_likelihood = 0.\n",
+    "\n",
+    "    # Calculate the forward model, this\n",
+    "    # returns the wavelengths in cm and the flux F_nu\n",
+    "    # in erg/cm^2/s/Hz\n",
+    "    wlen, flux_nu = \\\n",
+    "            rm.retrieval_model_plain(rt_object, temp_params, log_g, \\\n",
+    "                                         log_P0, R_pl, ab_metals)\n",
+    "\n",
+    "    # Just to make sure that a long chain does not die\n",
+    "    # unexpectedly:\n",
+    "    # Return -inf if forward model returns NaN values\n",
+    "    if np.sum(np.isnan(flux_nu)) > 0:\n",
+    "        print(\"NaN spectrum encountered\")\n",
+    "        NaN_spectra += 1\n",
+    "        return -np.inf\n",
+    "\n",
+    "    # Convert to observation for emission case\n",
+    "    flux_star = fstar(wlen)\n",
+    "    flux_sq   = flux_nu/flux_star*(R_pl/R_star)**2 \n",
+    "\n",
+    "    # Calculate log-likelihood\n",
+    "    for instrument in data_wlen.keys():\n",
+    "\n",
+    "        # Rebin model to observation\n",
+    "        flux_rebinned = rgw.rebin_give_width(wlen, flux_sq, \\\n",
+    "                        data_wlen[instrument], data_wlen_bins[instrument])\n",
+    "\n",
+    "        if plotting:\n",
+    "            plt.errorbar(data_wlen[instrument], \\\n",
+    "                             data_flux_nu[instrument], \\\n",
+    "                             data_flux_nu_error[instrument], \\\n",
+    "                             fmt = 'o', \\\n",
+    "                             zorder = -20, \\\n",
+    "                             color = 'red')\n",
+    "\n",
+    "            plt.plot(data_wlen[instrument], \\\n",
+    "                             flux_rebinned, \\\n",
+    "                             's', \\\n",
+    "                             zorder = -20, \\\n",
+    "                             color = 'blue')\n",
+    "\n",
+    "        # Calculate log-likelihood\n",
+    "        log_likelihood += -np.sum(((flux_rebinned - data_flux_nu[instrument])/ \\\n",
+    "                           data_flux_nu_error[instrument])**2.)/2.\n",
+    "\n",
+    "    if plotting:\n",
+    "        plt.plot(wlen, flux_sq, color = 'black')\n",
+    "        plt.xscale('log')\n",
+    "        plt.show()\n",
+    "        \n",
+    "    computed_spectra += 1\n",
+    "    \n",
+    "    if (function_calls >= write_threshold):\n",
+    "        \n",
+    "        write_threshold += delta_wt\n",
+    "        hours = (time.time() - start_time)/3600.0\n",
+    "        info_list = [function_calls, computed_spectra, NaN_spectra, \\\n",
+    "                 log_prior + log_likelihood, hours] \n",
+    "\n",
+    "        file_object = open(absolute_path + 'diag_' + retrieval_name + '.dat', 'a')\n",
+    "\n",
+    "        for i in np.arange(len(info_list)):\n",
+    "            if (i == len(info_list) - 1):\n",
+    "                file_object.write(str(info_list[i]).ljust(15) + \"\\n\")\n",
+    "            else:\n",
+    "                file_object.write(str(info_list[i]).ljust(15) + \" \")\n",
+    "        file_object.close()\n",
+    "\n",
+    "    print(log_prior + log_likelihood)\n",
+    "    print(\"--> \", function_calls, \" --> \", computed_spectra)\n",
+    "    if np.isnan(log_prior + log_likelihood):\n",
+    "        return -np.inf\n",
+    "    else:\n",
+    "        return log_prior + log_likelihood\n",
+    "\n",
+    "def lnprob(x):\n",
+    "    return calc_log_prob(x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Run the MCMC: pre-burn"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Here we first run a so-called pre-burn, to find the parameter region to zero-in on."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Emcee needs to know the number of parameters:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "n_dim = len(log_priors)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Next we set up the initial walker positions, note that we set log_P0 to a constant value (-2), as this is not relevant for calculating emission spectra:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Set initial position vectors in parameter space\n",
+    "p0 = [np.array([np.random.normal(loc = -5.5, scale = 2.5, size=1)[0], \\\n",
+    "                np.random.normal(loc = 0., scale = 2., size=1)[0], \\\n",
+    "                0.+1500.*np.random.uniform(size=1)[0], \\\n",
+    "                0.+4000.*np.random.uniform(size=1)[0], \\\n",
+    "                np.random.normal(loc = -3., scale = 3., size=1)[0], \\\n",
+    "                np.random.normal(loc = -0.25, scale = 0.4, size=1)[0], \\\n",
+    "                LOG_G,\n",
+    "                -2., \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0], \\\n",
+    "                -10.+10.*np.random.uniform(size=1)[0]] \\\n",
+    "                ) for i in range(n_walkers)]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now we run the pre-burn MCMC chain, depending on where and how we want to run it (on the cluster using mpirun, on the cluster (or locally) using multiple cores, or just on a single core):"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "if cluster:\n",
+    "    pool = MPIPool()\n",
+    "    if not pool.is_master():\n",
+    "        pool.wait()\n",
+    "        sys.exit(0)\n",
+    "    sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \\\n",
+    "                                        a = stepsize, pool = pool)\n",
+    "else:\n",
+    "    if n_threads > 1: \n",
+    "        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \\\n",
+    "                                            a = stepsize, threads = n_threads)\n",
+    "    else:\n",
+    "        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \\\n",
+    "                                            a = stepsize)\n",
+    "        \n",
+    "pre_burn_in_runs = int(np.min([399, n_iter/10])) + 3\n",
+    "pos, prob, state = sampler.run_mcmc(p0, pre_burn_in_runs)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "As we have 240 walkers, the value of `pre_burn_in_runs` ensure that we draw at least ~100,000 samples during the pre-burn."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Run the main MCMC chain"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now we get the best-fit position of the pre-burn, and restart the actual retrieval in a so-called \"Gauss ball\" around the best-fit position:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Get the best-fit position\n",
+    "highest_prob_index = np.unravel_index(sampler.lnprobability.argmax(), \\\n",
+    "                                          sampler.lnprobability.shape)\n",
+    "best_position = sampler.chain[highest_prob_index]\n",
+    "\n",
+    "f = open('best_position_pre_burn_in_' + retrieval_name + '.dat', 'w')\n",
+    "f.write(str(best_position))\n",
+    "f.close()\n",
+    "\n",
+    "# Run actual chain\n",
+    "p0 = [np.array([best_position[0]+np.random.normal(size=1)[0]*0.8, \\\n",
+    "                best_position[1]+np.random.normal(size=1)[0]*0.5, \\\n",
+    "                best_position[2]+np.random.normal(size=1)[0]*70., \\\n",
+    "                best_position[3]+np.random.normal(size=1)[0]*200., \\\n",
+    "                best_position[4]+np.random.normal(size=1)[0]*0.5, \\\n",
+    "                best_position[5]+np.random.normal(size=1)[0]*0.1, \\\n",
+    "                LOG_G, \\\n",
+    "                -2., \\\n",
+    "                best_position[8]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[9]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[10]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[11]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[12]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[13]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[14]+np.random.normal(size=1)[0]*0.3, \\\n",
+    "                best_position[15]+np.random.normal(size=1)[0]*0.3] \\\n",
+    "                   ) for i in range(n_walkers)]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "And now we run the main chain:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "if cluster:\n",
+    "    sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \\\n",
+    "                                        a = stepsize, pool = pool)\n",
+    "else:\n",
+    "    if n_threads > 1: \n",
+    "        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \\\n",
+    "                                            a = stepsize, threads = n_threads)\n",
+    "    else:\n",
+    "        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \\\n",
+    "                                            a = stepsize) \n",
+    "\n",
+    "pos, prob, state = sampler.run_mcmc(p0, n_iter) \n",
+    "\n",
+    "if cluster:\n",
+    "    pool.close()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Save the results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Finally, we save the sampled parameter positions `samples` and their associated log-probabilities to two pickle files."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "f = open('chain_pos_' + retrieval_name + '.pickle','wb')\n",
+    "pickle.dump(pos,f)\n",
+    "pickle.dump(prob,f)\n",
+    "pickle.dump(state,f)\n",
+    "samples = sampler.chain[:, :, :].reshape((-1, n_dim))\n",
+    "pickle.dump(samples,f)\n",
+    "f.close()\n",
+    "\n",
+    "\n",
+    "with open('chain_lnprob_' + retrieval_name + '.pickle', 'wb') as f:\n",
+    "    pickle.dump([sampler.lnprobability], \\\n",
+    "                f, protocol=pickle.HIGHEST_PROTOCOL)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:python3]",
+   "language": "python",
+   "name": "conda-env-python3-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

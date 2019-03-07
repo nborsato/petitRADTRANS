@@ -1,4 +1,8 @@
 Emission spectrum retrieval
 ===========================
 
-blabla
+.. toctree::
+   :maxdepth: 2
+
+   notebooks/ret_emission_master
+   notebooks/ret_emission_retrieval_model

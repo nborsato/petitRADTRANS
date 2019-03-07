@@ -218,8 +218,8 @@ def calc_log_prob(params):
     log_likelihood = 0.
 
     # Calculate the forward model, this
-    # returns the wavelengths in cm and the flux F_nu
-    # in erg/cm^2/s/Hz
+    # returns the wavelengths in cm and the planet radius
+    # in R_jup.
     wlen, flux_lambda = \
             rm.retrieval_model_plain(rt_object, temp_params, log_g, \
                                          log_P0, R_pl, ab_metals)

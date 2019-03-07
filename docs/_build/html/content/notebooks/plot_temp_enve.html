@@ -415,23 +415,14 @@ from PT_envelopes import return_PT_envelopes
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span># Paths to pickle files
 samples_path = &#39;chain_pos.pickle&#39;
-probabilities_path = &#39;chain_lnprob.pickle&#39;
 
 # Load samples
 f = open(samples_path,&#39;rb&#39;)
-pos = pickle.load(f, encoding=&#39;latin1&#39;)
-prob = pickle.load(f, encoding=&#39;latin1&#39;)
-state = pickle.load(f, encoding=&#39;latin1&#39;)
-samples = pickle.load(f, encoding=&#39;latin1&#39;)
+pos = pickle.load(f)
+prob = pickle.load(f)
+state = pickle.load(f)
+samples = pickle.load(f)
 f.close()
-
-# Load probabilities
-f = open(probabilities_path,&#39;rb&#39;)
-lnprob_2D,acc_frac,aut_corr_time = pickle.load(f, encoding=&#39;latin1&#39;)
-f.close()
-lnprob = lnprob_2D.reshape(np.shape(lnprob_2D)[0]*np.shape(lnprob_2D)[1])
-indmax = np.argmax(lnprob) # index with highest probability
-params_best = samples[indmax] # best-fit parameters from retrieval
 </pre></div>
 </div>
 </div>

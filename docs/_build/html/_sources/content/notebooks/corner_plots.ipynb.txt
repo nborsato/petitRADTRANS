@@ -48,28 +48,21 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "metadata": {},
+   "metadata": {
+    "collapsed": true
+   },
    "outputs": [],
    "source": [
     "# Paths to pickle files\n",
     "samples_path = 'chain_pos.pickle'\n",
-    "probabilities_path = 'chain_lnprob.pickle'\n",
     "\n",
     "# Load samples\n",
     "f = open(samples_path,'rb')\n",
-    "pos = pickle.load(f, encoding='latin1')\n",
-    "prob = pickle.load(f, encoding='latin1')\n",
-    "state = pickle.load(f, encoding='latin1')\n",
-    "samples = pickle.load(f, encoding='latin1')\n",
-    "f.close()\n",
-    "\n",
-    "# Load probabilities\n",
-    "f = open(probabilities_path,'rb')\n",
-    "lnprob_2D,acc_frac,aut_corr_time = pickle.load(f, encoding='latin1')\n",
-    "f.close()\n",
-    "lnprob = lnprob_2D.reshape(np.shape(lnprob_2D)[0]*np.shape(lnprob_2D)[1])\n",
-    "indmax = np.argmax(lnprob) # index with highest probability\n",
-    "params_best = samples[indmax] # best-fit parameters from retrieval"
+    "pos = pickle.load(f)\n",
+    "prob = pickle.load(f)\n",
+    "state = pickle.load(f)\n",
+    "samples = pickle.load(f)\n",
+    "f.close()"
    ]
   },
   {
@@ -142,7 +135,9 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "metadata": {},
+   "metadata": {
+    "collapsed": true
+   },
    "outputs": [],
    "source": [
     "parameter_ranges = {0: None, \\\n",

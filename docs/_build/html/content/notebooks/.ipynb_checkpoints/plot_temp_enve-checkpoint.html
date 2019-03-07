@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Corner plots &mdash; petitRADTRANS 1.0.0 documentation</title>
+  <title>Plotting temperature envelopes &mdash; petitRADTRANS 1.0.0 documentation</title>
   
 
   
@@ -24,15 +24,13 @@
 
   
 
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Plotting temperature envelopes" href="plot_temp_enve.html" />
-    <link rel="prev" title="Analysis of results" href="../ret_analysis.html" /> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../_static/js/modernizr.min.js"></script>
+  <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -48,12 +46,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> petitRADTRANS
+            <a href="../../../index.html" class="icon icon-home"> petitRADTRANS
           
 
           
             
-            <img src="../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="../../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -64,7 +62,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -82,24 +80,15 @@
             
             
               <p class="caption"><span class="caption-text">Guide:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../ret_transmission.html">Transmission spectrum retrieval</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ret_emission.html">Emission spectrum retrieval</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../ret_analysis.html">Analysis of results</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Corner plots</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_temp_enve.html">Plotting temperature envelopes</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../available_opacities.html">Available opacity species</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../retrieval_examples.html">Retrieval Examples</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../code.html">Code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Code documentation</a></li>
 </ul>
 
             
@@ -114,7 +103,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">petitRADTRANS</a>
+          <a href="../../../index.html">petitRADTRANS</a>
         
       </nav>
 
@@ -143,19 +132,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../retrieval_examples.html">Retrieval Examples</a> &raquo;</li>
-        
-          <li><a href="../ret_analysis.html">Analysis of results</a> &raquo;</li>
-        
-      <li>Corner plots</li>
+      <li>Plotting temperature envelopes</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/content/notebooks/corner_plots.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/content/notebooks/.ipynb_checkpoints/plot_temp_enve-checkpoint.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -390,10 +375,9 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Corner-plots">
-<h1>Corner plots<a class="headerlink" href="#Corner-plots" title="Permalink to this headline">¶</a></h1>
-<p>This section shows an example for producing a corner plot from a multidimensional array containing the samples of a retrieval run. One option is to use <a class="reference external" href="https://corner.readthedocs.io">the corner package</a>, see <a class="reference external" href="http://joss.theoj.org/papers/10.21105/joss.00024">Foreman-Mackey (2016)</a>. Here we use our quickly self-written (so don’t judge :) !) <code class="docutils literal notranslate"><span class="pre">nice_corner.py</span></code> package which can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/analysis</span></code>. It requires
-<a class="reference external" href="https://seaborn.pydata.org">seaborn</a>.</p>
+<div class="section" id="Plotting-temperature-envelopes">
+<h1>Plotting temperature envelopes<a class="headerlink" href="#Plotting-temperature-envelopes" title="Permalink to this headline">¶</a></h1>
+<p>Here we show how to plot temperature envelopes. For this we use the <code class="docutils literal notranslate"><span class="pre">PT_envelopes.py</span></code> package which can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/analysis</span></code>.</p>
 <p>We start by loading the relevant packages:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -404,15 +388,13 @@ div.rendered_html tbody tr:hover {
 import pylab as plt
 import pickle
 
-# nice_corner source can be found in the petitRADTRANS gitlab repository,
-# requires seaborn
-from nice_corner import nice_corner
+from PT_envelopes import return_PT_envelopes
 </pre></div>
 </div>
 </div>
 <p>Next we read the pickle files of the retrieval, in this case as produced for the transmission retrieval example (see the source in <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission_case</span></code>, and the documentation thereof <a href="#id1"><span class="problematic" id="id2">`here &lt;&gt;`__</span></a>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -429,114 +411,72 @@ f.close()
 </pre></div>
 </div>
 </div>
-<p>Next, we specify some required information: what are the names of the parameters, and where do we want to save the resulting corner plot:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>parameter_names = {0: r&quot;$\rm log(delta)$&quot;, \
-              1: r&quot;$\rm log(gamma)$&quot;, \
-              2: r&quot;$\rm T_{int}$&quot;, \
-              3: r&quot;$\rm T_{equ}$&quot;, \
-              4: r&quot;$\rm log(P_{tr})$&quot;, \
-              5: r&quot;$\rm alpha$&quot;, \
-              6: r&quot;$\rm log(g)$&quot;, \
-              7: r&quot;$\rm log(P_0)$&quot;, \
-              8: r&quot;$\rm CO$&quot;, \
-              9: r&quot;$\rm H_2O$&quot;, \
-              10: r&quot;$\rm CH_4$&quot;, \
-              11: r&quot;$\rm NH_3$&quot;, \
-              12: r&quot;$\rm CO_2$&quot;, \
-              13: r&quot;$\rm H_2S$&quot;, \
-              14: r&quot;$\rm Na$&quot;, \
-              15: r&quot;$\rm K$&quot;}
-
-output_file = &#39;test.pdf&#39;
-</pre></div>
-</div>
-</div>
-<p>In principle we are done now, but we specify a few more optional parameters:</p>
-<p>Only plot the last 700,000 samples, to discard the burn-in phase:</p>
+<p>Next we specify some parameters: the number of samples to be used (smaller than the total number of samples, to cut off the burn-in phase), the name of the pickle file to save the envelope arrays, and, optionally, the parameters used to generate the synthetic observations. The latter will be missing for a real observation.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>N_samples = 700000
+<span></span>envelope_file = &#39;T_enve.pickle&#39;
+N_samples = 700000
+true_values = np.genfromtxt(&#39;input_params.dat&#39;)
 </pre></div>
 </div>
 </div>
-<p>If we want we can also give the ranges from where to where to plot the parameter distribution. Here we do this for the log mass fraction of the absorbers for which we only find upper limits. Otherwise the prior cut at -10 for the parameters would become visible, which does not look too nice:</p>
+<p>Next we get the P-T envelopes. If <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">=</span> <span class="pre">True</span></code>, they will be read from the path specified in <code class="docutils literal notranslate"><span class="pre">envelope_file</span></code>. If it is <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">=</span> <span class="pre">False</span></code>, they will be calculated from the sample array and saved to the path specified in <code class="docutils literal notranslate"><span class="pre">envelope_file</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>parameter_ranges = {0: None, \
-             1: None, \
-             2: None, \
-             3: None, \
-             4: None, \
-             5: None, \
-             6: None, \
-             7: None, \
-             8: None, \
-             9: None, \
-             10: (-10., 0.), \
-             11: (-10, 0.), \
-             12: None, \
-             13: (-10, 0.), \
-             14: None, \
-             15: None}
+<span></span>envelopes = return_PT_envelopes(samples, \
+                    envelope_file, \
+                    N_samples = N_samples, \
+                    read = False, \
+                    true_values = true_values)
 </pre></div>
 </div>
 </div>
-<p>By not specifying ranges for most of the parameters, they will then be defined by using the 1-d parameter distribution, and plotting <span class="math notranslate nohighlight">\(\pm\)</span> 4 standard deviations around their mean value.</p>
-<p>We also do not want to plot all parameters: we won’t plot the first 6 parameters, which are nuisance parameters, used to generate the P-T profiles. The 7th parameter contains <span class="math notranslate nohighlight">\({\rm log}(g)\)</span> at <span class="math notranslate nohighlight">\(P_0\)</span>, which is fixed (instead, <span class="math notranslate nohighlight">\(P_0\)</span> is a free parameter). So we only plot from the 8th parameter on.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>parameter_plot_indices = [7, 8, 9, 10, 11, 12, 13, 14, 15]
-</pre></div>
-</div>
-</div>
-<p>We also load an array that contains the input parameters, in this way we can see how well we retrieve what we put in in our synthetic observation (these values one does not have for real observations):</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>true_values = np.genfromtxt(&#39;input_params.dat&#39;)
-</pre></div>
-</div>
-</div>
-<p>Finally, the hex bin plots of the 2-d projections of the posterior will be normalized such that the darkest color corresponds to values equal to, or larger than, 5 times the value that is expected for a uniform distribution:</p>
-<div class="nbinput nblast docutils container">
+<p>The function <code class="docutils literal notranslate"><span class="pre">return_PT_envelopes()</span></code> returns a list with the following content:</p>
+<p><code class="docutils literal notranslate"><span class="pre">[[p,</span> <span class="pre">temp_input],</span> <span class="pre">[5,</span> <span class="pre">15,</span> <span class="pre">25,</span> <span class="pre">35],</span> <span class="pre">[temp_left_1,</span> <span class="pre">temp_left_2,</span> <span class="pre">temp_left_3,</span> <span class="pre">temp_left_4],</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">[temp_right_1,</span> <span class="pre">temp_right_2,</span> <span class="pre">temp_right_3,</span> <span class="pre">temp_right_4]]</span></code></p>
+<p>Where <code class="docutils literal notranslate"><span class="pre">p</span></code> is the pressure array, <code class="docutils literal notranslate"><span class="pre">temp_input</span></code> will only not be <code class="docutils literal notranslate"><span class="pre">None</span></code> if <code class="docutils literal notranslate"><span class="pre">true_values</span></code> were given to the <code class="docutils literal notranslate"><span class="pre">return_PT_envelopes()</span></code> function, this is the input P-T profile. The <code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">15,</span> <span class="pre">25,</span> <span class="pre">35]</span></code> specifies how far the left envelope boundaries are from the zeroth percentile. This is identical to how far the right envelope boundaries are from the 100th percentile.</p>
+<p>Finally, let’s plot the envelope and input P-T profile:</p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>max_val_ratio = 5.
-</pre></div>
-</div>
-</div>
-<p>Let’s plot!</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>nice_corner(samples, \
-            parameter_names, \
-            output_file, \
-            N_samples = N_samples, \
-            parameter_plot_indices = parameter_plot_indices, \
-            true_values = true_values, \
-            max_val_ratio = max_val_ratio, \
-            parameter_ranges = parameter_ranges)
+<span></span>plt.gcf().set_size_inches(10., 6.)
+plt.gca().minorticks_on()
+plt.gca().tick_params(axis=&#39;y&#39;,which=&#39;major&#39;,length=6.,width=1)
+plt.gca().tick_params(axis=&#39;y&#39;,which=&#39;minor&#39;,length=3.,width=1)
+plt.gca().tick_params(axis=&#39;x&#39;,which=&#39;major&#39;,length=6.,width=1)
+plt.gca().tick_params(axis=&#39;x&#39;,which=&#39;minor&#39;,length=3.,width=1)
+
+plt.fill_betweenx(envelopes[0][0], envelopes[2][0], envelopes[3][0], \
+                      facecolor=&#39;lightgrey&#39;, label=&#39;5%$-$95%&#39;, zorder=-10)
+plt.fill_betweenx(envelopes[0][0], envelopes[2][1], envelopes[3][1], \
+                      facecolor=&#39;skyblue&#39;, label=&#39;15%$-$85%&#39;, zorder=-10)
+plt.fill_betweenx(envelopes[0][0], envelopes[2][2], envelopes[3][2], \
+                      facecolor=&#39;dodgerblue&#39;, label=&#39;25%$-$75%&#39;, zorder=-10)
+plt.fill_betweenx(envelopes[0][0], envelopes[2][3], envelopes[3][3], \
+                      facecolor=&#39;b&#39;, label=&#39;35%$-$65%&#39;, zorder=-10)
+
+plt.plot(envelopes[0][1], envelopes[0][0], color=&#39;red&#39;, linewidth=2, \
+             zorder=10, label=&#39;Input profile&#39;)
+
+plt.xlabel(&#39;Temperature (K)&#39;, fontsize = 18, color = &#39;k&#39;)
+plt.ylabel(&#39;Pressure (bar)&#39;, fontsize = 18, color = &#39;k&#39;)
+plt.ylim([1e3,1e-6])
+plt.xlim([500.,3000.])
+plt.xticks(fontsize=15)
+plt.yticks(fontsize=15)
+plt.yscale(&#39;log&#39;)
+plt.legend(loc=&#39;best&#39;,frameon=False, fontsize=13)
+plt.tight_layout()
+plt.show()
+plt.clf()
 </pre></div>
 </div>
 </div>
@@ -544,10 +484,9 @@ output_file = &#39;test.pdf&#39;
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_corner_plots_21_0.png" src="../../_images/content_notebooks_corner_plots_21_0.png" />
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_plot_temp_enve-checkpoint_15_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_plot_temp_enve-checkpoint_15_0.png" />
 </div>
 </div>
-<p>Note that the lower log mass fraction range as defined by the priors (-10) is clearly visible in the plots where only an upper limit on the mass fraction is retrieved.</p>
 </div>
 
 
@@ -555,15 +494,6 @@ output_file = &#39;test.pdf&#39;
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="plot_temp_enve.html" class="btn btn-neutral float-right" title="Plotting temperature envelopes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../ret_analysis.html" class="btn btn-neutral" title="Analysis of results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -591,18 +521,18 @@ output_file = &#39;test.pdf&#39;
 
     
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
 
   
 
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {

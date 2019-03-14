@@ -40,7 +40,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Next we read the pickle files of the retrieval, in this case as produced for the transmission retrieval example (see the source in `retrieval_examples/transmission_case`, and the documentation thereof [here]()."
+    "Next we read the pickle files of the retrieval, in this case as produced for the transmission retrieval example (see the source in `retrieval_examples/transmission_case`, and the documentation thereof [here](ret_transmission_master.html)."
    ]
   },
   {

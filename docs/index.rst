@@ -7,7 +7,7 @@ petitRADTRANS documentation
 =========================================
 
 Welcome to the **petitRADTRANS** documentation. petitRADTRANS is a
-Python package for the calculating transmission and emission spectra
+Python package for calculating transmission and emission spectra
 of exoplanets, at low (:math:`\lambda/\Delta\lambda=1000`) and high
 (:math:`\lambda/\Delta\lambda=10^6`) resolution, for clear and cloudy
 atmospheres.
@@ -25,7 +25,9 @@ as coauthor if you make use of petitRADTRANS in your work.
 
 .. _contact: molliere@strw.leidenuniv.nl
 
-This documentation webpage currently contains an installation guide, a tutorial, and a first code documentation.
+This documentation webpage currently contains an installation guide, a
+tutorial, a first code documentation, and an implemented retrieval
+example for mock JWST emission and transmission spectra.
 
 .. toctree::
    :maxdepth: 2

@@ -1230,7 +1230,7 @@ function bisect_particle_rad(x1,x2,gravity,rho,rho_p,temp,MMW,w_star)
   fb = fb - w_star
   
   if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.)) then
-     write(*,*) 'warning: root must be bracketed for zbrent'
+     write(*,*) 'Warning: root not bracketed.'
      bisect_particle_rad = 1d-17
      return 
   end if

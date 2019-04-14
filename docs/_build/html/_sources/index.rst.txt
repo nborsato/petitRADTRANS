@@ -28,6 +28,8 @@ as coauthor if you make use of petitRADTRANS in your work.
 This documentation webpage currently contains an installation guide, a
 tutorial, a first code documentation, and an implemented retrieval
 example for mock JWST emission and transmission spectra.
+Also, we give a tutorial on how to calculate opacities that may be
+missing from our database.
 
 .. toctree::
    :maxdepth: 2
@@ -37,6 +39,7 @@ example for mock JWST emission and transmission spectra.
    content/tutorial
    content/available_opacities
    content/retrieval_examples
+   content/opa_add
 
 .. toctree::
    :maxdepth: 2

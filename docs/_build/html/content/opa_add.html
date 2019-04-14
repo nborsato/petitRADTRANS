@@ -1,0 +1,578 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Adding opacities &mdash; petitRADTRANS 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Code documentation" href="code.html" />
+    <link rel="prev" title="Plotting temperature envelopes" href="notebooks/plot_temp_enve.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> petitRADTRANS
+          
+
+          
+            
+            <img src="../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="available_opacities.html">Available opacity species</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retrieval_examples.html">Retrieval Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adding opacities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#from-line-lists-to-opacities-using-exocross">From line lists to opacities (using ExoCross)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preparing-exocross-opacities-for-petitradtrans">Preparing ExoCross opacities for petitRADTRANS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-the-new-opacity-files-in-petitradtrans">Installing the new opacity files in petitRADTRANS</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">petitRADTRANS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Adding opacities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/content/opa_add.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="adding-opacities">
+<h1>Adding opacities<a class="headerlink" href="#adding-opacities" title="Permalink to this headline">¶</a></h1>
+<p>petitRADTRANS has an extensive line opacity database. However, it is very
+likely that we are missing the exact atom / molecule that you want.
+Here we give an example on how to calculate opacities and reformatting
+them for use in petitRADTRANS. In this way you will be able to add
+additional species, that we do not have added yet. If you are
+particularly nice, you can share these opacities with us, we will then
+make them available to the other petitRADTRANS users via this website, while properly
+attributing your contribution.</p>
+<div class="section" id="from-line-lists-to-opacities-using-exocross">
+<h2>From line lists to opacities (using ExoCross)<a class="headerlink" href="#from-line-lists-to-opacities-using-exocross" title="Permalink to this headline">¶</a></h2>
+<p>First, a line list needs to be converted into actual opacities.
+In this example we will show you how to do this using ExoCross, the
+open-source opacity calculator of the <a class="reference external" href="http://www.exomol.com">Exomol</a> database.
+ExoCross can be downloaded <a class="reference external" href="https://github.com/Trovemaster/exocross">here</a>, and is described in
+<a class="reference external" href="https://arxiv.org/abs/1801.09803">Yurchenko et al. (2018)</a>.</p>
+<p>First, download the ExoCross source, go into the folder containing the
+source and the makefile called “makefile”. Adapt that to your liking.
+For example, if you have the gfortran compiler, but not ifort, make
+sure that the flag using ifort is commented out, and that it uses
+gfortran. The relevant lines in “makefile” should look like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#FOR  = ifort</span>
+<span class="c1">#FFLAGS =  -O3 -qopenmp -traceback  -ip</span>
+<span class="nv">FOR</span> <span class="o">=</span> gfortran
+<span class="nv">FFLAGS</span> <span class="o">=</span> -O2 -fopenmp -std<span class="o">=</span>f2008
+</pre></div>
+</div>
+<p>Then, build ExoCross by typing <code class="docutils literal notranslate"><span class="pre">make</span></code> in the terminal. Sometimes the compiler will
+complain that lines within the ExoCross source are too long. Just open
+the source and introduce a line break there manually, like this:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! This is an example for a line that is too long</span>
+<span class="kt">DOUBLE PRECISION</span> <span class="kd">::</span> <span class="n">very_long_variable_name_number_one</span><span class="p">,</span> <span class="n">very_long_variable_name_number_two</span><span class="p">,</span> <span class="n">very_long_variable_name_number_three</span>
+
+<span class="c">! This is how you introduce line breaks</span>
+<span class="kt">DOUBLE PRECISION</span> <span class="kd">::</span> <span class="n">very_long_variable_name_number_one</span><span class="p">,</span> <span class="p">&amp;</span>
+   <span class="n">very_long_variable_name_number_two</span><span class="p">,</span> <span class="p">&amp;</span>
+   <span class="n">very_long_variable_name_number_three</span>
+</pre></div>
+</div>
+<p>So the <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> is th line break operator. After fixing this, recompile
+using <code class="docutils literal notranslate"><span class="pre">make</span></code>.</p>
+<p>In this example we will calculate the opacities of the NaH molecule.
+All necessary files for calculating opacities can be found on the Exomol
+website, just <a class="reference external" href="http://www.exomol.com/data/molecules/NaH/23Na-1H/Rivlin/">click here</a>.</p>
+<p>The following files need to be downloaded:</p>
+<ul class="simple">
+<li>23Na-1H__Rivlin.states.bz2</li>
+<li>23Na-1H__Rivlin.trans.bz2</li>
+<li>23Na-1H__Rivlin.pf</li>
+</ul>
+<p>Please unzip the .bz2 files before use.</p>
+<p>Next, make an input file for carrying out the calculations, in this
+example we call it NaH_input.inp. This is what it looks like:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>absorption
+voigt
+verbose <span class="m">3</span>
+offset <span class="m">60</span>.
+mass <span class="m">24</span>
+temperature <span class="m">1000</span>.000000
+pressure <span class="m">0</span>.00001
+range <span class="m">39</span>. <span class="m">91000</span>.
+R <span class="m">1000000</span>
+pffile 23Na-1H__Rivlin.pf
+output NaH_1000K_1em5bar.out
+states 23Na-1H__Rivlin.states
+transitions
+  <span class="s2">&quot;23Na-1H__Rivlin.trans&quot;</span>
+end
+species
+  <span class="m">0</span> gamma <span class="m">0</span>.06 n <span class="m">0</span>.5 t0 <span class="m">296</span> ratio <span class="m">1</span>.
+end
+</pre></div>
+</div>
+<p>This calculates the opacity of NaH with the following settings</p>
+<ul class="simple">
+<li><a href="#id1"><span class="problematic" id="id2">``</span></a>offset `` results in a line cutoff of 60 <span class="math notranslate nohighlight">\({\rm
+cm}^{-1}\)</span>. While being an important effect that also speeds up
+calculations, the choice of a cutoff is often arbitrary because the
+physics behind it remain difficult to model, see, for example the
+discussion in <a class="reference external" href="https://arxiv.org/abs/1503.03806">Grimm &amp; Heng
+(2015)</a>. Here we use the equivalent width of the line decrease
+function given by <a class="reference external" href="http://adsabs.harvard.edu/abs/2002JQSRT..72..117H">Hartmann et al. (2002)</a>, for <span class="math notranslate nohighlight">\(\rm CH_4\)</span>
+broadened by <span class="math notranslate nohighlight">\(\rm H_2\)</span>.</li>
+<li>NaH has a mass of 24 (in amu)</li>
+<li>The opacity is calculated at a temperature of 1000 K</li>
+<li>The opacity is calculated at a pressure of <span class="math notranslate nohighlight">\(10^{-5}\)</span> bar</li>
+<li>The opacity is calculated in the range from 39 to 91000 <span class="math notranslate nohighlight">\({\rm
+cm}^{-1}\)</span>. This corresponds to a wavelength range from 0.1099 to
+256.4103 micron, therefore bracketing the full petitRADTRANS
+wavelength range (0.11 to 250 micron at low resolution). This large
+a range is needed. Therefore, do not change this. Note that the opacities in
+the high-resolution mode of petitRADTRANS ultimately only go from
+0.3 to 28 microns.</li>
+<li>The resolution of the calculations carried out here is for a
+wavelength spacing of <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">pfile</span></code> line gives the relative path to the partition function
+file, that you have already downloaded from Exomol.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">states</span></code> line gives the relative path to the states
+file, that you have already downloaded from Exomol.</li>
+<li>The lines below <code class="docutils literal notranslate"><span class="pre">transitions</span></code> line give the relative paths to the transition
+files, that you have already downloaded from Exomol. For NaH this is
+only one file. For molecules with a lot more lines this can be
+multiple files.</li>
+<li>The lines below <code class="docutils literal notranslate"><span class="pre">species</span></code> define the pressure broadening to be
+used. This pressure boradening (width of the Lorentz profile) is of
+the form <span class="math notranslate nohighlight">\(\gamma \cdot (T_{0}/T)^n ({\rm ratio}\cdot
+P/{\rm 1 \ bar})\)</span>, in units of <span class="math notranslate nohighlight">\(\rm cm^{-1}\)</span>.  The choice here is a compromise between the
+various values reported for the broadening by <span class="math notranslate nohighlight">\(\rm H_2/He\)</span> of
+various absorbers, e.g. in <a class="reference external" href="https://arxiv.org/abs/1402.0814">Amundsen et al. (2014)</a>, <a class="reference external" href="https://arxiv.org/abs/1809.02548v2">Gharib-Nezhad &amp;
+Line (2018)</a>. Also see the text around Equation 12 in <a class="reference external" href="https://arxiv.org/abs/astro-ph/0607211">Sharp &amp;
+Burrows (2007)</a> for more information. Sometimes more detailed
+broadening information is available on Exomol, <a class="reference external" href="http://www.exomol.com/data/data-types/broadening_coefficients/">see here</a>.</li>
+</ul>
+<p>If more detailed broadening information is avaiable (not for NaH) you can replace
+the lines below <code class="docutils literal notranslate"><span class="pre">species</span></code> with something like</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>species
+  <span class="m">0</span> gamma <span class="m">0</span>.06 n <span class="m">0</span>.5 t0 <span class="m">296</span> file path_toH2_broadening_information_file model J ratio <span class="m">0</span>.860000
+  <span class="m">1</span> gamma <span class="m">0</span>.06 n <span class="m">0</span>.5 t0 <span class="m">296</span> file path_toHe_broadening_information_file model J ratio <span class="m">0</span>.140000
+end
+</pre></div>
+</div>
+<p>The above setting is for a primordial composition atmosphere, where
+<span class="math notranslate nohighlight">\(\rm H_2\)</span> and He roughly make up 86 % and 14 % of the
+atmosphere, respectively (i.e. these are volume mixing ratios, not
+mass fractions). The <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(n\)</span> values given before
+the path to the boradening files are what is used for rotational
+quantum numbers (<span class="math notranslate nohighlight">\(J\)</span>) not covered by the broadening files.</p>
+<p>Finally, the opacities are calculated by running ExoCross from the
+terminal command line via</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./xcross.exe &lt; NaH_input.inp &gt; test_run.out
+</pre></div>
+</div>
+<p>The resulting wavelength-dependent opacity will be in the “NaH_1000K_1em5bar.out.xsec” file, in our
+example here.
+In the end quite a few opacity points need to be calculated for
+petitRADTRANS (at 130 or 200 different pressure-temperature
+conbinations, see below). This is doable on a local machine for smaller
+linelists such as NaH, but may require the use of a cluster for much
+larger linelists. There also exsists the so-called superline
+treatment <a class="reference external" href="https://arxiv.org/abs/1801.09803">(see Yurchenko et al. 2018)</a>
+, where multiple lines are combined into one, this can speed
+up calculations a lot, but is not recommended if you want to calculate
+high-resolution spectra with petitRADTRANS (because line positions
+will shift if multiple lines are combined into one on a fixed
+wavelength grid).</p>
+</div>
+<div class="section" id="preparing-exocross-opacities-for-petitradtrans">
+<h2>Preparing ExoCross opacities for petitRADTRANS<a class="headerlink" href="#preparing-exocross-opacities-for-petitradtrans" title="Permalink to this headline">¶</a></h2>
+<p>For creating opacities for use in petitRADTRANS, calculate the
+molecular opacities from Exomol with ExoCross using the settings
+outlined above. Change parameters where applicable (temperature,
+pressure, molecule mass, broadening information…).</p>
+<p>The opacities need to be calculated at the 130 pressure temperature points
+of petitRADTRANS which you can find in the file
+<a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid.dat">PTgrid.dat</a>. Temeratures go from 80 up to 3000 K,
+in a log-uniform way. If you want to be ready for the future, please calculate opacities
+using <a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid_new.dat">PTgrid_new.dat</a>, where we have added a
+few more points at high temperatures (increasing the temperature resolution there) and extend
+the temperature range to 4000 K (note that currently petitRADTRANS sets
+<span class="math notranslate nohighlight">\(\kappa(T&gt;3000 K)\)</span> to <span class="math notranslate nohighlight">\(\kappa(T=3000 K)\)</span> for the opacity
+<span class="math notranslate nohighlight">\(\kappa\)</span>, if tempertatures get too high). The new grid has 200 points in total. The ability of
+petitRADTRANS to use the high-temperature grid (<a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid_new.dat">PTgrid_new.dat</a>) will
+be added ASAP. Shoot us a <a class="reference external" href="mailto:molliere&#37;&#52;&#48;strw&#46;leidenuniv&#46;nl">email</a> to find out when / pressuring us to do
+this even more quickly.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">For later use in petitRADTRANS it is important that the opacity
+files have the correct names. Every molecule needs to be assigned
+a random two digit integer (e.g. “06”). It does not matter if two
+different molecules have the same number. Then, the opacity file
+at (for example) T = 200 K, P = 1 bar must be called
+“sigma_06_200.K_1.000000bar.dat”. The exact names of the files
+used in petitRADTRANS can be found <a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTnames.dat">in this file here</a>. petitRADTRANS will be
+looking for these files, and throw an error message and crash if
+they are not named properly.</p>
+</div>
+<p>Now, let’s turn towards preparing the ExoCross results for
+petitRADTRANS. We will assume that you have calculated the opacites at
+all 130 (or 200) pressure-temperature points. The high-resolution
+wavelength setup between ExoCross and our
+classical petitCODE/petitRADTRANS opacity calculator is slightly
+different. ExoCross’ wavelength spacing varies a bit around the
+user-defined resolution, whereas our routines preparing the opacity
+files for petitRADTRANS assume that the wavelength spacing is exactly
+<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>, from 0.11 to 250 microns.
+Hence we will first have to rebin the ExoCross results to the
+petitCODE/petitRADTRANS grid. To this end, please download the
+petitRADTRANS high resolution grid (<a class="reference external" href="https://www.dropbox.com/s/2lyo8ot3nq4rx43/wlen_petitRADTRANS.dat?dl=0">wlen_petitRADTRANS.dat</a>).</p>
+<p>Next, rebin all ExoCross opacity files to that wavelength file, like
+shown below, here we for simplicity we use the NaH opacity file
+calculated above.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the opacity file from ExoCross</span>
+<span class="nv">dat</span> <span class="o">=</span> np.genfromtxt<span class="o">(</span><span class="s1">&#39;NaH_1000K_1em5bar.out.xsec&#39;</span><span class="o">)</span>
+<span class="nv">wavelength</span> <span class="o">=</span> <span class="m">1</span>./dat<span class="o">[</span>:,0<span class="o">]</span>
+<span class="nv">sigma</span> <span class="o">=</span> dat<span class="o">[</span>:,1<span class="o">]</span>
+
+<span class="c1"># Invert them to go from a accending wavenumber ordering</span>
+<span class="c1"># to an accending wavelength ordering.</span>
+<span class="nv">wavelength</span> <span class="o">=</span> wavelength<span class="o">[</span>::-1<span class="o">]</span>
+<span class="nv">sigma</span> <span class="o">=</span> sigma<span class="o">[</span>::-1<span class="o">]</span>
+
+<span class="c1"># Read the fiducial petitRADTRANS wavelength grid</span>
+<span class="nv">wavelength_petit</span> <span class="o">=</span> np.genfromtxt<span class="o">(</span><span class="s1">&#39;wlen_petitRADTRANS.dat&#39;</span><span class="o">)</span>
+
+<span class="c1"># Interpolate the ExoCross calculation to that grid</span>
+from scipy.interpolate import interp1d
+<span class="nv">sig_interp</span> <span class="o">=</span> interp1d<span class="o">(</span>wavelength, sigma<span class="o">)</span>
+<span class="nv">sig_interpolated_petit</span> <span class="o">=</span> sig_interp<span class="o">(</span>wavelength_petit<span class="o">)</span>
+
+<span class="c1"># Save rebinned calculation</span>
+np.savetxt<span class="o">(</span><span class="s1">&#39;NaH_1000K_1em5bar_petit_grid.dat&#39;</span>, <span class="se">\</span>
+   np.column_stack<span class="o">((</span>wavelength_petit, <span class="se">\</span>
+                                sig_interpolated_petit<span class="o">)))</span>
+</pre></div>
+</div>
+<p>Now we can create the correlated-k tables (or just “k-tables”) and high-resolution opacity files from
+these formatted files. Please <a class="reference external" href="mailto:molliere&#37;&#52;&#48;strw&#46;leidenuniv&#46;nl">email</a> us to get the relevant Fortran
+source to do this, we will send you four files called</p>
+<ul class="simple">
+<li>calc_k_g_r1000_ptrad.f90: this converts the opacity data to
+petitRADTRANS k-tables (these are the opacities for the
+low-resolution mode of petitRADTRANS, at <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>.</li>
+<li>retrieval_NP_16_ggrid.dat: this is the 16-point Gaussian quadrature
+grid that petitRADTRANS uses as the g-coordinate for the k-tables.</li>
+<li>make_short.f90: this cuts the opacities to the right 0.3 to 28
+micron range for the high-resolution calculations
+<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>.</li>
+<li>short_stream_lambs_mass.dat: input file for make_short.f90.</li>
+</ul>
+<p>You do not need to understand anything about k-tables to do this step
+here, we just wanted to explain what the routines are for.</p>
+<p>To start, put the names of all opacity files you want to convert into a file called
+“sigma_list.ls”. Do not include the paths to these files, just the
+file names. Hence will have to run the Fortran conversion routines in the
+folder where the opacity files are. In our simple example (just one
+NaH file at 1000 K and <span class="math notranslate nohighlight">\(10^{-5}\)</span> bar, its content looks like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>NaH_1000K_1em5bar_petit_grid.dat
+</pre></div>
+</div>
+<p>Let’s start with the k-table calculation, for the low-resolution
+opacity mode of petitRADTRANS. Open calc_k_g_r1000_ptrad.f90 and
+modify it to have the correct mass for the molecular species that you
+are interested in (NaH has 24 amu, so just put 24, like below):</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! (c) Paul Molliere 2014</span>
+
+ <span class="k">program </span><span class="n">calc_k_g</span>
+
+  <span class="k">implicit none</span>
+
+  <span class="c">!-----------------------------------------------------------</span>
+  <span class="c">!            |||               |||                |||      !</span>
+  <span class="c">!           \|||/             \|||/              \|||/     !</span>
+  <span class="c">!             v                 v                  v       !</span>
+  <span class="c">!----------------------------------------------------------!</span>
+  <span class="c">!----------------------------------------------------------!</span>
+  <span class="c">! DO NOT FORGET TO CHANGE THE MASS OF THE MOLECULE</span>
+  <span class="c">! EVERY TIME!!!</span>
+  <span class="kt">DOUBLE PRECISION</span><span class="p">,</span> <span class="k">parameter</span>   <span class="kd">::</span> <span class="n">mol_mass_amu</span> <span class="o">=</span> <span class="mi">24</span><span class="n">d0</span>  <span class="c">!&lt;---!</span>
+  <span class="c">!----------------------------------------------------------!</span>
+  <span class="c">!----------------------------------------------------------!</span>
+  <span class="c">!             ^                 ^                  ^       !</span>
+  <span class="c">!           /|||\             /|||\              /|||\     !</span>
+  <span class="c">!            |||               |||                |||      !</span>
+  <span class="c">!----------------------------------------------------------!</span>
+</pre></div>
+</div>
+<p>Next, compile the Fortran source:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gfortran -o calc_k_g_r1000_ptrad calc_k_g_r1000_ptrad.f90
+</pre></div>
+</div>
+<p>Lastly, create a folder called kappa_gs_r1000. Now, take care that the opacity files, the compiled Fortran routine,
+sigma_list.ls, retrieval_NP_16_ggrid.dat and the kappa_gs_r1000 folder
+are all in the same folder. And that you are in this folder. Type</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./calc_k_g_r1000_ptrad
+</pre></div>
+</div>
+<p>and all k-tables will be generated and placed into the kappa_gs_r1000
+folder.</p>
+<p>For the high resolution mode, generate a folder called “short_stream”.
+Next open the short_stream_lambs_mass.dat file and adapt its content
+to have the correct molecule mass. Do not change the wavelength
+boundary values in this file. For NaH, with mass 24, it should look
+like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Minimum wavelength in cm</span>
+<span class="m">0</span>.3d-4
+<span class="c1"># Maximum wavelength in cm</span>
+28d-4
+<span class="c1"># Molecular mass in amu</span>
+24d0
+</pre></div>
+</div>
+<p>Next, compile the high-resolution opacity conversion routine:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gfortran -o make_short make_short.f90
+</pre></div>
+</div>
+<p>Now, again take care that the opacity files, the compiled Fortran routine,
+sigma_list.ls, short_stream_lambs_mass.dat and the short_stream folder
+are all in the same folder. And that you are in this folder. Type</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./make_short
+</pre></div>
+</div>
+<p>and all high resolution opacity tables will be generated and placed into the short_stream
+folder.</p>
+</div>
+<div class="section" id="installing-the-new-opacity-files-in-petitradtrans">
+<h2>Installing the new opacity files in petitRADTRANS<a class="headerlink" href="#installing-the-new-opacity-files-in-petitradtrans" title="Permalink to this headline">¶</a></h2>
+<p>The new opacity files are now ready to be installed. Before that
+create a file called “molparam_id.txt” with the following content</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Species ID (A2) format</span>
+<span class="m">06</span>
+<span class="c1">#### molparam value</span>
+<span class="m">1</span>.0
+</pre></div>
+</div>
+<p>Simply exchange the “06” two-digit integer with the one that you have
+chosen for your molecule (or leave it at 06 if you chose to keep it).
+Copy the “molparam_id.txt” file to the short_stream and kappa_gs_r1000
+folders. Now we are ready for installation. In the folder where
+petitRADTRANS is installed, there also is a input_data folder. To
+install a new species (e.g. NaH), create a folder called NaH in the
+input_data/opacities/lines/corr_k/ and
+input_data/opacities/lines/line_by_line folders. Copy the contents of
+the kappa_gs_r1000 and short_stream folders to the NaH folders in the
+corr_k and line_by_line folders, respectively. The opacities are now
+installed and ready for use!</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="code.html" class="btn btn-neutral float-right" title="Code documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="notebooks/plot_temp_enve.html" class="btn btn-neutral" title="Plotting temperature envelopes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Paul Mollière
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

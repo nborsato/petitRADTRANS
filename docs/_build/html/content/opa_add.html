@@ -187,8 +187,8 @@
 </style>
 <div class="section" id="adding-opacities">
 <h1>Adding opacities<a class="headerlink" href="#adding-opacities" title="Permalink to this headline">¶</a></h1>
-<p>petitRADTRANS has an extensive line opacity database. However, it is very
-likely that we are missing the exact atom / molecule that you want.
+<p>petitRADTRANS has an extensive database of line opacities. However, it is very
+likely that we are missing the one atom / molecule that you want.
 Here we give an example on how to calculate opacities and reformatting
 them for use in petitRADTRANS. In this way you will be able to add
 additional species, that we do not have added yet. If you are
@@ -375,9 +375,12 @@ Hence we will first have to rebin the ExoCross results to the
 petitCODE/petitRADTRANS grid. To this end, please download the
 petitRADTRANS high resolution grid (<a class="reference external" href="https://www.dropbox.com/s/2lyo8ot3nq4rx43/wlen_petitRADTRANS.dat?dl=0">wlen_petitRADTRANS.dat</a>).</p>
 <p>Next, rebin all ExoCross opacity files to that wavelength file, like
-shown below, here we for simplicity we use the NaH opacity file
+shown below, using Python, here for simplicity we use the NaH opacity file
 calculated above.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the opacity file from ExoCross</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>import numpy as np
+from scipy.interpolate import interp1d
+
+<span class="c1"># Read the opacity file from ExoCross</span>
 <span class="nv">dat</span> <span class="o">=</span> np.genfromtxt<span class="o">(</span><span class="s1">&#39;NaH_1000K_1em5bar.out.xsec&#39;</span><span class="o">)</span>
 <span class="nv">wavelength</span> <span class="o">=</span> <span class="m">1</span>./dat<span class="o">[</span>:,0<span class="o">]</span>
 <span class="nv">sigma</span> <span class="o">=</span> dat<span class="o">[</span>:,1<span class="o">]</span>
@@ -391,7 +394,6 @@ calculated above.</p>
 <span class="nv">wavelength_petit</span> <span class="o">=</span> np.genfromtxt<span class="o">(</span><span class="s1">&#39;wlen_petitRADTRANS.dat&#39;</span><span class="o">)</span>
 
 <span class="c1"># Interpolate the ExoCross calculation to that grid</span>
-from scipy.interpolate import interp1d
 <span class="nv">sig_interp</span> <span class="o">=</span> interp1d<span class="o">(</span>wavelength, sigma<span class="o">)</span>
 <span class="nv">sig_interpolated_petit</span> <span class="o">=</span> sig_interp<span class="o">(</span>wavelength_petit<span class="o">)</span>
 

@@ -1,8 +1,8 @@
 Adding opacities
 ================
 
-petitRADTRANS has an extensive line opacity database. However, it is very
-likely that we are missing the exact atom / molecule that you want.
+petitRADTRANS has an extensive database of line opacities. However, it is very
+likely that we are missing the one atom / molecule that you want.
 Here we give an example on how to calculate opacities and reformatting
 them for use in petitRADTRANS. In this way you will be able to add
 additional species, that we do not have added yet. If you are
@@ -232,11 +232,14 @@ petitRADTRANS high resolution grid (`wlen_petitRADTRANS.dat`_).
 .. _`wlen_petitRADTRANS.dat`: https://www.dropbox.com/s/2lyo8ot3nq4rx43/wlen_petitRADTRANS.dat?dl=0
 
 Next, rebin all ExoCross opacity files to that wavelength file, like
-shown below, here we for simplicity we use the NaH opacity file
+shown below, using Python, here for simplicity we use the NaH opacity file
 calculated above.
 
 .. code-block:: bash
-		
+
+    import numpy as np
+    from scipy.interpolate import interp1d
+    
     # Read the opacity file from ExoCross
     dat = np.genfromtxt('NaH_1000K_1em5bar.out.xsec')
     wavelength = 1./dat[:,0]
@@ -251,7 +254,6 @@ calculated above.
     wavelength_petit = np.genfromtxt('wlen_petitRADTRANS.dat')
 
     # Interpolate the ExoCross calculation to that grid
-    from scipy.interpolate import interp1d
     sig_interp = interp1d(wavelength, sigma)
     sig_interpolated_petit = sig_interp(wavelength_petit)
 

@@ -28,12 +28,21 @@ Download opacity data
 _____________________
 
 Download the `opacity and input data
-<https://www.icloud.com/iclouddrive/0vEY-uMZYwPMX573_TFiR7t2A#input_data>`_
+<https://www.dropbox.com/s/s8v10dpyv7j9v07/input_data.zip?dl=0>`_
 (2.3 GB), unzip them, and put the "input_data" folder into the
 "petitRADTRANS" folder (i.e. the same folder where the source is, if
 you clone from gitlab, this should be the
-petitRADTRANS folder *in* the petitRADTRANS folder). This contains the necessary files to run petitRADTRANS, and the low resolution (:math:`\lambda/\Delta\lambda=1000`) opacity files. The high resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data is too large to be fully store online (~100 GB). Please contact us for having the high-resolution opacity files you are interested in (see :ref:`avail_opas`) made available via ftp, upon request. We are working on a more permanent solution for sharing these data.
+petitRADTRANS folder *in* the petitRADTRANS folder). This contains the
+necessary files to run petitRADTRANS, and the low resolution
+(:math:`\lambda/\Delta\lambda=1000`) opacity files. The high
+resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data (about
+130 GB if you want to get all species) can be
+accessed and downloaded `via Dropbox here`_. To
+install them, create a folder called "line-by-line" in the
+"input_data/opacities/lines" folder. Then put the folder of the absorber
+species you downloaded in there.
 
+.. _`via Dropbox here`: https://www.dropbox.com/sh/w7sa20v8qp19b4d/AABKF0GsjghsYLJMUJXDgrHma?dl=0
 Installation
 ____________
 

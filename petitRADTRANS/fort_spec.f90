@@ -480,16 +480,21 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
   ! I/O
   INTEGER, intent(in)                         :: freq_len, struc_len
   CHARACTER*20, intent(in)                    :: spec
-  DOUBLE PRECISION, intent(in)                :: lambda_angstroem(freq_len), abund(struc_len), &
+  DOUBLE PRECISION, intent(in)                :: lambda_angstroem(freq_len), &
+       abund(struc_len), &
        MMW(struc_len), temp(struc_len), press(struc_len)
   DOUBLE PRECISION, intent(out)               :: rayleigh_kappa(freq_len,struc_len)
 
   ! Internal
   INTEGER                                     :: i_str, i_freq
-  DOUBLE PRECISION                            :: lambda_cm(freq_len), lamb_inv(freq_len), alpha_pol
-  DOUBLE PRECISION                            :: a0, a1, a2, a3, a4, a5, a6, a7, luv, lir, l(freq_len), &
-       d(struc_len), T(struc_len), retVal, retValMin, retValMax, mass_h2o, nm1, fk, scale, mass_co2, &
-       mass_o2, mass_n2, A, B, C
+  DOUBLE PRECISION                            :: lambda_cm(freq_len), &
+       lamb_inv(freq_len), alpha_pol, lamb_inv_use
+  DOUBLE PRECISION                            :: a0, a1, a2, a3, a4, a5, &
+       a6, a7, luv, lir, l(freq_len), &
+       d(struc_len), T(struc_len), retVal, retValMin, retValMax, mass_h2o, &
+       nm1, fk, scale, mass_co2, &
+       mass_o2, mass_n2, A, B, C, mass_co, nfr_co, &
+       mass_ch4, nfr_ch4
   
   rayleigh_kappa = 0d0
   
@@ -646,7 +651,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
 
   else if (trim(adjustl(spec)) .EQ. 'N2') then
 
-     ! O2 Rayleigh scattering according to Thalman et al. (2014).
+     ! N2 Rayleigh scattering according to Thalman et al. (2014).
      ! Also see their erratum!
      d = MMW*amu*press/kB/temp*abund
 
@@ -684,6 +689,76 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
 
         end do        
      end do
+
+  else if (trim(adjustl(spec)) .EQ. 'CO') then
+
+     ! CO Rayleigh scattering according to Sneep & Ubachs (2004)
+
+     lambda_cm = lambda_angstroem*1d-8
+     lamb_inv = 1d0/lambda_cm
+
+     d = MMW*amu*press/kB/temp*abund
+
+     do i_str = 1, struc_len
+
+        if (abund(i_str) > 1d-60) then
+
+           scale = d(i_str)/28d0/amu/sneep_ubachs_n
+           nfr_co = d(i_str)/28d0/amu
+           mass_co = 28d0*amu
+
+           do i_freq = 1, freq_len
+
+              lamb_inv_use = lamb_inv(i_freq)
+              if (lambda_cm(i_freq)/1e-4 < 0.168d0) then
+                 lamb_inv_use = 1d0/0.168d-4
+              end if
+              nm1 = (22851d0 + 0.456d12/(71427d0**2d0-lamb_inv_use**2d0))*1d-8
+              nm1 = nm1 * scale
+              fk = 1.016d0
+              
+              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(nfr_co)**2d0* &
+                   (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_co * &
+                   abund(i_str)
+
+           end do
+        end if
+
+     end do
+
+  else if (trim(adjustl(spec)) .EQ. 'CH4') then
+
+     ! CH4 Rayleigh scattering according to Sneep & Ubachs (2004)
+
+     lambda_cm = lambda_angstroem*1d-8
+     lamb_inv = 1d0/lambda_cm
+
+     d = MMW*amu*press/kB/temp*abund
+
+     do i_str = 1, struc_len
+
+        if (abund(i_str) > 1d-60) then
+
+           scale = d(i_str)/16d0/amu/sneep_ubachs_n
+           nfr_ch4 = d(i_str)/16d0/amu
+           mass_ch4 = 16d0*amu
+
+           do i_freq = 1, freq_len
+              
+              nm1 = (46662d0 + 4.02d-6*lamb_inv(i_freq)**2d0)*1d-8
+              nm1 = nm1 * scale
+              fk = 1.0
+              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(nfr_ch4)**2d0* &
+                   (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_ch4 * &
+                   abund(i_str)
+
+           end do
+        end if
+
+     end do
+
 
   end if
 

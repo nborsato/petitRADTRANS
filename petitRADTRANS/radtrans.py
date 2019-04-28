@@ -466,16 +466,23 @@ class Radtrans:
                                      self.cloud_specs_scat_opa, \
                                      self.cloud_aniso)
 
-        cloud_abs, cloud_scat, aniso, cloud_abs_tot_no_aniso = \
+        # aniso = (1-g)
+        cloud_abs, cloud_abs_plus_scat_aniso, aniso, cloud_abs_plus_scat_no_aniso = \
            fs.interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, \
             cloud_red_fac_aniso_TOT,self.cloud_lambdas,self.border_freqs)
 
-        self.continuum_opa_scat += cloud_abs_tot_no_aniso - cloud_abs
+        self.continuum_opa_scat += cloud_abs_plus_scat_no_aniso - cloud_abs
 
         if add_cloud_scat_as_abs != None:
             if add_cloud_scat_as_abs:
                 self.continuum_opa += cloud_abs \
-                  + 0.20*(cloud_abs_tot_no_aniso - cloud_abs)
+                    + 0.20*(cloud_abs_plus_scat_no_aniso - cloud_abs)
+                    
+                  #+ (cloud_abs_plus_scat_aniso - cloud_abs)
+
+                  #+ 1.*(cloud_abs_plus_scat_no_aniso - cloud_abs)* \
+                  #  (aniso)
+                  
             else:
                 self.continuum_opa += cloud_abs
         else:
@@ -789,7 +796,38 @@ class Radtrans:
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
 
     def get_opa(self,temp):
+        ''' Method to calculate and return the line opacities (assuming an abundance
+        of 100 % for the inidividual species) of the Radtrans object. This method
+        updates the line_struc_kappas attribute within the Radtrans class. For the
+        low resolution (`c-k`) mode, the wavelength-mean within every frequency bin
+        is returned.
+
+            Args:
+                temp:
+                    the atmospheric temperature in K, at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+
+            Returns:
+                * wavelength in cm (1-d numpy array)
+                * dictionary of opacities, keys are the names of the line_species
+                  dictionary, entries are 2-d numpy arrays, with the shape
+                  being (number of frequencies, number of atmospheric layers).
+                  Units are cm^2/g, assuming an absorber abundance of 100 % for all
+                  respective species.
+
+        '''
+        
         # Function to calc flux, called from outside
         self.interpolate_species_opa(temp)
-        return self.line_struc_kappas
+       
+        return_opas = {}
+
+        resh_wgauss = self.w_gauss.reshape(len(self.w_gauss), 1, 1)
+    
+        for i_spec in range(len(self.line_species)):
+            return_opas[self.line_species[i_spec]] = np.sum( \
+                self.line_struc_kappas[:, :, i_spec, :] * \
+                resh_wgauss, axis = 0)
+        
+        return nc.c/self.freq, return_opas
 

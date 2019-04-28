@@ -443,6 +443,37 @@ effect of neglecting scattering.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="petitRADTRANS.Radtrans.get_opa">
+<code class="descname">get_opa</code><span class="sig-paren">(</span><em>temp</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.get_opa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate and return the line opacities (assuming an abundance
+of 100 % for the inidividual species) of the Radtrans object. This method
+updates the line_struc_kappas attribute within the Radtrans class. For the
+low resolution (<cite>c-k</cite>) mode, the wavelength-mean within every frequency bin
+is returned.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>temp:</dt>
+<dd>the atmospheric temperature in K, at each atmospheric layer
+(1-d numpy array, same length as pressure array).</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>wavelength in cm (1-d numpy array)</li>
+<li>dictionary of opacities, keys are the names of the line_species
+dictionary, entries are 2-d numpy arrays, with the shape
+being (number of frequencies, number of atmospheric layers).
+Units are cm^2/g, assuming an absorber abundance of 100 % for all
+respective species.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
 <dt id="petitRADTRANS.Radtrans.setup_opa_structure">
 <code class="descname">setup_opa_structure</code><span class="sig-paren">(</span><em>P</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.setup_opa_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup opacity arrays at atmospheric structure dimensions, 

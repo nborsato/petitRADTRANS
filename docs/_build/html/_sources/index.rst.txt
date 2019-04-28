@@ -19,9 +19,8 @@ atmospheres.
    `petitCODE <https://home.strw.leidenuniv.nl/~molliere/#petitcode>`_
    to petitRADTRANS soon.
 
-petitRADTRANS will be available under the MIT License, and documented in Mollière et al, in prep.
-Until the documentation paper is published, please contact_ and invite Paul Mollière
-as coauthor if you make use of petitRADTRANS in your work.
+petitRADTRANS is available under the MIT License, and documented in
+Mollière et al. (2019). Please cite this paper if you make use of petitRADTRANS in your work.
 
 .. _contact: molliere@strw.leidenuniv.nl
 

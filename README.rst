@@ -14,14 +14,13 @@ The code documentation, installation guide, and tutorial can be found at `https:
 Attribution
 -----------
 
-The petitRADTRANS paper is in prep. If you use petitRADTRANS in the meantime, please contact Paul Mollière.
-The most likely solution is to invite him as a coauthor on your paper.
-Once the paper describing petitRADTRANS is published, simply cite the paper.
+If you use petitRADTRANS in your work, please cite the petitRADTRANS
+paper (Mollière et al. 2019, link to follow).
 
 License
 -------
 
 Copyright 2019 Paul Mollière
 
-As soon as the paper describing petitRADTRANS is out, the code is available under the MIT licencse.
+petitRADTRANS is available under the MIT licencse.
 See the LICENSE file for more information.

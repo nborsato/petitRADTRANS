@@ -16,11 +16,11 @@ _____________________________________________
 First, a line list needs to be converted into actual opacities.
 In this example we will show you how to do this using ExoCross, the
 open-source opacity calculator of the `Exomol`_ database.
-ExoCross can be downloaded `here`_, and is described in
-`Yurchenko et al. (2018)`_.
+ExoCross can be downloaded `here <https://github.com/Trovemaster/exocross>`_, is described in
+`Yurchenko et al. (2018)`_ and documented `here
+<https://exocross.readthedocs.io>`_. 
 
 .. _Exomol: http://www.exomol.com
-.. _here: https://github.com/Trovemaster/exocross
 .. _Yurchenko et al. (2018): https://arxiv.org/abs/1801.09803
 
 First, download the ExoCross source, go into the folder containing the

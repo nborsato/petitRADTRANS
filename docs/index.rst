@@ -20,7 +20,8 @@ atmospheres.
    to petitRADTRANS soon.
 
 petitRADTRANS is available under the MIT License, and documented in
-Mollière et al. (2019). Please cite this paper if you make use of petitRADTRANS in your work.
+`Mollière et al. (2019) <https://arxiv.org/abs/1904.11504>`_.
+Please cite this paper if you make use of petitRADTRANS in your work.
 
 .. _contact: molliere@strw.leidenuniv.nl
 

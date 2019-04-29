@@ -15,7 +15,7 @@ Attribution
 -----------
 
 If you use petitRADTRANS in your work, please cite the petitRADTRANS
-paper (Mollière et al. 2019, link to follow).
+paper (`Mollière et al. 2019 <https://arxiv.org/abs/1904.11504>`_).
 
 License
 -------

@@ -11,7 +11,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "This section shows the main script of the implementation of the emission spectrum retrieval. The source `retrieve_emission_paper.py` can be found in the `petitRADTRANS` source folder, in the sub folder `retrieval_examples/emission`. This is the implementation used for the emission retrieval case of the [petitRADTRANS paper](). In this retrieval we make use of the [emcee](https://emcee.readthedocs.io) package, see [Foreman-Mackey et al. (2012)](https://arxiv.org/abs/1202.3665)."
+    "This section shows the main script of the implementation of the emission spectrum retrieval. The source `retrieve_emission_paper.py` can be found in the `petitRADTRANS` source folder, in the sub folder `retrieval_examples/emission`. This is the implementation used for the emission retrieval case of the [petitRADTRANS paper](https://arxiv.org/abs/1904.11504). In this retrieval we make use of the [emcee](https://emcee.readthedocs.io) package, see [Foreman-Mackey et al. (2012)](https://arxiv.org/abs/1202.3665)."
    ]
   },
   {
@@ -387,7 +387,9 @@
   {
    "cell_type": "code",
    "execution_count": 15,
-   "metadata": {},
+   "metadata": {
+    "collapsed": true
+   },
    "outputs": [],
    "source": [
     "# Declare diagnostics\n",

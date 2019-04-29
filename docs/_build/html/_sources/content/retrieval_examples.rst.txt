@@ -5,7 +5,7 @@ In this section we will give two fully imlemented examples of
 retrievals, using synthetic JWST observations. One retrieval for
 emission and one for transmission spectra.  These are the retrievals
 reported on in the `petitRADTRANS paper
-<http://abcd.efgh>`_.
+<https://arxiv.org/abs/1904.11504>`_.
 
 In addition we also give some implemented examples on how to analyze
 the results, by producing contribution functions, corner plots and

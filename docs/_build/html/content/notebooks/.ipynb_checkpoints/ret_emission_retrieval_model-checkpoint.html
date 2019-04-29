@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Master retrieval model: transmission case &mdash; petitRADTRANS 1.0.0 documentation</title>
+  <title>Master retrieval model: emission case &mdash; petitRADTRANS 1.0.0 documentation</title>
   
 
   
@@ -24,15 +24,13 @@
 
   
 
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Emission spectrum retrieval" href="../ret_emission.html" />
-    <link rel="prev" title="Transmission spectrum retrieval: main script" href="ret_transmission_master.html" /> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../_static/js/modernizr.min.js"></script>
+  <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -48,12 +46,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> petitRADTRANS
+            <a href="../../../index.html" class="icon icon-home"> petitRADTRANS
           
 
           
             
-            <img src="../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="../../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -64,7 +62,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -82,25 +80,16 @@
             
             
               <p class="caption"><span class="caption-text">Guide:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../ret_transmission.html">Transmission spectrum retrieval</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="ret_transmission_master.html">Transmission spectrum retrieval: main script</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Master retrieval model: transmission case</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../ret_emission.html">Emission spectrum retrieval</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ret_analysis.html">Analysis of results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../opa_add.html">Adding opacities</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../available_opacities.html">Available opacity species</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../retrieval_examples.html">Retrieval Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../opa_add.html">Adding opacities</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../code.html">Code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Code documentation</a></li>
 </ul>
 
             
@@ -115,7 +104,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">petitRADTRANS</a>
+          <a href="../../../index.html">petitRADTRANS</a>
         
       </nav>
 
@@ -144,19 +133,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../retrieval_examples.html">Retrieval Examples</a> &raquo;</li>
-        
-          <li><a href="../ret_transmission.html">Transmission spectrum retrieval</a> &raquo;</li>
-        
-      <li>Master retrieval model: transmission case</li>
+      <li>Master retrieval model: emission case</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/content/notebooks/ret_transmission_retrieval_model.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/content/notebooks/.ipynb_checkpoints/ret_emission_retrieval_model-checkpoint.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -391,12 +376,12 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Master-retrieval-model:-transmission-case">
-<h1>Master retrieval model: transmission case<a class="headerlink" href="#Master-retrieval-model:-transmission-case" title="Permalink to this headline">¶</a></h1>
-<p>This section shows the retrieval model used by the main retrieval script of the transmission spectrum. The source <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code>. This is the implementation used for the transmission retrieval case of the <a class="reference external" href="https://arxiv.org/abs/1904.11504">petitRADTRANS paper</a>.</p>
+<div class="section" id="Master-retrieval-model:-emission-case">
+<h1>Master retrieval model: emission case<a class="headerlink" href="#Master-retrieval-model:-emission-case" title="Permalink to this headline">¶</a></h1>
+<p>This section shows the retrieval model used by the main retrieval script of the emission spectrum. The source <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/emission</span></code>. This is the implementation used for the emission retrieval case of the <a class="reference external" href="https://arxiv.org/abs/1904.11504">petitRADTRANS paper</a>.</p>
 <p>First we load all required packages:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -409,7 +394,7 @@ from petitRADTRANS import nat_cst as nc
 </div>
 <p>Next we define the function to calculate the mean molecular weight from the abundance dictionary, as described in the petitRADTRANS paper:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -440,18 +425,17 @@ from petitRADTRANS import nat_cst as nc
             MMW += abundances[key]/MMWs[key]
 
     return 1./MMW
-
 </pre></div>
 </div>
 </div>
 <p>Finally, we define the function to calculate and return the emission spectrum:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>def retrieval_model_plain(rt_object, temperature_parameters, log_g, log_P0, \
-                          R_pl, ab_metals):
+                              R_pl, ab_metals):
 
     gravity = 1e1**log_g
 
@@ -470,10 +454,9 @@ from petitRADTRANS import nat_cst as nc
 
     MMW = calc_MMW(abundances)
 
-    rt_object.calc_transm(temp, abundances, gravity, MMW, \
-                              R_pl = R_pl, P0_bar = 1e1**log_P0)
+    rt_object.calc_flux(temp, abundances, gravity, MMW)
 
-    return nc.c/rt_object.freq, rt_object.transm_rad/nc.r_jup_mean
+    return nc.c/rt_object.freq, rt_object.flux
 </pre></div>
 </div>
 </div>
@@ -484,15 +467,6 @@ from petitRADTRANS import nat_cst as nc
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../ret_emission.html" class="btn btn-neutral float-right" title="Emission spectrum retrieval" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="ret_transmission_master.html" class="btn btn-neutral" title="Transmission spectrum retrieval: main script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -520,18 +494,18 @@ from petitRADTRANS import nat_cst as nc
 
     
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
 
   
 
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {

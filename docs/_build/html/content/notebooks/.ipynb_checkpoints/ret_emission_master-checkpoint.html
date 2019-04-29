@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Transmission spectrum retrieval: main script &mdash; petitRADTRANS 1.0.0 documentation</title>
+  <title>Emission spectrum retrieval: main script &mdash; petitRADTRANS 1.0.0 documentation</title>
   
 
   
@@ -24,15 +24,13 @@
 
   
 
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Master retrieval model: transmission case" href="ret_transmission_retrieval_model.html" />
-    <link rel="prev" title="Transmission spectrum retrieval" href="../ret_transmission.html" /> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../_static/js/modernizr.min.js"></script>
+  <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -48,12 +46,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> petitRADTRANS
+            <a href="../../../index.html" class="icon icon-home"> petitRADTRANS
           
 
           
             
-            <img src="../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="../../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -64,7 +62,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -82,35 +80,16 @@
             
             
               <p class="caption"><span class="caption-text">Guide:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../ret_transmission.html">Transmission spectrum retrieval</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Transmission spectrum retrieval: main script</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#General-setup">General setup</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Reading-the-observational-data-in">Reading the observational data in</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Creating-the-radiative-transfer-object">Creating the radiative transfer object</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Prior-setup-for-retrieval">Prior setup for retrieval</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Define-the-log-probability-function">Define the log-probability function</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Run-the-MCMC:-pre-burn">Run the MCMC: pre-burn</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Run-the-main-MCMC-chain">Run the main MCMC chain</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Save-the-results">Save the results</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ret_transmission_retrieval_model.html">Master retrieval model: transmission case</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../ret_emission.html">Emission spectrum retrieval</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ret_analysis.html">Analysis of results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../opa_add.html">Adding opacities</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../available_opacities.html">Available opacity species</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../retrieval_examples.html">Retrieval Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../opa_add.html">Adding opacities</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../code.html">Code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Code documentation</a></li>
 </ul>
 
             
@@ -125,7 +104,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">petitRADTRANS</a>
+          <a href="../../../index.html">petitRADTRANS</a>
         
       </nav>
 
@@ -154,19 +133,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../retrieval_examples.html">Retrieval Examples</a> &raquo;</li>
-        
-          <li><a href="../ret_transmission.html">Transmission spectrum retrieval</a> &raquo;</li>
-        
-      <li>Transmission spectrum retrieval: main script</li>
+      <li>Emission spectrum retrieval: main script</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/content/notebooks/ret_transmission_master.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/content/notebooks/.ipynb_checkpoints/ret_emission_master-checkpoint.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -401,15 +376,15 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Transmission-spectrum-retrieval:-main-script">
-<h1>Transmission spectrum retrieval: main script<a class="headerlink" href="#Transmission-spectrum-retrieval:-main-script" title="Permalink to this headline">¶</a></h1>
-<p>This section shows the main script of the implementation of the transmission spectrum retrieval. The source <code class="docutils literal notranslate"><span class="pre">retrieve_transmission_paper.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code>. This is the implementation used for the transmission retrieval case of the <a class="reference external" href="https://arxiv.org/abs/1904.11504">petitRADTRANS paper</a>. In this retrieval we make use of the <a class="reference external" href="https://emcee.readthedocs.io">emcee</a> package, see <a class="reference external" href="https://arxiv.org/abs/1202.3665">Foreman-Mackey et al.
+<div class="section" id="Emission-spectrum-retrieval:-main-script">
+<h1>Emission spectrum retrieval: main script<a class="headerlink" href="#Emission-spectrum-retrieval:-main-script" title="Permalink to this headline">¶</a></h1>
+<p>This section shows the main script of the implementation of the emission spectrum retrieval. The source <code class="docutils literal notranslate"><span class="pre">retrieve_emission_paper.py</span></code> can be found in the <code class="docutils literal notranslate"><span class="pre">petitRADTRANS</span></code> source folder, in the sub folder <code class="docutils literal notranslate"><span class="pre">retrieval_examples/emission</span></code>. This is the implementation used for the emission retrieval case of the <a class="reference external" href="https://arxiv.org/abs/1904.11504">petitRADTRANS paper</a>. In this retrieval we make use of the <a class="reference external" href="https://emcee.readthedocs.io">emcee</a> package, see <a class="reference external" href="https://arxiv.org/abs/1202.3665">Foreman-Mackey et al.
 (2012)</a>.</p>
 <div class="section" id="General-setup">
 <h2>General setup<a class="headerlink" href="#General-setup" title="Permalink to this headline">¶</a></h2>
 <p>First we load all outside packages:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -419,6 +394,7 @@ import emcee
 import pickle as pickle
 import time
 from emcee.utils import MPIPool
+from scipy.interpolate import interp1d
 </pre></div>
 </div>
 </div>
@@ -430,28 +406,28 @@ from emcee.utils import MPIPool
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>from petitRADTRANS import Radtrans
-from petitRADTRANS import nat_cst as nc
 import master_retrieval_model as rm
+from petitRADTRANS import nat_cst as nc
 import rebin_give_width as rgw
 </pre></div>
 </div>
 </div>
-<p>The package <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> contains the function that returns the model spectrum, given the input parameters. It can be found in <code class="docutils literal notranslate"><span class="pre">retrieval_examples/transmission</span></code> as well, and is explained <a class="reference external" href="ret_transmission_retrieval_model.html">here</a>.</p>
+<p>The package <code class="docutils literal notranslate"><span class="pre">master_retrieval_model.py</span></code> contains the function that returns the model spectrum, given the input parameters. It can be found in <code class="docutils literal notranslate"><span class="pre">retrieval_examples/emission</span></code> as well, and is explained <a class="reference external" href="ret_emission_retrieval_model.html">here</a>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">rebin_give_width.so</span></code> package is a Fortran binary compiled for use in Python, written specifically for this retrieval example. It is written in Fortran to increase speed. It rebins the forward model to the observational wavelength grid, with the width of the wavelength bin given for every grid point. It is compiled by typing:</p>
 <p><code class="docutils literal notranslate"><span class="pre">f2py</span> <span class="pre">-c</span> <span class="pre">--opt='-O3</span> <span class="pre">-funroll-loops</span> <span class="pre">-ftree-vectorize</span> <span class="pre">-ftree-loop-optimize</span> <span class="pre">-msse</span> <span class="pre">-msse2</span> <span class="pre">-m3dnow'</span> <span class="pre">-m</span> <span class="pre">rebin_give_width</span> <span class="pre">rebin_give_width.f90</span></code></p>
 <p>If it won’t run, also see the general installation tips of petitRADTRANS, when building <code class="docutils literal notranslate"><span class="pre">.so</span></code> files, <a class="reference external" href="../installation.html">here</a>.</p>
 <p>Next we specify the observation paths:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>retrieval_name = &#39;JWST_transmission_petitRADTRANSpaper&#39;
+<span></span>retrieval_name = &#39;JWST_emission_petitRADTRANSpaper&#39;
 absolute_path = &#39;&#39; # end with forward slash!
 observation_files = {}
-observation_files[&#39;NIRISS SOSS&#39;] = &#39;NIRISS_SOSS.dat&#39;
-observation_files[&#39;NIRSpec G395M&#39;] = &#39;NIRSpec_G395M.dat&#39;
-observation_files[&#39;MIRI LRS&#39;] = &#39;MIRI_LRS.dat&#39;
+observation_files[&#39;NIRISS SOSS&#39;] = &#39;NIRISS_SOSS_flux.dat&#39;
+observation_files[&#39;NIRSpec G395M&#39;] = &#39;NIRSpec_G395M_flux.dat&#39;
+observation_files[&#39;MIRI LRS&#39;] = &#39;MIRI_LRS_flux.dat&#39;
 </pre></div>
 </div>
 </div>
@@ -470,21 +446,21 @@ if plotting:
 </div>
 <p>Next we setup the hyperparameters of the emcee MCMC sampler:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span># Retrieval hyperparameters
 stepsize = 1.75
 n_walkers = 240
-n_iter = 4200
+n_iter = 5000
 </pre></div>
 </div>
 </div>
-<p>The 240 walkers will carry out 4200 steps, that is we will draw 1,008,000 samples.</p>
+<p>The 240 walkers will carry out 4200 steps, that is we will draw 1,200,000 samples.</p>
 <p>Put <code class="docutils literal notranslate"><span class="pre">cluster</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> if you want to run with <code class="docutils literal notranslate"><span class="pre">mpirun</span></code> on the cluster. We only used multiprocessing in our cases, that is leaving <code class="docutils literal notranslate"><span class="pre">cluster</span> <span class="pre">=</span> <span class="pre">False</span></code> and setting <code class="docutils literal notranslate"><span class="pre">n_threads</span> <span class="pre">=</span> <span class="pre">40</span></code> when running on, for example, 40 cores.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -494,16 +470,21 @@ write_threshold = 200 # number of iterations after which diagnostics are updated
 </pre></div>
 </div>
 </div>
-<p>Next we specify the wavelength range of the models (a bit larger than that of the observations), and fixed parameters that will not be retrieved for the transmission spectrum case. Don’t make the wavelength range larger than needed, it will decrease the forward modeling speed.</p>
+<p>Next we specify the wavelength range of the models (a bit larger than that of the observations), and fixed parameters that will not be retrieved for the transmission spectrum case. Don’t make the wavelength range larger than needed, it will decrease the forward modeling speed. We also get the stellar spectrum, to be used for the calculation of <span class="math notranslate nohighlight">\(F_{\rm Pl}/F_*\)</span> later.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>WLEN = [0.8, 14.0]
+<span></span># Wavelength range of observations, fixed parameters that will not be retrieved
+WLEN = [0.8, 14.0]
 LOG_G =  2.58
 R_pl =   1.84*nc.r_jup_mean
 R_star = 1.81*nc.r_sun
+# Get host star spectrum to calculate F_pl / F_star later.
+T_star = 6295.
+x = nc.get_PHOENIX_spec(T_star)
+fstar = interp1d(x[:,0], x[:,1])
 </pre></div>
 </div>
 </div>
@@ -516,18 +497,17 @@ R_star = 1.81*nc.r_sun
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Read in data, convert all to cgs!
-data_wlen = {}
-data_flux_lambda = {}
-data_flux_lambda_error = {}
+<span></span>data_wlen = {}
+data_flux_nu = {}
+data_flux_nu_error = {}
 data_wlen_bins = {}
 
 for name in observation_files.keys():
 
     dat_obs = np.genfromtxt(observation_files[name])
     data_wlen[name] = dat_obs[:,0]*1e-4
-    data_flux_lambda[name] = dat_obs[:,1]
-    data_flux_lambda_error[name] = dat_obs[:,2]
+    data_flux_nu[name] = dat_obs[:,1]
+    data_flux_nu_error[name] = dat_obs[:,2]
 
     data_wlen_bins[name] = np.zeros_like(data_wlen[name])
     data_wlen_bins[name][:-1] = np.diff(data_wlen[name])
@@ -562,7 +542,7 @@ rt_object = Radtrans(line_species=[&#39;H2&#39;, &#39;CO_all_iso&#39;, &#39;H2O&
                     rayleigh_species=[&#39;H2&#39;,&#39;He&#39;], \
                     continuum_opacities = [&#39;H2-H2&#39;,&#39;H2-He&#39;], \
                     mode=&#39;c-k&#39;, \
-                    wlen_bords_micron = WLEN)
+                    wlen_bords_micron=WLEN)
 
 # Create the RT arrays of appropriate lengths
 rt_object.setup_opa_structure(p)
@@ -585,7 +565,7 @@ rt_object.setup_opa_structure(p)
 <h2>Prior setup for retrieval<a class="headerlink" href="#Prior-setup-for-retrieval" title="Permalink to this headline">¶</a></h2>
 <p>Here we set up the priors for the temperature profile parameters, abundances, and other free parameters, as described in the petitRADTRANS paper.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -630,7 +610,7 @@ log_priors[&#39;K&#39;]              = lambda x: a_b_range(x, -10., 0.)
 <h2>Define the log-probability function<a class="headerlink" href="#Define-the-log-probability-function" title="Permalink to this headline">¶</a></h2>
 <p>First we set up the variables that will be changed and be written into the diagnostice file, during the retrieval run:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -648,7 +628,7 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
 </div>
 <p>Here it comes…. the log-probability function! I tried to comment it sufficiently, shoot me an email if something is unclear.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -716,22 +696,23 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
     log_likelihood = 0.
 
     # Calculate the forward model, this
-    # returns the wavelengths in cm and the planet radius
-    # in R_jup.
-    wlen, flux_lambda = \
+    # returns the wavelengths in cm and the flux F_nu
+    # in erg/cm^2/s/Hz
+    wlen, flux_nu = \
             rm.retrieval_model_plain(rt_object, temp_params, log_g, \
                                          log_P0, R_pl, ab_metals)
 
     # Just to make sure that a long chain does not die
     # unexpectedly:
-    # Return -inf if retrieval model returns NaN values
-    if np.sum(np.isnan(flux_lambda)) &gt; 0:
+    # Return -inf if forward model returns NaN values
+    if np.sum(np.isnan(flux_nu)) &gt; 0:
         print(&quot;NaN spectrum encountered&quot;)
         NaN_spectra += 1
         return -np.inf
 
-    # Convert to observation for transmission case
-    flux_sq = (flux_lambda*nc.r_jup_mean/R_star)**2
+    # Convert to observation for emission case
+    flux_star = fstar(wlen)
+    flux_sq   = flux_nu/flux_star*(R_pl/R_star)**2
 
     # Calculate log-likelihood
     for instrument in data_wlen.keys():
@@ -742,8 +723,8 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
 
         if plotting:
             plt.errorbar(data_wlen[instrument], \
-                             data_flux_lambda[instrument], \
-                             data_flux_lambda_error[instrument], \
+                             data_flux_nu[instrument], \
+                             data_flux_nu_error[instrument], \
                              fmt = &#39;o&#39;, \
                              zorder = -20, \
                              color = &#39;red&#39;)
@@ -755,9 +736,8 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
                              color = &#39;blue&#39;)
 
         # Calculate log-likelihood
-        log_likelihood += \
-               -np.sum(((flux_rebinned - data_flux_lambda[instrument])/ \
-                    data_flux_lambda_error[instrument])**2.)/2.
+        log_likelihood += -np.sum(((flux_rebinned - data_flux_nu[instrument])/ \
+                           data_flux_nu_error[instrument])**2.)/2.
 
     if plotting:
         plt.plot(wlen, flux_sq, color = &#39;black&#39;)
@@ -766,7 +746,6 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
 
     computed_spectra += 1
 
-    # Write diagnostics file
     if (function_calls &gt;= write_threshold):
 
         write_threshold += delta_wt
@@ -774,8 +753,7 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
         info_list = [function_calls, computed_spectra, NaN_spectra, \
                  log_prior + log_likelihood, hours]
 
-        file_object = open(absolute_path + &#39;diag_&#39; + \
-                               retrieval_name + &#39;.dat&#39;, &#39;a&#39;)
+        file_object = open(absolute_path + &#39;diag_&#39; + retrieval_name + &#39;.dat&#39;, &#39;a&#39;)
 
         for i in np.arange(len(info_list)):
             if (i == len(info_list) - 1):
@@ -786,7 +764,10 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
 
     print(log_prior + log_likelihood)
     print(&quot;--&gt; &quot;, function_calls, &quot; --&gt; &quot;, computed_spectra)
-    return log_prior + log_likelihood
+    if np.isnan(log_prior + log_likelihood):
+        return -np.inf
+    else:
+        return log_prior + log_likelihood
 
 def lnprob(x):
     return calc_log_prob(x)
@@ -807,9 +788,9 @@ def lnprob(x):
 </pre></div>
 </div>
 </div>
-<p>Next we set up the initial walker positions:</p>
+<p>Next we set up the initial walker positions, note that we set log_P0 to a constant value (-2), as this is not relevant for calculating emission spectra:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -821,7 +802,7 @@ p0 = [np.array([np.random.normal(loc = -5.5, scale = 2.5, size=1)[0], \
                 np.random.normal(loc = -3., scale = 3., size=1)[0], \
                 np.random.normal(loc = -0.25, scale = 0.4, size=1)[0], \
                 LOG_G,
-                -4.+6.*np.random.uniform(size=1)[0], \
+                -2., \
                 -10.+10.*np.random.uniform(size=1)[0], \
                 -10.+10.*np.random.uniform(size=1)[0], \
                 -10.+10.*np.random.uniform(size=1)[0], \
@@ -887,7 +868,7 @@ p0 = [np.array([best_position[0]+np.random.normal(size=1)[0]*0.8, \
                 best_position[4]+np.random.normal(size=1)[0]*0.5, \
                 best_position[5]+np.random.normal(size=1)[0]*0.1, \
                 LOG_G, \
-                best_position[7]+np.random.normal(size=1)[0]*0.2, \
+                -2., \
                 best_position[8]+np.random.normal(size=1)[0]*0.3, \
                 best_position[9]+np.random.normal(size=1)[0]*0.3, \
                 best_position[10]+np.random.normal(size=1)[0]*0.3, \
@@ -941,6 +922,7 @@ samples = sampler.chain[:, :, :].reshape((-1, n_dim))
 pickle.dump(samples,f)
 f.close()
 
+
 with open(&#39;chain_lnprob_&#39; + retrieval_name + &#39;.pickle&#39;, &#39;wb&#39;) as f:
     pickle.dump([sampler.lnprobability], \
                 f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -955,15 +937,6 @@ with open(&#39;chain_lnprob_&#39; + retrieval_name + &#39;.pickle&#39;, &#39;wb&
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="ret_transmission_retrieval_model.html" class="btn btn-neutral float-right" title="Master retrieval model: transmission case" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../ret_transmission.html" class="btn btn-neutral" title="Transmission spectrum retrieval" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -991,18 +964,18 @@ with open(&#39;chain_lnprob_&#39; + retrieval_name + &#39;.pickle&#39;, &#39;wb&
 
     
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
 
   
 
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {

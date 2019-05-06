@@ -34,7 +34,7 @@ necessary files to run petitRADTRANS, and the low resolution
 resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data (about
 130 GB if you want to get all species) can be
 accessed and downloaded `via Dropbox here`_. To
-install them, create a folder called "line-by-line" in the
+install them, create a folder called "line_by_line" in the
 "input_data/opacities/lines" folder. Then put the folder of the absorber
 species you downloaded in there.
 

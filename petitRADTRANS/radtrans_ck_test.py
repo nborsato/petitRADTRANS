@@ -53,8 +53,12 @@ class Radtrans:
     
     def __init__(self, line_species=[], rayleigh_species=[], cloud_species=[], \
                      continuum_opacities = [], H2H2CIA=False, H2HeCIA=False, \
-                     wlen_bords_micron=[0.05,300.], mode='c-k'):
+                     wlen_bords_micron=[0.05,300.], mode='c-k', \
+                     test_ck_shuffle_comp = False):
 
+        ##### ADD TO SOURCE AND COMMENT PROPERLY LATER!
+        self.test_ck_shuffle_comp = test_ck_shuffle_comp
+        
         # Line-by-line or corr-k
         self.mode = mode
 
@@ -152,17 +156,12 @@ class Radtrans:
         self.haze_factor = None
         self.gray_opacity = None
 
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN OUTSOURCE~~~
-        
         ###########################
         # Read in opacities
         ###########################
         
         # Molecules:
         # First get the P-Ts where the grid is defined.
-        # This here is for the nominal, log-uniform 10 x 13 point
-        # P-T grid.
         buffer = np.genfromtxt(self.path+'/opa_input_files/opa_PT_grid.dat')
         self.line_TP_grid = np.zeros_like(buffer)
         self.line_TP_grid[:,0] = buffer[:,1]
@@ -172,96 +171,26 @@ class Radtrans:
         self.line_TP_grid = np.array(self.line_TP_grid.reshape( \
                     len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
 
-        # Check if species has custom PT grid
-        self.custom_grid = {}
-        
-        if len(self.line_species) > 0:
-            self.custom_line_TP_grid = {}
-            self.custom_line_paths = {}
-            self.custom_diffTs, self.custom_diffPs = {}, {}
-            
-            for i_spec in range(len(self.line_species)):
-                custom_grid_data = \
-                  pyi.get_custom_PT_grid(self.path, \
-                                         self.mode, \
-                                         self.line_species[i_spec])
-
-                if custom_grid_data == None:
-                    self.custom_line_TP_grid[self.line_species[i_spec]] = \
-                      self.line_TP_grid
-                    self.custom_line_paths[self.line_species[i_spec]] = None
-                    self.custom_diffTs[self.line_species[i_spec]], \
-                      self.custom_diffPs[self.line_species[i_spec]] = 13, 10
-                    self.custom_grid[self.line_species[i_spec]] = False
-                else:
-                    self.custom_line_TP_grid[self.line_species[i_spec]] = \
-                      custom_grid_data[0]
-                    self.custom_line_paths[self.line_species[i_spec]] = \
-                      custom_grid_data[1]
-                    self.custom_diffTs[self.line_species[i_spec]], \
-                      self.custom_diffPs[self.line_species[i_spec]] = \
-                      custom_grid_data[2], \
-                      custom_grid_data[3]
-                    self.custom_grid[self.line_species[i_spec]] = True
-
         # Read actual opacities....
         # line_grid_kappas has the shape g_len,freq_len,len(line_species),
         # len(line_TP_grid[:,0])
-
-        # line_grid_kappas_custom_PT's entries have the shape
-        # g_len,freq_len,len(self.custom_line_TP_grid[self.line_species[i_spec]])
-        self.line_grid_kappas_custom_PT = {}
-                
         if len(self.line_species) > 0:
 
             tot_str = ''
             for sstring in self.line_species:
                 tot_str = tot_str + sstring + ':'
 
-            custom_file_names = ''
-
-            for i_spec in range(len(self.line_species)):
-
-                if not self.custom_grid[self.line_species[i_spec]]:
-                    len_TP = len(self.line_TP_grid[:,0])
-                else:
-                    len_TP = len(self.custom_line_TP_grid[ \
-                            self.line_species[i_spec]][:,0])
-
-                custom_file_names = ''
-                if self.custom_grid[self.line_species[i_spec]]:
-                    for i_TP in range(len_TP):
-                        custom_file_names = custom_file_names + \
-                   self.custom_line_paths[self.line_species[i_spec]][i_TP] \
-                   + ':'
-                
-                self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
-                  fi.read_in_molecular_opacities( \
-                    self.path, \
-                    self.line_species[i_spec]+':', \
-                    freq_len_full, \
-                    self.g_len, \
-                    1, \
-                    len_TP, \
-                    self.mode, \
-                    arr_min, \
-                    arr_max, \
-                    self.custom_grid[self.line_species[i_spec]], \
-                    custom_file_names)
-            print()
-            
+            self.line_grid_kappas = fi.read_in_molecular_opacities( \
+                    self.path,tot_str,freq_len_full,self.g_len, \
+                    len(self.line_species),len(self.line_TP_grid[:,0]), \
+                                                self.mode, arr_min, arr_max)
             if self.mode == 'c-k':
-                for i_spec in range(len(self.line_species)):
-                    self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
-                      np.array(self.line_grid_kappas_custom_PT[ \
-                        self.line_species[i_spec]][:,index,0,:], \
-                                 dtype='d',order='Fortran')
+                self.line_grid_kappas = np.array( \
+                    self.line_grid_kappas[:,index,:,:], \
+                    dtype='d',order='Fortran')
             else:
-                for i_spec in range(len(self.line_species)):
-                    self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
-                    np.array(self.line_grid_kappas_custom_PT[ \
-                        self.line_species[i_spec]][:,:,0,:], \
-                                 dtype='d',order='Fortran')
+                self.line_grid_kappas = \
+                  np.array(self.line_grid_kappas,dtype='d',order='Fortran')
             
         # Read in g grid for correlated-k
         if self.mode == 'c-k':
@@ -275,8 +204,6 @@ class Radtrans:
             self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d', \
                 order='Fortran'),np.array(self.w_gauss, \
                 dtype='d',order='Fortran')
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~END OUTSOURCE~~~~~
         
         # Read in the angle (mu) grid for the emission spectral calculations.
         buffer = np.genfromtxt(self.path+'/opa_input_files/mu_points.dat')
@@ -425,13 +352,8 @@ class Radtrans:
         # Interpolate line opacities to given temperature structure.
         self.temp = temp
         if len(self.line_species) > 0:
-            for i_spec in range(len(self.line_species)):
-                self.line_struc_kappas[:,:,i_spec,:] = fi.interpol_opa_ck(self.press,temp, \
-                                    self.custom_line_TP_grid[self.line_species[i_spec]], \
-                                    self.custom_grid[self.line_species[i_spec]], \
-                                    self.custom_diffTs[self.line_species[i_spec]], \
-                                    self.custom_diffPs[self.line_species[i_spec]], \
-                                    self.line_grid_kappas_custom_PT[self.line_species[i_spec]])
+            self.line_struc_kappas = fi.interpol_opa_ck(self.press,temp, \
+                                    self.line_TP_grid,self.line_grid_kappas)
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             
@@ -504,6 +426,14 @@ class Radtrans:
         self.line_struc_kappas = fi.mix_opas_ck(self.line_abundances, \
                                     self.line_struc_kappas,self.continuum_opa)
 
+        # Similar to the line-by-line case below, if test_ck_shuffle_comp is
+        # True, we will put the total opacity into the first species slot and
+        # then carry the remaining radiative transfer steps only over that 0
+        # index.
+        if (self.mode == 'c-k') and self.test_ck_shuffle_comp:
+            self.line_struc_kappas[:,:,0,:] = self.combine_opas_shuffle_ck()
+            sys.exit(1)
+            
         # In the line-by-line case we can simply
         # add the opacities of different species
         # in frequency space. All opacities are
@@ -512,6 +442,47 @@ class Radtrans:
             self.line_struc_kappas[:,:,0,:] = \
               np.sum(self.line_struc_kappas, axis = 2)
 
+    def combine_opas_shuffle_ck(self):
+
+        from scipy.interpolate import interp1d
+        
+        # For the sampled, uncorrelated opacity combination:
+        # How many opacity points should be sampled?
+        nsample = 160
+
+        # Give the lower indices 3 times, and decrease their weight
+        # later by 3! In this way they can also sample the low g grid
+        # a bit more...
+        indices = np.array([0,1,2,3,4,5,6,7, \
+                        0,1,2,3,4,5,6,7, \
+                        0,1,2,3,4,5,6,7, \
+                        8,9,10,11,12,13,14,15])
+
+        # Randomly sample the indices, for every band and species
+        nbands = self.freq_len*len(self.press)
+        sample_ind = np.random.choice(indices, size = \
+                                      nbands*nsample*nspec).reshape( \
+                                      nbands, nsample, nspec)
+
+        nspec = len(self.line_species)
+
+        i_band = 0
+        for i_struc in range(len(self.press)):
+            for i_freq in range(self.freq_len):
+
+                ks = line_struc_kappas[:, i_freq, :, i_struc]
+                
+                g_sample, k_sample = \
+                  combine_sample(ks, self.w_gauss, nspec, \
+                          nsample, sample_ind[i_band,:,:], \
+                                     self.g_gauss)
+
+                ktab_sampled = interp1d(g_sample, k_sample)
+                line_struc_kappas[:, i_freq, 0, i_struc] = \
+                  ktab_sampled(self.g_gauss)
+
+                i_band += 1
+                
     def calc_cloud_opacity(self,abundances, mmw, gravity, sigma_lnorm, \
                                fsed = None, Kzz = None, \
                                radius = None, add_cloud_scat_as_abs = None):
@@ -878,38 +849,114 @@ class Radtrans:
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
 
     def get_opa(self,temp):
-        ''' Method to calculate and return the line opacities (assuming an abundance
-        of 100 % for the inidividual species) of the Radtrans object. This method
-        updates the line_struc_kappas attribute within the Radtrans class. For the
-        low resolution (`c-k`) mode, the wavelength-mean within every frequency bin
-        is returned.
-
-            Args:
-                temp:
-                    the atmospheric temperature in K, at each atmospheric layer
-                    (1-d numpy array, same length as pressure array).
-
-            Returns:
-                * wavelength in cm (1-d numpy array)
-                * dictionary of opacities, keys are the names of the line_species
-                  dictionary, entries are 2-d numpy arrays, with the shape
-                  being (number of frequencies, number of atmospheric layers).
-                  Units are cm^2/g, assuming an absorber abundance of 100 % for all
-                  respective species.
-
-        '''
-        
         # Function to calc flux, called from outside
         self.interpolate_species_opa(temp)
-       
-        return_opas = {}
+        return self.line_struc_kappas
 
-        resh_wgauss = self.w_gauss.reshape(len(self.w_gauss), 1, 1)
+
+
+
+
+# Test, implement in Fortran later if it works,
+# also the function that uses it, above.
+
+def combine_sample(ks, delgs_use, nspec, nsample, sample_ind, \
+                       g_gauss):
+    '''
+    Combine the k-tables of two species, by simply sampling their tables
+    ks[dimensions len(delgs), nspec] (float): k tables of species
+    delgs[dimension len(delgs)] (float): weights of k table points
+    g_gauss[dimension len(delgs)] (float): g coordinates of k table 
+            points, used for potting only
+    n_spec (int) = number of species with k tables
+    nsample (int) = number of samples to be drawn
+    sample_ind[dimensions nsample, nspec] (int): randomly created
+           indices for combination
+    '''
+
+    plotting = False
+
+    if plotting:
+        import pylab as plt
+        plt.yscale('log')
+        plt.xlim([0., 1.])
     
-        for i_spec in range(len(self.line_species)):
-            return_opas[self.line_species[i_spec]] = np.sum( \
-                self.line_struc_kappas[:, :, i_spec, :] * \
-                resh_wgauss, axis = 0)
-        
-        return nc.c/self.freq, return_opas
+    # Copy the weights here, because we will change them!
+    delgs = cp.copy(delgs_use)
 
+    # Decrease the lower weights by a factor of 3, because
+    # they will be sampled 3 times more often!
+    delgs[:8] = delgs[:8]/3.
+    #stamps = []
+    #stamps.append(time.clock())
+    
+    # Will contain total sampled opacity
+    tot_opa = np.zeros(nsample)
+    # Will contain the weights of the sampled opacity points
+    tot_weight = np.ones(nsample)
+
+    #stamps.append(time.clock())
+    
+    # Minimum and maximum opacity
+    k_min = np.sum(np.min(ks, axis = 0))
+    k_max = np.sum(np.max(ks, axis = 0))
+    
+    #stamps.append(time.clock())
+    
+    # Loop through species, and sample
+    for i_spec in range(nspec):
+        
+        #sub_stamps = []
+        #sub_stamps.append(time.clock())
+
+        # Get index sample
+        sample_indices = sample_ind[:, i_spec]
+
+        #sub_stamps.append(time.clock())
+        
+        # Use this to get opacity sample
+        tot_opa += ks[sample_indices, i_spec]
+        # These are the weights of the corresponding sample
+        tot_weight *= delgs[sample_indices]
+
+        if plotting:
+            plt.plot(g_gauss, ks[:, i_spec], \
+                         color = 'gray', linestyle = '.-')
+
+        #sub_stamps.append(time.clock())
+
+    #print("Subtimes", np.diff(sub_stamps)/np.sum(np.diff(sub_stamps))*100)
+    #stamps.append(time.clock())
+
+    # sort the resulting k-table (keeping the weights
+    # with their opacity values)
+    sort_ind = tot_opa.argsort()
+    tot_opa = tot_opa[sort_ind]
+    tot_weight = tot_weight[sort_ind]
+
+    #stamps.append(time.clock())
+
+    # Transform weights to normalized g coordinate.
+    tot_weight = tot_weight / np.sum(tot_weight)
+    g_sample = np.concatenate((np.array([0.]), \
+                np.cumsum(tot_weight)[:-1])) +  tot_weight/2.
+
+    #stamps.append(time.clock())
+
+    # Return g coordinate and new opacity table
+    g_ret = np.concatenate((np.array([0.]), g_sample))
+    k_ret = np.concatenate((np.array([k_min]), tot_opa))
+    g_ret = np.concatenate((g_ret, np.array([1.])))
+    k_ret = np.concatenate((k_ret, np.array([k_max])))
+
+    #stamps.append(time.clock())
+    #stamps = np.array(stamps)
+    #print("Times", np.diff(stamps)/np.sum(np.diff(stamps))*100)
+
+    if plotting:
+        plt.plot(g_ret, k_ret, \
+                     color = 'black', linestyle = '.-')
+        plt.show()
+        plt.clf()
+    
+    return g_ret, k_ret

@@ -5,7 +5,8 @@ from . import nat_cst as nc
 
 def sigma_hm_ff(lambda_angstroem, temp, P_e):
     '''
-    Returns the H- free-free cross-section in units of cm^2 per H per e- pressure (in cgs), as defined on page 156 of
+    Returns the H- free-free cross-section in units of cm^2
+    per H per e- pressure (in cgs), as defined on page 156 of
     "The Observation and Analysis of Stellar Photospheres"
     by David F. Gray
     '''
@@ -17,16 +18,19 @@ def sigma_hm_ff(lambda_angstroem, temp, P_e):
         # Convert to Angstrom (from cgs)
         theta = 5040./temp
 
-        f0 = -2.2763 - 1.6850 * np.log10(lamb_use) + 0.76661*np.log10(lamb_use)**2. \
+        f0 = -2.2763 - 1.6850 * np.log10(lamb_use) + \
+          0.76661*np.log10(lamb_use)**2. \
           - 0.053346*np.log10(lamb_use)**3.
-        f1 = 15.2827 - 9.2846 * np.log10(lamb_use) + 1.99381*np.log10(lamb_use)**2. \
+        f1 = 15.2827 - 9.2846 * np.log10(lamb_use) + \
+          1.99381*np.log10(lamb_use)**2. \
           - 0.142631*np.log10(lamb_use)**3.
         f2 = 0. # -197.789 + 190.266 * np.log10(lamb_use) - 67.9775*np.log10(lamb_use)**2. \
                 # + 10.6913*np.log10(lamb_use)**3. - 0.625151*np.log10(lamb_use)*4.
         # Once last term was commented out agreement was good. Otherwise opacity was way too large.
 
         retVal = np.zeros_like(lambda_angstroem)
-        retVal[index] = 1e-26*P_e*1e1**(f0+f1*np.log10(theta)+f2*np.log10(theta)**2.)
+        retVal[index] = 1e-26*P_e*1e1**(f0+f1*np.log10(theta)+ \
+                                            f2*np.log10(theta)**2.)
         return retVal
 
     else:
@@ -35,7 +39,8 @@ def sigma_hm_ff(lambda_angstroem, temp, P_e):
 
 def sigma_bf_mean(border_lambda_angstroem):
     '''
-    Returns the H- bound-free cross-section in units of cm^2  per H-, as defined on page 155 of
+    Returns the H- bound-free cross-section in units of cm^2 \
+    per H-, as defined on page 155 of
     "The Observation and Analysis of Stellar Photospheres"
     by David F. Gray
     '''
@@ -58,11 +63,13 @@ def sigma_bf_mean(border_lambda_angstroem):
     index = right <= 1.64e4
 
     for i_a in range(len(a)):
-        retVal[index] += a[i_a]*(right[index]**(i_a+1)-left[index]**(i_a+1))/(i_a+1)
+        retVal[index] += a[i_a]*(right[index]**(i_a+1)- \
+                                     left[index]**(i_a+1))/(i_a+1)
 
     index_bracket = (left < 1.64e4) & (right > 1.64e4)
     for i_a in range(len(a)):
-        retVal[index_bracket] += a[i_a]*((1.64e4)**(i_a+1)-left[index_bracket]**(i_a+1))/(i_a+1)
+        retVal[index_bracket] += a[i_a]*((1.64e4)**(i_a+1)- \
+                            left[index_bracket]**(i_a+1))/(i_a+1)
     #print(len(retVal[index_bracket]))
 
     index = (left+right)/2. > 1.64e4
@@ -73,10 +80,12 @@ def sigma_bf_mean(border_lambda_angstroem):
     return retVal*1e-18/diff
 
 
-def hminus_opacity(lambda_angstroem, border_lambda_angstroem, temp, press, mmw, abundances):
+def hminus_opacity(lambda_angstroem, border_lambda_angstroem, \
+                       temp, press, mmw, abundances):
     ''' Calc the H- opacity.'''
 
-    retVal = np.array(np.zeros(len(lambda_angstroem)*len(press)).reshape(len(lambda_angstroem), \
+    retVal = np.array(np.zeros(len(lambda_angstroem)*len(press)).reshape( \
+                        len(lambda_angstroem), \
                         len(press)),dtype='d',order='Fortran')
     
     # Calc. electron number fraction
@@ -91,13 +100,107 @@ def hminus_opacity(lambda_angstroem, border_lambda_angstroem, temp, press, mmw, 
     
     for i_struct in range(len(n_e)):
         #print(i_struct)
-        kappa_hminus_ff = sigma_hm_ff(lambda_angstroem, temp[i_struct], P_e[i_struct])/ \
-          nc.amu*abundances['H'][i_struct]
+        kappa_hminus_ff = sigma_hm_ff(lambda_angstroem, temp[i_struct], \
+          P_e[i_struct])/nc.amu*abundances['H'][i_struct]
         
         retVal[:,i_struct] = kappa_hminus_bf*abundances['H-'][i_struct] + \
           kappa_hminus_ff
 
     return retVal
+
+
+
+
+
+#################################################
+# Functions to read custom PT grids
+#################################################
+
+# Function to sort custom (potentially randomly sorted) PT grid of opacities
+def sort_opa_PTgrid(path_ptg):
+
+    # Read the Ps and Ts
+    PTs = np.genfromtxt(path_ptg)
+
+    # Read the file names
+    f = open(path_ptg)
+    lines = f.readlines()
+    f.close()
+    
+    n_entries = len(lines)
+
+    # Prepare the array to contain the
+    # pressures, temperatures, indices in the unsorted list.
+    # Also prepare the list of unsorted names
+    PTind = np.ones(n_entries*3).reshape(n_entries, 3)
+    names = []
+
+    # Fill the array and name list
+    for i_line in range(n_entries):
+
+        line = lines[i_line]
+        lsp = line.split(' ')
+
+        PTind[i_line, 0], \
+        PTind[i_line, 1], \
+        PTind[i_line, 2] = \
+        PTs[i_line, 0], PTs[i_line, 1], i_line
+        if lsp[-1][-1] == '\n':
+            names.append(lsp[-1][:-1])
+        else:
+            names.append(lsp[-1])
+
+    # Sort the array by temperature
+    Tsortind = np.argsort(PTind[:,1])
+    PTind = PTind[Tsortind, :]
+    #print(PTind)
+    #input()
+    
+    # Sort the array entries with constant
+    # temperatures by pressure
+    diffPs = 0
+    T_start = PTind[0, 1]
+    for i in range(n_entries):
+        if np.abs(PTind[i, 1]-T_start) > 1e-10:
+            break
+        diffPs = diffPs+1
+    #print(diffPs)
+
+    diffTs = int(n_entries / diffPs)
+    for i_dT in range(diffTs):
+        subsort = PTind[i_dT*diffPs:(i_dT+1)*diffPs, :]
+        Psortind = np.argsort(subsort[:,0])
+        subsort = subsort[Psortind, :]
+        PTind[i_dT*diffPs:(i_dT+1)*diffPs, :] = subsort
+        #print(subsort)
+        #input()
+
+    names_sorted = []
+    for i_line in range(n_entries):
+        names_sorted.append(names[int(PTind[i_line, 2]+0.01)])
+
+    # Convert from bars to cgs
+    PTind[:,0] = PTind[:,0]*1e6
+
+    return [PTind[:,:-1][:,::-1], names_sorted, diffTs, diffPs]
+
+# Check if custom grid exists, if yes return sorted P-T array with
+# corresponding sorted path names, retutn None otherwise.
+
+def get_custom_PT_grid(path, mode, species):
+
+    import os as os
+
+    path_test = path+'/opacities/lines/'
+    if mode == 'lbl':
+        path_test = path_test + 'line_by_line/'
+    elif mode == 'c-k':
+        path_test = path_test + 'corr_k/'
+    path_test = path_test + species + '/PTpaths.ls'
+    if not os.path.isfile(path_test):
+        return None
+    else:
+        return sort_opa_PTgrid(path_test)
 
 '''
 import pylab as plt

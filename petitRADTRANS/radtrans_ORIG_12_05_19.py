@@ -152,9 +152,6 @@ class Radtrans:
         self.haze_factor = None
         self.gray_opacity = None
 
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~BEGIN OUTSOURCE~~~
-        
         ###########################
         # Read in opacities
         ###########################
@@ -172,96 +169,26 @@ class Radtrans:
         self.line_TP_grid = np.array(self.line_TP_grid.reshape( \
                     len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
 
-        # Check if species has custom PT grid
-        self.custom_grid = {}
-        
-        if len(self.line_species) > 0:
-            self.custom_line_TP_grid = {}
-            self.custom_line_paths = {}
-            self.custom_diffTs, self.custom_diffPs = {}, {}
-            
-            for i_spec in range(len(self.line_species)):
-                custom_grid_data = \
-                  pyi.get_custom_PT_grid(self.path, \
-                                         self.mode, \
-                                         self.line_species[i_spec])
-
-                if custom_grid_data == None:
-                    self.custom_line_TP_grid[self.line_species[i_spec]] = \
-                      self.line_TP_grid
-                    self.custom_line_paths[self.line_species[i_spec]] = None
-                    self.custom_diffTs[self.line_species[i_spec]], \
-                      self.custom_diffPs[self.line_species[i_spec]] = 13, 10
-                    self.custom_grid[self.line_species[i_spec]] = False
-                else:
-                    self.custom_line_TP_grid[self.line_species[i_spec]] = \
-                      custom_grid_data[0]
-                    self.custom_line_paths[self.line_species[i_spec]] = \
-                      custom_grid_data[1]
-                    self.custom_diffTs[self.line_species[i_spec]], \
-                      self.custom_diffPs[self.line_species[i_spec]] = \
-                      custom_grid_data[2], \
-                      custom_grid_data[3]
-                    self.custom_grid[self.line_species[i_spec]] = True
-
         # Read actual opacities....
         # line_grid_kappas has the shape g_len,freq_len,len(line_species),
         # len(line_TP_grid[:,0])
-
-        # line_grid_kappas_custom_PT's entries have the shape
-        # g_len,freq_len,len(self.custom_line_TP_grid[self.line_species[i_spec]])
-        self.line_grid_kappas_custom_PT = {}
-                
         if len(self.line_species) > 0:
 
             tot_str = ''
             for sstring in self.line_species:
                 tot_str = tot_str + sstring + ':'
 
-            custom_file_names = ''
-
-            for i_spec in range(len(self.line_species)):
-
-                if not self.custom_grid[self.line_species[i_spec]]:
-                    len_TP = len(self.line_TP_grid[:,0])
-                else:
-                    len_TP = len(self.custom_line_TP_grid[ \
-                            self.line_species[i_spec]][:,0])
-
-                custom_file_names = ''
-                if self.custom_grid[self.line_species[i_spec]]:
-                    for i_TP in range(len_TP):
-                        custom_file_names = custom_file_names + \
-                   self.custom_line_paths[self.line_species[i_spec]][i_TP] \
-                   + ':'
-                
-                self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
-                  fi.read_in_molecular_opacities( \
-                    self.path, \
-                    self.line_species[i_spec]+':', \
-                    freq_len_full, \
-                    self.g_len, \
-                    1, \
-                    len_TP, \
-                    self.mode, \
-                    arr_min, \
-                    arr_max, \
-                    self.custom_grid[self.line_species[i_spec]], \
-                    custom_file_names)
-            print()
-            
+            self.line_grid_kappas = fi.read_in_molecular_opacities( \
+                    self.path,tot_str,freq_len_full,self.g_len, \
+                    len(self.line_species),len(self.line_TP_grid[:,0]), \
+                                                self.mode, arr_min, arr_max)
             if self.mode == 'c-k':
-                for i_spec in range(len(self.line_species)):
-                    self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
-                      np.array(self.line_grid_kappas_custom_PT[ \
-                        self.line_species[i_spec]][:,index,0,:], \
-                                 dtype='d',order='Fortran')
+                self.line_grid_kappas = np.array( \
+                    self.line_grid_kappas[:,index,:,:], \
+                    dtype='d',order='Fortran')
             else:
-                for i_spec in range(len(self.line_species)):
-                    self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
-                    np.array(self.line_grid_kappas_custom_PT[ \
-                        self.line_species[i_spec]][:,:,0,:], \
-                                 dtype='d',order='Fortran')
+                self.line_grid_kappas = \
+                  np.array(self.line_grid_kappas,dtype='d',order='Fortran')
             
         # Read in g grid for correlated-k
         if self.mode == 'c-k':
@@ -275,8 +202,6 @@ class Radtrans:
             self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d', \
                 order='Fortran'),np.array(self.w_gauss, \
                 dtype='d',order='Fortran')
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~END OUTSOURCE~~~~~
         
         # Read in the angle (mu) grid for the emission spectral calculations.
         buffer = np.genfromtxt(self.path+'/opa_input_files/mu_points.dat')
@@ -425,13 +350,8 @@ class Radtrans:
         # Interpolate line opacities to given temperature structure.
         self.temp = temp
         if len(self.line_species) > 0:
-            for i_spec in range(len(self.line_species)):
-                self.line_struc_kappas[:,:,i_spec,:] = fi.interpol_opa_ck(self.press,temp, \
-                                    self.custom_line_TP_grid[self.line_species[i_spec]], \
-                                    self.custom_grid[self.line_species[i_spec]], \
-                                    self.custom_diffTs[self.line_species[i_spec]], \
-                                    self.custom_diffPs[self.line_species[i_spec]], \
-                                    self.line_grid_kappas_custom_PT[self.line_species[i_spec]])
+            self.line_struc_kappas = fi.interpol_opa_ck(self.press,temp, \
+                                    self.line_TP_grid,self.line_grid_kappas)
         else:
             self.line_struc_kappas = np.zeros_like(self.line_struc_kappas)
             

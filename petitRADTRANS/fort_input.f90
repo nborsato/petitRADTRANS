@@ -80,24 +80,27 @@ end subroutine get_freq
 !!$ Subroutine to read in the molecular opacities (c-k or line-by-line)
 
 subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,species_len,opa_TP_grid_len, &
-     opa_grid_kappas, mode, arr_min, arr_max)
+     opa_grid_kappas, mode, arr_min, arr_max, custom_grid, custom_file_names)
 
   implicit none
   ! I/O
   character*150, intent(in) :: path
   character*5000, intent(in) :: species_names_tot
+  character*20000, intent(in) :: custom_file_names
   integer, intent(in) :: freq_len,g_len,species_len, opa_TP_grid_len, arr_min, arr_max
   character*3, intent(in) :: mode
   double precision, intent(out) :: opa_grid_kappas(g_len,freq_len,species_len,opa_TP_grid_len)
+  logical :: custom_grid
   ! Internal
   character*2 :: species_id
   character*150 :: path_names(opa_TP_grid_len)
   character*400 :: path_read_stream
   !character*150 :: species_names(species_len)
   integer :: species_name_inds(2,species_len)
+  integer :: opa_file_names_inds(2,opa_TP_grid_len)
   double precision :: molparam, read_val, buffer
   integer :: i_spec, i_file, i_str, curr_spec_ind, &
-       i_kg, curr_N_g_int, curr_cb_int
+       i_kg, curr_N_g_int, curr_cb_int, curr_file_ind
 
   ! Get single species names
   curr_spec_ind = 1
@@ -115,14 +118,44 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
      end if
   end do
 
-  ! Get paths of opacity files
-  open(unit=20,file=trim(adjustl(path))//'/opa_input_files/opa_filenames.txt')
-  do i_file = 1, opa_TP_grid_len
-     read(20,*) path_names(i_file)
-  end do
-  close(20)
+  ! Get opacity file names if defined by user
+  if (custom_grid) then
+     curr_file_ind = 1 !
+     opa_file_names_inds(1,curr_file_ind) = 1
+     do i_str = 1, 20000
+        if (curr_file_ind > opa_TP_grid_len) then
+           EXIT
+        end if
+        if (custom_file_names(i_str:i_str) .EQ. ':') then
+           opa_file_names_inds(2,curr_file_ind) = i_str-1
+           curr_file_ind = curr_file_ind+1
+           if (curr_file_ind <= opa_TP_grid_len) then
+              opa_file_names_inds(1,curr_file_ind) = i_str+1
+           end if
+        end if
+     end do
 
-  write(*,*)
+!!$     do i_file = 1, opa_TP_grid_len
+!!$        write(*,*) custom_file_names(opa_file_names_inds(1,i_file): &
+!!$             opa_file_names_inds(2,i_file))
+!!$     end do     
+  end if
+
+  ! Get paths of opacity files
+  if (custom_grid) then
+     do i_file = 1, opa_TP_grid_len
+        path_names(i_file) = custom_file_names(opa_file_names_inds(1,i_file): &
+             opa_file_names_inds(2,i_file))
+     end do
+  else
+     open(unit=20,file=trim(adjustl(path))//'/opa_input_files/opa_filenames.txt')
+     do i_file = 1, opa_TP_grid_len
+        read(20,*) path_names(i_file)
+     end do
+     close(20)
+  end if
+
+  !write(*,*)
   ! Read opas for every species...
   do i_spec = 1, species_len
      ! Get species file ID and molparam
@@ -147,17 +180,34 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
         ! Open opacity file
         if (mode .EQ. 'c-k') then
 
-           open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
-                //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
-                species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
-                adjustl(trim(path_names(i_file))), form='unformatted')
+           if (custom_grid) then
+              open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
+                   //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+                   species_name_inds(2,i_spec))))//'/'// &
+                   adjustl(trim(path_names(i_file))), form='unformatted')
+           else
+              open(unit=20,file=trim(adjustl(path))//'/opacities/lines/corr_k/' &
+                   //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+                   species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
+                   adjustl(trim(path_names(i_file))), form='unformatted')
+           end if
            
         else if (mode .EQ. 'lbl') then
 
-           path_read_stream =  trim(adjustl(path))//'/opacities/lines/line_by_line/' &
-                //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
-                species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
-                adjustl(trim(path_names(i_file)))
+           if (custom_grid) then
+              path_read_stream =  trim(adjustl(path))//'/opacities/lines/line_by_line/' &
+                   //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+                   species_name_inds(2,i_spec))))//'/'// &
+                   adjustl(trim(path_names(i_file)))
+           else
+              path_read_stream =  trim(adjustl(path))//'/opacities/lines/line_by_line/' &
+                   //trim(adjustl(species_names_tot(species_name_inds(1,i_spec): &
+                   species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
+                   adjustl(trim(path_names(i_file)))
+!!$              write(*,*) 'sigma_'//species_id// &
+!!$                   adjustl(trim(path_names(i_file)))
+           end if
+           
            call read_kappa(arr_min, arr_max, freq_len, &
                 path_read_stream, opa_grid_kappas(1,:,i_spec,i_file))
            
@@ -177,7 +227,7 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
   end do
 
   write(*,*) 'Done.'
-  write(*,*)
+  !write(*,*)
   
 end subroutine read_in_molecular_opacities
 
@@ -381,53 +431,82 @@ end subroutine read_in_cloud_opacities
 
 !!$ Subroutine to interpolate the total opacity at a given PT structure
 
-subroutine interpol_opa_ck(press,temp,struc_len,opa_TP_grid, &
-     opa_grid_kappas,tp2nddim,N_PT_grid,N_species,freq_len,g_len,opa_struc_kappas)
+subroutine interpol_opa_ck(press,temp,opa_TP_grid,custom_grid, &
+     diffTs, diffPs, opa_grid_kappas, struc_len, tp2nddim, N_PT_grid, &
+     freq_len, g_len, opa_struc_kappas)
 
   implicit none
   ! I/O
   INTEGER, intent(in)                   :: struc_len, N_PT_grid, g_len
-  INTEGER, intent(in)                   :: N_species, freq_len, tp2nddim
+  INTEGER, intent(in)                   :: freq_len, tp2nddim
   DOUBLE PRECISION, intent(in)          :: press(struc_len), temp(struc_len)
   DOUBLE PRECISION, intent(in)          :: opa_TP_grid(N_PT_grid,tp2nddim)
-  DOUBLE PRECISION, intent(in)          :: opa_grid_kappas(g_len,freq_len,N_species,N_PT_grid)
-  DOUBLE PRECISION, intent(out)         :: opa_struc_kappas(g_len,freq_len,N_species,struc_len)
+  DOUBLE PRECISION, intent(in)          :: opa_grid_kappas(g_len,freq_len,N_PT_grid)
+  LOGICAL, intent(in)                   :: custom_grid
+  INTEGER, intent(in)                   :: diffTs, diffPs
+  DOUBLE PRECISION, intent(out)         :: opa_struc_kappas(g_len,freq_len,struc_len)
+  
   ! internal
-  INTEGER                               :: i_str, s_temp_ind
-  INTEGER                               :: press_s_t_s_ind, press_s_t_l_ind, &
-       s_temp_ind_own, press_ind_own
+  INTEGER                               :: i_str, ind_take
+  INTEGER                               :: s_temp_ind_own, press_ind_own
   INTEGER                               :: PT_ind_Ts_Ps, PT_ind_Ts_Pl,PT_ind_Tl_Ps, &
        PT_ind_Tl_Pl
-  DOUBLE PRECISION                      :: PorT(g_len,freq_len,N_species), &
-       slopes(g_len,freq_len,N_species), &
-       buffer1(g_len,freq_len,N_species),buffer2(g_len,freq_len,N_species)
-  DOUBLE PRECISION                      :: buffer_Ts(g_len,freq_len,N_species), &
-       buffer_Tl(g_len,freq_len,N_species),temp_min, temp_max
+  DOUBLE PRECISION                      :: PorT(g_len,freq_len), &
+       slopes(g_len,freq_len), &
+       buffer1(g_len,freq_len),buffer2(g_len,freq_len), &
+       diff_Ps_vals(diffPs), diff_Ts_vals(diffTs)
+  DOUBLE PRECISION                      :: buffer_Ts(g_len,freq_len), &
+       buffer_Tl(g_len,freq_len),temp_min, temp_max
 
   !~~~~~~~~~~~~~
-
-  press_s_t_l_ind = 0
-  press_s_t_s_ind = 0
-  s_temp_ind = 0
 
   temp_min = MINVAL(opa_TP_grid(:,1))
   temp_max = MAXVAL(opa_TP_grid(:,1))
 
+  if (custom_grid) then
+     diff_Ps_vals = opa_TP_grid(1:diffPs,2)
+     do i_str = 1, diffTs
+        ind_take = (i_str-1)*diffPs+1
+        diff_Ts_vals(i_str) = opa_TP_grid(ind_take,1)
+     end do
+  end if
+
   do i_str = 1, struc_len
 
-     s_temp_ind_own = MAX(MIN(INT(log10(temp(i_str)/81.14113604736988d0)/ &
-          log10(2995d0/81.14113604736988d0)*12d0)+1,12),1)
-     press_ind_own = MAX(MIN(INT(log10(press(i_str)*1d-6)+6d0)+1,9),1)
+     if (custom_grid) then
 
-     ! Opacity N_PT_grid indice at smaller P and T than point of interest
-     PT_ind_Ts_Ps = (s_temp_ind_own-1)*10+press_ind_own
-     ! Opacity N_PT_grid indice at larger P and smaller T than point of interest
-     PT_ind_Ts_Pl = (s_temp_ind_own-1)*10+press_ind_own+1
-     ! Opacity N_PT_grid indice at smaller P and larger T than point of interest
-     PT_ind_Tl_Ps = s_temp_ind_own*10+press_ind_own
-     ! Opacity N_PT_grid indice at larger P and T than point of interest
-     PT_ind_Tl_Pl = s_temp_ind_own*10+press_ind_own+1
+        call search_intp_ind(diff_Ts_vals,diffTs,temp(i_str),1,s_temp_ind_own)
+        call search_intp_ind(diff_Ps_vals,diffPs,press(i_str),1,press_ind_own)
 
+        ! Opacity N_PT_grid indice at smaller P and T than point of interest
+        PT_ind_Ts_Ps = (s_temp_ind_own-1)*diffPs+press_ind_own
+        ! Opacity N_PT_grid indice at larger P and smaller T than point of interest
+        PT_ind_Ts_Pl = (s_temp_ind_own-1)*diffPs+press_ind_own+1
+        ! Opacity N_PT_grid indice at smaller P and larger T than point of interest
+        PT_ind_Tl_Ps = s_temp_ind_own*diffPs+press_ind_own
+        ! Opacity N_PT_grid indice at larger P and T than point of interest
+        PT_ind_Tl_Pl = s_temp_ind_own*diffPs+press_ind_own+1
+
+!!$        write(*,*) opa_TP_grid(PT_ind_Ts_Pl,1), temp(i_str), opa_TP_grid(PT_ind_Tl_Pl,1)
+        
+     else
+        s_temp_ind_own = MAX(MIN(INT(log10(temp(i_str)/81.14113604736988d0)/ &
+             log10(2995d0/81.14113604736988d0)*12d0)+1,12),1)
+        press_ind_own = MAX(MIN(INT(log10(press(i_str)*1d-6)+6d0)+1,9),1)
+
+        ! Opacity N_PT_grid indice at smaller P and T than point of interest
+        PT_ind_Ts_Ps = (s_temp_ind_own-1)*10+press_ind_own
+        ! Opacity N_PT_grid indice at larger P and smaller T than point of interest
+        PT_ind_Ts_Pl = (s_temp_ind_own-1)*10+press_ind_own+1
+        ! Opacity N_PT_grid indice at smaller P and larger T than point of interest
+        PT_ind_Tl_Ps = s_temp_ind_own*10+press_ind_own
+        ! Opacity N_PT_grid indice at larger P and T than point of interest
+        PT_ind_Tl_Pl = s_temp_ind_own*10+press_ind_own+1
+
+!!$        write(*,*) opa_TP_grid(PT_ind_Ts_Pl,1), temp(i_str), opa_TP_grid(PT_ind_Tl_Pl,1)
+        
+     end if
+     
      ! Interpolate...
 
      !**********************************************************
@@ -437,9 +516,9 @@ subroutine interpol_opa_ck(press,temp,struc_len,opa_TP_grid, &
      ! kappas
 
      ! kappa_gs at smaller T and smaller P
-     buffer1 = opa_grid_kappas(:,:,:,PT_ind_Ts_Ps)
+     buffer1 = opa_grid_kappas(:,:,PT_ind_Ts_Ps)
      ! kappa_gs at smaller T and larger P
-     buffer2 = opa_grid_kappas(:,:,:,PT_ind_Ts_Pl)
+     buffer2 = opa_grid_kappas(:,:,PT_ind_Ts_Pl)
 
      PorT = press(i_str)-opa_TP_grid(PT_ind_Ts_Ps,2)
 
@@ -460,9 +539,9 @@ subroutine interpol_opa_ck(press,temp,struc_len,opa_TP_grid, &
      ! kappas
 
      ! opacity at larger T and smaller P
-     buffer1 = opa_grid_kappas(:,:,:,PT_ind_Tl_Ps)
+     buffer1 = opa_grid_kappas(:,:,PT_ind_Tl_Ps)
      ! opacity at larger T and larger P
-     buffer2 = opa_grid_kappas(:,:,:,PT_ind_Tl_Pl)
+     buffer2 = opa_grid_kappas(:,:,PT_ind_Tl_Pl)
 
      PorT = press(i_str)-opa_TP_grid(PT_ind_Tl_Ps,2)
 
@@ -489,17 +568,64 @@ subroutine interpol_opa_ck(press,temp,struc_len,opa_TP_grid, &
      slopes = (buffer_Tl-buffer_Ts)/(opa_TP_grid(PT_ind_Tl_Ps,1)-opa_TP_grid(PT_ind_Ts_Ps,1))
 
      if (temp(i_str) >= temp_max) then
-        opa_struc_kappas(:,:,:,i_str) = buffer_Tl
+        opa_struc_kappas(:,:,i_str) = buffer_Tl
      else if (temp(i_str) <= temp_min) then
-        opa_struc_kappas(:,:,:,i_str) = buffer_Ts
+        opa_struc_kappas(:,:,i_str) = buffer_Ts
      else
-        opa_struc_kappas(:,:,:,i_str) = &
+        opa_struc_kappas(:,:,i_str) = &
              buffer_Ts +  slopes*PorT
      end if
 
   end do
 
 end subroutine interpol_opa_ck
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
+
+  implicit none
+
+  INTEGER            :: binbordlen, arrlen, intpint(arrlen)
+  DOUBLE PRECISION   :: binbord(binbordlen),arr(arrlen)
+  INTEGER            :: i_arr
+  INTEGER            :: pivot, k0, km
+
+  ! carry out a binary search for the interpolation bin borders
+  do i_arr = 1, arrlen 
+
+     if (arr(i_arr) >= binbord(binbordlen)) then
+        intpint(i_arr) = binbordlen - 1
+     else if (arr(i_arr) <= binbord(1)) then
+        intpint(i_arr) = 1
+     else
+
+        k0 = 1
+        km = binbordlen
+        pivot = (km+k0)/2
+
+        do while(km-k0>1)
+
+           if (arr(i_arr) >= binbord(pivot)) then
+              k0 = pivot
+              pivot = (km+k0)/2
+           else
+              km = pivot
+              pivot = (km+k0)/2
+           end if
+
+        end do
+
+        intpint(i_arr) = k0
+
+     end if
+
+  end do
+  
+end subroutine search_intp_ind
 
 !!$ #########################################################################
 !!$ #########################################################################

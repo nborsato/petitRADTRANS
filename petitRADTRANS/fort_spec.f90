@@ -358,12 +358,12 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
 !!$  if (contribution) then
 !!$     contr_tr = t_graze_wlen_int
 !!$  end if
-
+!!$
 !!$  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,.FALSE.,radius)
 !!$  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,.TRUE.,radius_var)
 !!$  open(unit=10,file='rad_test.dat')
 !!$  do i_str = 1, struc_len
-!!$     write(10,*) press(i_str)*1d-6, radius(i_str)/R_jup, radius_var(i_str)/R_jup
+!!$     write(10,*) press(i_str)*1d-6, radius(i_str)/R_jup, radius_var(i_str)/R_jup, rho(i_str)
 !!$  end do
 !!$  close(10)
   

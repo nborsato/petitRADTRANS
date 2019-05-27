@@ -88,7 +88,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Available opacity species</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#line-absorbers">Line absorbers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#line-absorbers-low-resolution-mode-c-k-with-lambda-delta-lambda-1000"><strong>Line absorbers, low resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;c-k&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contributed-opacities-low-resolution-mode">Contributed opacities, low resolution mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#line-absorbers-high-resolution-mode-lbl-with-lambda-delta-lambda-10-6"><strong>Line absorbers, high resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;lbl&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contributed-opacities-high-resolution-mode">Contributed opacities, high resolution mode</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#cloud-opacities">Cloud opacities</a></li>
@@ -194,6 +196,8 @@
 <span id="avail-opas"></span><h1>Available opacity species<a class="headerlink" href="#available-opacity-species" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="line-absorbers">
 <h2>Line absorbers<a class="headerlink" href="#line-absorbers" title="Permalink to this headline">¶</a></h2>
+<p>Please see the <a class="reference external" href="installation.html">Installation</a> section for how to
+obtain and use the opacities listed below.</p>
 <div class="section" id="line-absorbers-low-resolution-mode-c-k-with-lambda-delta-lambda-1000">
 <h3><strong>Line absorbers, low resolution mode</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;c-k&quot;</span></code>, with <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>)<a class="headerlink" href="#line-absorbers-low-resolution-mode-c-k-with-lambda-delta-lambda-1000" title="Permalink to this headline">¶</a></h3>
 <div class="admonition important">
@@ -304,6 +308,134 @@
 <tr class="row-even"><td>VO</td>
 <td>VO</td>
 <td>Main isotopologue, B. Plez</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="contributed-opacities-low-resolution-mode">
+<h3>Contributed opacities, low resolution mode<a class="headerlink" href="#contributed-opacities-low-resolution-mode" title="Permalink to this headline">¶</a></h3>
+<p>Please make sure to install the lastest version of petitRADTRANS when
+using the contributed opacities below, otherwise the code will not
+see, and hence not use, the high temperature points (T &gt; 3000 K) of
+the opacities.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Abund. dict.</th>
+<th class="head">Ref. line list / broad.</th>
+<th class="head">P (bar), T (K) range</th>
+<th class="head">Contributor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Ca</td>
+<td>Ca</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Ca+</td>
+<td>Ca+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Fe</td>
+<td>Fe</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Fe+</td>
+<td>Fe+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Ti</td>
+<td>Ti</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Ti+</td>
+<td>Ti+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Mg</td>
+<td>Mg</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Mg+</td>
+<td>Mg+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>O</td>
+<td>O</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>O+</td>
+<td>O+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Si</td>
+<td>Si</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Si+</td>
+<td>Si+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>V</td>
+<td>V</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>V+</td>
+<td>V+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Al</td>
+<td>Al</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Al+</td>
+<td>Al+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Li</td>
+<td>Li</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
 </tr>
 </tbody>
 </table>
@@ -438,6 +570,134 @@
 <tr class="row-even"><td>VO</td>
 <td>VO</td>
 <td>Main isotopologue, B. Plez</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="contributed-opacities-high-resolution-mode">
+<h3>Contributed opacities, high resolution mode<a class="headerlink" href="#contributed-opacities-high-resolution-mode" title="Permalink to this headline">¶</a></h3>
+<p>Please make sure to install the lastest version of petitRADTRANS when
+using the contributed opacities below, otherwise the code will not
+see, and hence not use, the high temperature points (T &gt; 3000 K) of
+the opacities.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Abund. dict.</th>
+<th class="head">Ref. line list / broad.</th>
+<th class="head">P (bar), T (K) range</th>
+<th class="head">Contributor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Ca</td>
+<td>Ca</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Ca+</td>
+<td>Ca+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Fe</td>
+<td>Fe</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Fe+</td>
+<td>Fe+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Ti</td>
+<td>Ti</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Ti+</td>
+<td>Ti+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Mg</td>
+<td>Mg</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Mg+</td>
+<td>Mg+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>O</td>
+<td>O</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>O+</td>
+<td>O+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Si</td>
+<td>Si</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Si+</td>
+<td>Si+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>V</td>
+<td>V</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>V+</td>
+<td>V+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Al</td>
+<td>Al</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-odd"><td>Al+</td>
+<td>Al+</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
+</tr>
+<tr class="row-even"><td>Li</td>
+<td>Li</td>
+<td><a class="reference external" href="http://kurucz.harvard.edu">Kurucz</a>, <span class="math notranslate nohighlight">\(\gamma_{\rm nat+VdW},\sigma_{\rm therm}\)</span></td>
+<td><span class="math notranslate nohighlight">\(10^{-6}\)</span>-<span class="math notranslate nohighlight">\(10^{3}\)</span>, 80-4000</td>
+<td><a class="reference external" href="mailto:karan&#37;&#52;&#48;mpia&#46;de">K<span>&#46;</span> Molaverdikhani</a></td>
 </tr>
 </tbody>
 </table>

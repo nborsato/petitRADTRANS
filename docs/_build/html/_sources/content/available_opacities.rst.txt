@@ -6,6 +6,9 @@ Available opacity species
 Line absorbers
 ______________
 
+Please see the `Installation <installation.html>`_ section for how to
+obtain and use the opacities listed below.
+
 **Line absorbers, low resolution mode** (``"c-k"``, with :math:`\lambda/\Delta\lambda=1000`)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -88,6 +91,127 @@ ______________
    * - VO
      - VO
      - Main isotopologue, B. Plez
+
+Contributed opacities, low resolution mode
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please make sure to install the lastest version of petitRADTRANS when
+using the contributed opacities below, otherwise the code will not
+see, and hence not use, the high temperature points (T > 3000 K) of
+the opacities.
+
+.. list-table::
+   :widths: 10 10 10 10 10
+   :header-rows: 1
+
+   * - Name
+     - Abund. dict.
+     - Ref. line list / broad.
+     - P (bar), T (K) range
+     - Contributor
+
+   * - Ca
+     - Ca
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Ca+
+     - Ca+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Fe
+     - Fe
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Fe+
+     - Fe+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Ti
+     - Ti
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Ti+
+     - Ti+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Mg
+     - Mg
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Mg+
+     - Mg+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - O
+     - O
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - O+
+     - O+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Si
+     - Si
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Si+
+     - Si+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - V
+     - V
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - V+
+     - V+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Al
+     - Al
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Al+
+     - Al+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Li
+     - Li
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
 
 **Line absorbers, high resolution mode** (``"lbl"``, with :math:`\lambda/\Delta\lambda=10^6`)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -187,6 +311,127 @@ ______________
      - VO
      - Main isotopologue, B. Plez
 
+Contributed opacities, high resolution mode
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please make sure to install the lastest version of petitRADTRANS when
+using the contributed opacities below, otherwise the code will not
+see, and hence not use, the high temperature points (T > 3000 K) of
+the opacities.
+
+.. list-table::
+   :widths: 10 10 10 10 10
+   :header-rows: 1
+
+   * - Name
+     - Abund. dict.
+     - Ref. line list / broad.
+     - P (bar), T (K) range
+     - Contributor
+
+   * - Ca
+     - Ca
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Ca+
+     - Ca+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Fe
+     - Fe
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Fe+
+     - Fe+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Ti
+     - Ti
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Ti+
+     - Ti+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Mg
+     - Mg
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Mg+
+     - Mg+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - O
+     - O
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - O+
+     - O+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Si
+     - Si
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Si+
+     - Si+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - V
+     - V
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - V+
+     - V+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Al
+     - Al
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Al+
+     - Al+
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+   * - Li
+     - Li
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+
+       
 Cloud opacities
 _______________
 

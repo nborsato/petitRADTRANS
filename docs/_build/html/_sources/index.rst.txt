@@ -34,7 +34,7 @@ missing from our database.
 News
 ____
 
-29 May 2019: high-temperature atom and ion opacities now available
+27 May 2019: high-temperature atom and ion opacities now available
        We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
        Si, Si+, O, O+, Al, Al+, Ti, Ti+, V and V+, up to temperatures of
        4000 K. As usual, if the atmospheric temperatures increase

@@ -25,14 +25,14 @@ _____________________
 
 Download the `opacity and input data
 <https://www.dropbox.com/s/s8v10dpyv7j9v07/input_data.zip?dl=0>`_
-(2.3 GB), unzip them, and put the "input_data" folder into the
+(4.3 GB), unzip them, and put the "input_data" folder into the
 "petitRADTRANS" folder (i.e. the same folder where the source is, if
 you clone from gitlab, this should be the
 petitRADTRANS folder *in* the petitRADTRANS folder). This contains the
 necessary files to run petitRADTRANS, and the low resolution
 (:math:`\lambda/\Delta\lambda=1000`) opacity files. The high
 resolution (:math:`\lambda/\Delta\lambda=10^6`) opacity data (about
-130 GB if you want to get all species) can be
+240 GB if you want to get all species) can be
 accessed and downloaded `via Dropbox here`_. To
 install them, create a folder called "line_by_line" in the
 "input_data/opacities/lines" folder. Then put the folder of the absorber
@@ -42,7 +42,8 @@ species you downloaded in there.
 Installation
 ____________
 
-- In the terminal, enter the petitRADTRANS folder (``cd petitRADTRANS``).
+- In the terminal, enter the petitRADTRANS folder containing the source
+  (.py and .f90 files) (``cd petitRADTRANS``).
 - Type the following in the terminal ``chmod +x make.sh``, and press Enter.
 - Type the following in the terminal ``./make.sh``, and press Enter. A lot of text will appear while the Fortran subroutines are being built. If you use Anaconda, see the first installation tip below before carrying out this step.
 - Type ``ls`` in the terminal and press Enter. If everything has worked you should see three files with the “.so” extension in the folder. If you are experiencing problems see the installation tips below.
@@ -50,15 +51,17 @@ ____________
 
 .. code-block:: bash
 		
-   export PYTHONPATH=Path to the folder containing petitRADTRANS/:$PYTHONPATH
+   export PYTHONPATH=Path of the folder containing the petitRADTRANS source/:$PYTHONPATH
 
 .. attention::
    Don’t forget to adapt the path in the line above :) ! If you clone petitRADTRANS from gitlab, this
-   should be the path of the petitRADTRANS folder *in* the petitRADTRANS folder. If you are
+   should be the path of the top-level petitRADTRANS folder
+   *containing* the petitRADTRANS source folder. If you are
    uncertain what the absolute path of the folder containing the
-   petitRADTRANS folder is, then switch to that folder in the
-   terminal, type “pwd”, and press Enter. Don’t forget the dash “/“
-   behind the path.
+   petitRADTRANS source folder is, then switch to that folder in the
+   terminal, type “pwd”, and press Enter. You can then just copy-paste
+   that path. Don’t forget to put a dash “/“
+   at the end of the path.
    Close and reopen the terminal such that it will set the Python path correctly.
 
 Installation tips

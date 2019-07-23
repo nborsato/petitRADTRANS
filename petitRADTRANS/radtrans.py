@@ -172,7 +172,11 @@ class Radtrans:
         self.line_TP_grid = np.array(self.line_TP_grid.reshape( \
                     len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
 
+<<<<<<< HEAD
         # Check if species has custom PT grid.
+=======
+        # Check if species has custom PT grid
+>>>>>>> c3ee7c2dfa19a512ff53fd8487698a02aed7eea5
         self.custom_grid = {}
         
         if len(self.line_species) > 0:

@@ -502,31 +502,36 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
 
      ! H2 Rayleigh according to dalgarno & williams (1962)
      do i_str = 1, struc_len
-        rayleigh_kappa(:,i_str) = rayleigh_kappa(:,i_str) + &
-             (8.14d-13/lambda_angstroem**4+1.28d-6/lambda_angstroem**6+1.61d0/lambda_angstroem**8)/2d0 &
-             /1.66053892d-24*abund(i_str)
+
+        if (abund(i_str) > 1d-60) then
+           rayleigh_kappa(:,i_str) = rayleigh_kappa(:,i_str) + &
+                (8.14d-13/lambda_angstroem**4+1.28d-6/lambda_angstroem**6+1.61d0/lambda_angstroem**8)/2d0 &
+                /1.66053892d-24*abund(i_str)
+        end if
+        
      end do
      
   else if (trim(adjustl(spec)) .EQ. 'He') then
      
      ! He Rayleigh scattering according to Chan & Dalgarno alphas (1965)
      lambda_cm = lambda_angstroem*1d-8
-
+     
      do i_str = 1, struc_len
-        do i_freq = 1, freq_len
+        if (abund(i_str) > 1d-60) then
+           do i_freq = 1, freq_len
 
-           if (lambda_cm(i_freq) >= 0.9110d-4) then
-              alpha_pol = 1.379
-           else
-              alpha_pol = 2.265983321d0 - 3.721350022d0*lambda_cm(i_freq)/1d-4 &
-                   + 3.016150391d0*(lambda_cm(i_freq)/1d-4)**2d0
-           end if
+              if (lambda_cm(i_freq) >= 0.9110d-4) then
+                 alpha_pol = 1.379
+              else
+                 alpha_pol = 2.265983321d0 - 3.721350022d0*lambda_cm(i_freq)/1d-4 &
+                      + 3.016150391d0*(lambda_cm(i_freq)/1d-4)**2d0
+              end if
 
-           rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
-                +128d0*pi**5d0/3d0/lambda_cm(i_freq)**4d0*(alpha_pol*1.482d-25)**2d0/4d0 &
-                /1.66053892d-24*abund(i_str)
-
-        end do
+              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                   +128d0*pi**5d0/3d0/lambda_cm(i_freq)**4d0*(alpha_pol*1.482d-25)**2d0/4d0 &
+                   /1.66053892d-24*abund(i_str)
+           end do
+        end if
      end do
 
   else if (trim(adjustl(spec)) .EQ. 'H2O') then
@@ -552,36 +557,38 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
      T = temp/273.15d0
 
      do i_str = 1, struc_len
-        do i_freq = 1, freq_len
+        if (abund(i_str) > 1d-60) then
+           do i_freq = 1, freq_len
 
-           retVal = (a0+a1*d(i_str)+a2*T(i_str)+a3*l(i_freq)**2d0*T(i_str)+a4/l(i_freq)**2d0 &
-                + a5/(l(i_freq)**2d0-luv**2d0) + a6/(l(i_freq)**2d0-lir**2d0) + &
-                a7*d(i_str)**2d0)*d(i_str)
+              retVal = (a0+a1*d(i_str)+a2*T(i_str)+a3*l(i_freq)**2d0*T(i_str)+a4/l(i_freq)**2d0 &
+                   + a5/(l(i_freq)**2d0-luv**2d0) + a6/(l(i_freq)**2d0-lir**2d0) + &
+                   a7*d(i_str)**2d0)*d(i_str)
 
-           retValMin = (a0+a1*d(i_str)+a2*T(i_str)+a3*(0.2d0/0.589d0)**2d0*T(i_str)+a4/(0.2d0/0.589d0)**2d0 &
-                + a5/((0.2d0/0.589d0)**2d0-luv**2d0) + a6/((0.2d0/0.589d0)**2d0-lir**2d0) + &
-                a7*d(i_str)**2d0)*d(i_str)
+              retValMin = (a0+a1*d(i_str)+a2*T(i_str)+a3*(0.2d0/0.589d0)**2d0*T(i_str)+a4/(0.2d0/0.589d0)**2d0 &
+                   + a5/((0.2d0/0.589d0)**2d0-luv**2d0) + a6/((0.2d0/0.589d0)**2d0-lir**2d0) + &
+                   a7*d(i_str)**2d0)*d(i_str)
 
-           retValMax = (a0+a1*d(i_str)+a2*T(i_str)+a3*(1.1d0/0.589d0)**2d0*T(i_str)+a4/(1.1d0/0.589d0)**2d0 &
-                + a5/((1.1d0/0.589d0)**2d0-luv**2d0) + a6/((1.1d0/0.589d0)**2d0-lir**2d0) + &
-                a7*d(i_str)**2d0)*d(i_str)
+              retValMax = (a0+a1*d(i_str)+a2*T(i_str)+a3*(1.1d0/0.589d0)**2d0*T(i_str)+a4/(1.1d0/0.589d0)**2d0 &
+                   + a5/((1.1d0/0.589d0)**2d0-luv**2d0) + a6/((1.1d0/0.589d0)**2d0-lir**2d0) + &
+                   a7*d(i_str)**2d0)*d(i_str)
 
-           if ((lambda_cm(i_freq)/1d-4 > 0.2d0) .AND. (lambda_cm(i_freq)/1d-4 < 1.1d0)) then
-              nm1 = sqrt((1d0+2d0*retVal)/(1d0-retVal))
-           else if (lambda_cm(i_freq)/1d-4 >= 1.1d0) then
-              nm1 = sqrt((1.+2.*retValMax)/(1.-retValMax))
-           else
-              nm1 = sqrt((1.+2.*retValMin)/(1.-retValMin))
-           end if
+              if ((lambda_cm(i_freq)/1d-4 > 0.2d0) .AND. (lambda_cm(i_freq)/1d-4 < 1.1d0)) then
+                 nm1 = sqrt((1d0+2d0*retVal)/(1d0-retVal))
+              else if (lambda_cm(i_freq)/1d-4 >= 1.1d0) then
+                 nm1 = sqrt((1.+2.*retValMax)/(1.-retValMax))
+              else
+                 nm1 = sqrt((1.+2.*retValMin)/(1.-retValMin))
+              end if
 
-           nm1 = nm1 - 1d0
-           fk = 1.0
-           rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
-                + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(d(i_str)/18d0/amu)**2d0* &
-                (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_h2o * &
-                abund(i_str)
+              nm1 = nm1 - 1d0
+              fk = 1.0
+              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(d(i_str)/18d0/amu)**2d0* &
+                   (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_h2o * &
+                   abund(i_str)
 
-        end do
+           end do
+        end if
      end do
 
   else if (trim(adjustl(spec)) .EQ. 'CO2') then
@@ -594,23 +601,24 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
      mass_co2 = 44d0*amu
 
      do i_str = 1, struc_len
+        if (abund(i_str) > 1d-60) then
+           scale = d(i_str)/44d0/amu/sneep_ubachs_n
+           do i_freq = 1, freq_len
 
-        scale = d(i_str)/44d0/amu/sneep_ubachs_n
-        do i_freq = 1, freq_len
+              nm1 = 1d-3*1.1427d6*( 5799.25d0/max(20d0**2d0,128908.9d0**2d0-lamb_inv(i_freq)**2d0) + &
+                   120.05d0/max(20d0**2d0,89223.8d0**2d0-lamb_inv(i_freq)**2d0) + &
+                   5.3334d0/max(20d0**2d0,75037.5d0**2d0-lamb_inv(i_freq)**2d0) + &
+                   4.3244/max(20d0**2d0,67837.7d0**2d0-lamb_inv(i_freq)**2d0) + &
+                   0.1218145d-4/max(20d0**2d0,2418.136d0**2d0-lamb_inv(i_freq)**2d0))
+              nm1 = nm1 * scale
+              fk = 1.1364+25.3d-12*lamb_inv(i_freq)**2d0
+              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(scale*sneep_ubachs_n)**2d0* &
+                   (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_co2 * &
+                   abund(i_str)
 
-           nm1 = 1d-3*1.1427d6*( 5799.25d0/max(20d0**2d0,128908.9d0**2d0-lamb_inv(i_freq)**2d0) + &
-                120.05d0/max(20d0**2d0,89223.8d0**2d0-lamb_inv(i_freq)**2d0) + &
-                5.3334d0/max(20d0**2d0,75037.5d0**2d0-lamb_inv(i_freq)**2d0) + &
-                4.3244/max(20d0**2d0,67837.7d0**2d0-lamb_inv(i_freq)**2d0) + &
-                0.1218145d-4/max(20d0**2d0,2418.136d0**2d0-lamb_inv(i_freq)**2d0))
-           nm1 = nm1 * scale
-           fk = 1.1364+25.3d-12*lamb_inv(i_freq)**2d0
-           rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
-                + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(scale*sneep_ubachs_n)**2d0* &
-                (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_co2 * &
-                abund(i_str)
-
-        end do
+           end do
+        end if
      end do
 
   else if (trim(adjustl(spec)) .EQ. 'O2') then
@@ -624,29 +632,30 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
      mass_o2 = 32d0*amu
 
      do i_str = 1, struc_len
-        
-        scale = d(i_str)/mass_o2/2.68678d19
+        if (abund(i_str) > 1d-60) then
+           scale = d(i_str)/mass_o2/2.68678d19
 
-        do i_freq = 1, freq_len
+           do i_freq = 1, freq_len
 
-           if (lamb_inv(i_freq) > 18315d0) then
-              A = 20564.8d0
-              B = 2.480899d13
-           else
-              A = 21351.1d0
-              B = 2.18567d13
-           end if
-           C = 4.09d9
-           
-           nm1 = 1d-8*(A+B/(C-lamb_inv(i_freq)**2d0))
-           nm1 = nm1 !* scale
-           fk = 1.096d0+1.385d-11*lamb_inv(i_freq)**2d0+1.448d-20*lamb_inv(i_freq)**4d0
-           rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
-                + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(2.68678d19)**2d0* & !(d(i_str)/mass_o2)**2d0* &
-                (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_o2 * &
-                abund(i_str)
+              if (lamb_inv(i_freq) > 18315d0) then
+                 A = 20564.8d0
+                 B = 2.480899d13
+              else
+                 A = 21351.1d0
+                 B = 2.18567d13
+              end if
+              C = 4.09d9
 
-        end do        
+              nm1 = 1d-8*(A+B/(C-lamb_inv(i_freq)**2d0))
+              nm1 = nm1 !* scale
+              fk = 1.096d0+1.385d-11*lamb_inv(i_freq)**2d0+1.448d-20*lamb_inv(i_freq)**4d0
+              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(2.68678d19)**2d0* & !(d(i_str)/mass_o2)**2d0* &
+                   (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_o2 * &
+                   abund(i_str)
+
+           end do
+        end if
      end do
 
   else if (trim(adjustl(spec)) .EQ. 'N2') then
@@ -660,34 +669,35 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
      mass_n2 = 34d0*amu
 
      do i_str = 1, struc_len
-        
-        scale = d(i_str)/mass_n2/2.546899d19
+        if (abund(i_str) > 1d-60) then
+           scale = d(i_str)/mass_n2/2.546899d19
 
-        do i_freq = 1, freq_len
+           do i_freq = 1, freq_len
 
-           if (lamb_inv(i_freq) > 4860d0) then 
-              
-              if (lamb_inv(i_freq) > 21360d0) then
-                 A = 5677.465d0
-                 B = 318.81874d12
-                 C = 14.4d9
-              else
-                 A = 6498.2d0
-                 B = 307.43305d12
-                 C = 14.4d9
+              if (lamb_inv(i_freq) > 4860d0) then 
+
+                 if (lamb_inv(i_freq) > 21360d0) then
+                    A = 5677.465d0
+                    B = 318.81874d12
+                    C = 14.4d9
+                 else
+                    A = 6498.2d0
+                    B = 307.43305d12
+                    C = 14.4d9
+                 end if
+
+                 nm1 = 1d-8*(A+B/(C-lamb_inv(i_freq)**2d0))
+                 nm1 = nm1 !* scale
+                 fk = 1.034d0+3.17d-12*lamb_inv(i_freq)**2d0
+                 rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                      + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(2.546899d19)**2d0* & !(d(i_str)/mass_n2)**2d0* &
+                      (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_n2 * &
+                      abund(i_str)
+
               end if
 
-              nm1 = 1d-8*(A+B/(C-lamb_inv(i_freq)**2d0))
-              nm1 = nm1 !* scale
-              fk = 1.034d0+3.17d-12*lamb_inv(i_freq)**2d0
-              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
-                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(2.546899d19)**2d0* & !(d(i_str)/mass_n2)**2d0* &
-                   (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_n2 * &
-                   abund(i_str)
-
-           end if
-
-        end do        
+           end do
+        end if
      end do
 
   else if (trim(adjustl(spec)) .EQ. 'CO') then

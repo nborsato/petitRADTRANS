@@ -86,7 +86,7 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
   ! I/O
   character*150, intent(in) :: path
   character*5000, intent(in) :: species_names_tot
-  character*20000, intent(in) :: custom_file_names
+  character*100000, intent(in) :: custom_file_names
   integer, intent(in) :: freq_len,g_len,species_len, opa_TP_grid_len, arr_min, arr_max
   character*3, intent(in) :: mode
   double precision, intent(out) :: opa_grid_kappas(g_len,freq_len,species_len,opa_TP_grid_len)
@@ -122,7 +122,7 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
   if (custom_grid) then
      curr_file_ind = 1 !
      opa_file_names_inds(1,curr_file_ind) = 1
-     do i_str = 1, 20000
+     do i_str = 1, 100000
         if (curr_file_ind > opa_TP_grid_len) then
            EXIT
         end if

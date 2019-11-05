@@ -91,7 +91,10 @@ obtain and use the opacities listed below.
    * - VO
      - VO
      - Main isotopologue, B. Plez
-
+   * - FeH
+     - FeH
+     - Main isotopologue, Exomol
+       
 Contributed opacities, low resolution mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -310,6 +313,9 @@ the opacities.
    * - VO
      - VO
      - Main isotopologue, B. Plez
+   * - FeH_main_iso
+     - FeH_main_iso
+     - Main isotopologue, Exomol
 
 Contributed opacities, high resolution mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

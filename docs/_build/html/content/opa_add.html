@@ -340,15 +340,15 @@ outlined above. Change parameters where applicable (temperature,
 pressure, molecule mass, broadening information…).</p>
 <p>The opacities need to be calculated at the 130 pressure temperature points
 of petitRADTRANS which you can find in the file
-<a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid.dat">PTgrid.dat</a>. Temeratures go from 80 up to 3000 K,
+<a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid.dat">PTgrid.dat</a>. Temeratures go from 80 up to 3000 K,
 in a log-uniform way. If you want to be ready for the future, please calculate opacities
-using <a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid_new.dat">PTgrid_new.dat</a>, where we have added a
+using <a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid_new.dat">PTgrid_new.dat</a>, where we have added a
 few more points at high temperatures (increasing the temperature resolution there) and extend
 the temperature range to 4000 K (note that currently petitRADTRANS sets
 <span class="math notranslate nohighlight">\(\kappa(T&gt;3000 K)\)</span> to <span class="math notranslate nohighlight">\(\kappa(T=3000 K)\)</span> for the opacity
 <span class="math notranslate nohighlight">\(\kappa\)</span>, if tempertatures get too high). The new grid has 200 points in total. The ability of
-petitRADTRANS to use the high-temperature grid (<a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid_new.dat">PTgrid_new.dat</a>) will
-be added ASAP. Shoot us a <a class="reference external" href="mailto:molliere&#37;&#52;&#48;strw&#46;leidenuniv&#46;nl">email</a> to find out when / pressuring us to do
+petitRADTRANS to use the high-temperature grid (<a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid_new.dat">PTgrid_new.dat</a>) will
+be added ASAP. Shoot us a <a class="reference external" href="mailto:molliere&#37;&#52;&#48;mpia&#46;de">email</a> to find out when / pressuring us to do
 this even more quickly.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
@@ -358,7 +358,7 @@ a random two digit integer (e.g. “06”). It does not matter if two
 different molecules have the same number. Then, the opacity file
 at (for example) T = 200 K, P = 1 bar must be called
 “sigma_06_200.K_1.000000bar.dat”. The exact names of the files
-used in petitRADTRANS can be found <a class="reference external" href="https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTnames.dat">in this file here</a>. petitRADTRANS will be
+used in petitRADTRANS can be found <a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTnames.dat">in this file here</a>. petitRADTRANS will be
 looking for these files, and throw an error message and crash if
 they are not named properly.</p>
 </div>
@@ -404,7 +404,7 @@ np.savetxt<span class="o">(</span><span class="s1">&#39;NaH_1000K_1em5bar_petit_
 </pre></div>
 </div>
 <p>Now we can create the correlated-k tables (or just “k-tables”) and high-resolution opacity files from
-these formatted files. Please <a class="reference external" href="mailto:molliere&#37;&#52;&#48;strw&#46;leidenuniv&#46;nl">email</a> us to get the relevant Fortran
+these formatted files. Please <a class="reference external" href="mailto:molliere&#37;&#52;&#48;mpia&#46;de">email</a> us to get the relevant Fortran
 source to do this, we will send you four files called</p>
 <ul class="simple">
 <li>calc_k_g_r1000_ptrad.f90: this converts the opacity data to

@@ -190,14 +190,14 @@ pressure, molecule mass, broadening information...).
 
 The opacities need to be calculated at the 130 pressure temperature points
 of petitRADTRANS which you can find in the file
-`PTgrid.dat <https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid.dat>`_. Temeratures go from 80 up to 3000 K,
+`PTgrid.dat <https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid.dat>`_. Temeratures go from 80 up to 3000 K,
 in a log-uniform way. If you want to be ready for the future, please calculate opacities
-using `PTgrid_new.dat <https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid_new.dat>`_, where we have added a
+using `PTgrid_new.dat <https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid_new.dat>`_, where we have added a
 few more points at high temperatures (increasing the temperature resolution there) and extend
 the temperature range to 4000 K (note that currently petitRADTRANS sets
 :math:`\kappa(T>3000 K)` to :math:`\kappa(T=3000 K)` for the opacity
 :math:`\kappa`, if tempertatures get too high). The new grid has 200 points in total. The ability of
-petitRADTRANS to use the high-temperature grid (`PTgrid_new.dat <https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTgrid_new.dat>`_) will
+petitRADTRANS to use the high-temperature grid (`PTgrid_new.dat <https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid_new.dat>`_) will
 be added ASAP. Shoot us a `email`_ to find out when / pressuring us to do
 this even more quickly.
 
@@ -213,8 +213,8 @@ this even more quickly.
     looking for these files, and throw an error message and crash if
     they are not named properly.
 
-.. _email: molliere@strw.leidenuniv.nl
-.. _in this file here: https://home.strw.leidenuniv.nl/~molliere/petitRADTRANS/content/files/PTnames.dat
+.. _email: molliere@mpia.de
+.. _in this file here: https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTnames.dat
 
 Now, let's turn towards preparing the ExoCross results for
 petitRADTRANS. We will assume that you have calculated the opacites at
@@ -276,7 +276,7 @@ source to do this, we will send you four files called
   :math:`\lambda/\Delta\lambda=10^6`.
 - short_stream_lambs_mass.dat: input file for make_short.f90.
 
-.. _email: molliere@strw.leidenuniv.nl
+.. _email: molliere@mpia.de
 
 You do not need to understand anything about k-tables to do this step
 here, we just wanted to explain what the routines are for.

@@ -16,14 +16,14 @@ atmospheres.
    Scattering is currently not included for
    emission spectra in petitRADTRANS (but it is for the transmission
    spectra). We intend to migrate the scattering implementation of
-   `petitCODE <https://home.strw.leidenuniv.nl/~molliere/#petitcode>`_
+   `petitCODE <http://www.mpia.de/homes/molliere/#petitcode>`_
    to petitRADTRANS soon.
 
 petitRADTRANS is available under the MIT License, and documented in
 `Mollière et al. (2019) <https://arxiv.org/abs/1904.11504>`_.
 Please cite this paper if you make use of petitRADTRANS in your work.
 
-.. _contact: molliere@strw.leidenuniv.nl
+.. _contact: molliere@mpia.de
 
 This documentation webpage currently contains an installation guide, a
 tutorial, a first code documentation, and an implemented retrieval

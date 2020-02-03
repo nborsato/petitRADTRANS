@@ -125,7 +125,7 @@ class Radtrans:
             index = (nc.c/self.freq > wlen_bords_micron[0]*1e-4) & \
               (nc.c/self.freq < wlen_bords_micron[1]*1e-4)
 
-            self.freq = np.array(self.freq[index],dtype='d',order='Fortran')
+            self.freq = np.array(self.freq[index],dtype='d',order='F')
             self.freq_len = len(self.freq)
 
         ###########################
@@ -134,17 +134,17 @@ class Radtrans:
         ###########################        
 
         self.lambda_angstroem = np.array(nc.c/self.freq/1e-8,dtype='d', \
-                                             order='Fortran')
+                                             order='F')
         self.flux = np.array(np.zeros(self.freq_len),dtype='d', \
-                                 order='Fortran')
+                                 order='F')
         self.transm_rad = np.array(np.zeros(self.freq_len),dtype='d', \
-                                       order='Fortran')
+                                       order='F')
 
         # Define frequency bins around grid for later interpolation
         # purposes when including
         # clouds...
         self.border_freqs = np.array(nc.c/self.calc_borders(nc.c/self.freq), \
-                                         dtype='d',order='Fortran')
+                                         dtype='d',order='F')
         self.border_lambda_angstroem = \
           np.array(self.calc_borders(self.lambda_angstroem))
 
@@ -170,7 +170,7 @@ class Radtrans:
         # Convert from bars to cgs
         self.line_TP_grid[:,1] = 1e6*self.line_TP_grid[:,1]
         self.line_TP_grid = np.array(self.line_TP_grid.reshape( \
-                    len(self.line_TP_grid[:,1]),2),dtype='d',order='Fortran')
+                    len(self.line_TP_grid[:,1]),2),dtype='d',order='F')
 
         # Check if species has custom PT grid.
         self.custom_grid = {}
@@ -255,26 +255,26 @@ class Radtrans:
                     self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
                       np.array(self.line_grid_kappas_custom_PT[ \
                         self.line_species[i_spec]][:,index,0,:], \
-                                 dtype='d',order='Fortran')
+                                 dtype='d',order='F')
             else:
                 for i_spec in range(len(self.line_species)):
                     self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
                     np.array(self.line_grid_kappas_custom_PT[ \
                         self.line_species[i_spec]][:,:,0,:], \
-                                 dtype='d',order='Fortran')
+                                 dtype='d',order='F')
             
         # Read in g grid for correlated-k
         if self.mode == 'c-k':
             buffer = np.genfromtxt(self.path+'/opa_input_files/g_comb_grid.dat')
             self.g_gauss, self.w_gauss = buffer[:,0], buffer[:,1]
             self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d', \
-                order='Fortran'),np.array(self.w_gauss, \
-                dtype='d',order='Fortran')
+                order='F'),np.array(self.w_gauss, \
+                dtype='d',order='F')
         elif self.mode == 'lbl':
             self.g_gauss, self.w_gauss = np.ones(1), np.ones(1)
             self.g_gauss,self.w_gauss = np.array(self.g_gauss,dtype='d', \
-                order='Fortran'),np.array(self.w_gauss, \
-                dtype='d',order='Fortran')
+                order='F'),np.array(self.w_gauss, \
+                dtype='d',order='F')
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~END OUTSOURCE~~~~~
         
@@ -296,13 +296,13 @@ class Radtrans:
           self.cia_h2h2_lambda, self.cia_h2h2_temp, \
             self.cia_h2h2_alpha_grid = fi.cia_read('H2H2',self.path)
           self.cia_h2h2_alpha_grid = np.array(self.cia_h2h2_alpha_grid, \
-                                                dtype='d',order='Fortran')
+                                                dtype='d',order='F')
         if self.H2HeCIA:
           print('  Read CIA opacities for H2-He...')
           self.cia_h2he_lambda, self.cia_h2he_temp, self.cia_h2he_alpha_grid = \
             fi.cia_read('H2He',self.path)
           self.cia_h2he_alpha_grid = np.array(self.cia_h2he_alpha_grid, \
-                                                dtype='d',order='Fortran')
+                                                dtype='d',order='F')
         if self.H2H2CIA or self.H2HeCIA:
           print(' Done.')
           print()
@@ -325,7 +325,7 @@ class Radtrans:
             self.cloud_species[i] = splitstr[0]
 
         # Prepare single strings delimited by ':' which are then
-        # put into Fortran routines
+        # put into F routines
         tot_str_names = ''
         for sstring in self.cloud_species:
             tot_str_names = tot_str_names + sstring + ':'
@@ -345,15 +345,15 @@ class Radtrans:
                             len(self.cloud_species),self.N_cloud_lambda_bins)
 
         self.rho_cloud_particles = \
-          np.array(rho_cloud_particles,dtype='d',order='Fortran')
+          np.array(rho_cloud_particles,dtype='d',order='F')
         self.cloud_specs_abs_opa = \
-          np.array(cloud_specs_abs_opa,dtype='d',order='Fortran')
+          np.array(cloud_specs_abs_opa,dtype='d',order='F')
         self.cloud_specs_scat_opa = \
-          np.array(cloud_specs_scat_opa,dtype='d',order='Fortran')
-        self.cloud_aniso = np.array(cloud_aniso,dtype='d',order='Fortran')
-        self.cloud_lambdas = np.array(cloud_lambdas,dtype='d',order='Fortran')
-        self.cloud_rad_bins = np.array(cloud_rad_bins,dtype='d',order='Fortran')
-        self.cloud_radii = np.array(cloud_radii,dtype='d',order='Fortran')
+          np.array(cloud_specs_scat_opa,dtype='d',order='F')
+        self.cloud_aniso = np.array(cloud_aniso,dtype='d',order='F')
+        self.cloud_lambdas = np.array(cloud_lambdas,dtype='d',order='F')
+        self.cloud_rad_bins = np.array(cloud_rad_bins,dtype='d',order='F')
+        self.cloud_radii = np.array(cloud_radii,dtype='d',order='F')
         
     # Preparing structures
     def setup_opa_structure(self,P):
@@ -370,42 +370,42 @@ class Radtrans:
         self.press = P*1e6
         self.continuum_opa = np.array(np.zeros(self.freq_len*len(P)) \
                                           .reshape(self.freq_len, \
-                                          len(P)),dtype='d',order='Fortran')
+                                          len(P)),dtype='d',order='F')
         self.continuum_opa_scat = np.array(np.zeros(self.freq_len*len(P)) \
                                             .reshape(self.freq_len, \
-                                            len(P)),dtype='d',order='Fortran')
+                                            len(P)),dtype='d',order='F')
         self.contr_em = np.array(np.zeros(self.freq_len*len(P)) \
                                      .reshape(len(P),self.freq_len), \
-                                     dtype='d',order='Fortran')
+                                     dtype='d',order='F')
         self.contr_tr = np.array(np.zeros(self.freq_len*len(P)) \
                                      .reshape(len(P),self.freq_len), \
-                                     dtype='d',order='Fortran')
+                                     dtype='d',order='F')
         if len(self.line_species) > 0:
             self.line_struc_kappas = \
               np.array(np.zeros(self.g_len*self.freq_len*len(P)* \
                 len(self.line_species)).reshape(self.g_len,self.freq_len, \
-                len(self.line_species),len(P)),dtype='d',order='Fortran')
+                len(self.line_species),len(P)),dtype='d',order='F')
             self.total_tau = \
               np.array(np.zeros_like(self.line_struc_kappas), \
-                           dtype='d',order='Fortran')
+                           dtype='d',order='F')
             self.line_abundances = \
               np.array(np.zeros(len(self.press)*len(self.line_species)) \
                            .reshape(len(self.press), \
-                            len(self.line_species)),dtype='d',order='Fortran')
+                            len(self.line_species)),dtype='d',order='F')
         else: # If there are no specified line species then we need at
               # least an array to contain the continuum opas
               # I'll (mis)use the line_struc_kappas array for that
             self.line_struc_kappas = \
               np.array(np.zeros(self.g_len*self.freq_len*len(P)) \
                            .reshape(self.g_len,self.freq_len, \
-                            1,len(P)),dtype='d',order='Fortran')
+                            1,len(P)),dtype='d',order='F')
             self.total_tau = \
               np.array(np.zeros_like(self.line_struc_kappas), \
-                           dtype='d',order='Fortran')
+                           dtype='d',order='F')
             self.line_abundances = \
               np.array(np.zeros(len(self.press)) \
                            .reshape(len(self.press),1), \
-                           dtype='d',order='Fortran')
+                           dtype='d',order='F')
         
         self.mmw = np.zeros_like(self.press)
 
@@ -414,12 +414,12 @@ class Radtrans:
                         int(len(self.cloud_species))) \
                             .reshape(int(len(self.press)), \
                             int(len(self.cloud_species))), \
-                                                 dtype='d',order='Fortran')
+                                                 dtype='d',order='F')
             self.r_g = np.array(np.zeros(int(len(self.press))* \
                         int(len(self.cloud_species))) \
                                     .reshape(int(len(self.press)), \
                                             int(len(self.cloud_species))), \
-                                            dtype='d',order='Fortran')
+                                            dtype='d',order='F')
 
     def interpolate_species_opa(self, temp):
         # Interpolate line opacities to given temperature structure.

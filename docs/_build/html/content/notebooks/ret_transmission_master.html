@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Master retrieval model: transmission case" href="ret_transmission_retrieval_model.html" />
     <link rel="prev" title="Transmission spectrum retrieval" href="../ret_transmission.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -53,7 +58,7 @@
 
           
             
-            <img src="../../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="../../_static/petitlogo.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -184,16 +189,16 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput,
-div.nbinput div.prompt,
-div.nbinput div.input_area,
-div.nbinput div[class*=highlight],
-div.nbinput div[class*=highlight] pre,
-div.nboutput,
-div.nbinput div.prompt,
-div.nbinput div.output_area,
-div.nboutput div[class*=highlight],
-div.nboutput div[class*=highlight] pre {
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
     background: none;
     border: none;
     padding: 0 0;
@@ -202,13 +207,13 @@ div.nboutput div[class*=highlight] pre {
 }
 
 /* avoid gaps between output lines */
-div.nboutput div[class*=highlight] pre {
+div.nboutput.container div[class*=highlight] pre {
     line-height: normal;
 }
 
 /* input/output containers */
-div.nbinput,
-div.nboutput {
+div.nbinput.container,
+div.nboutput.container {
     display: -webkit-flex;
     display: flex;
     align-items: flex-start;
@@ -216,35 +221,35 @@ div.nboutput {
     width: 100%;
 }
 @media (max-width: 540px) {
-    div.nbinput,
-    div.nboutput {
+    div.nbinput.container,
+    div.nboutput.container {
         flex-direction: column;
     }
 }
 
 /* input container */
-div.nbinput {
+div.nbinput.container {
     padding-top: 5px;
 }
 
 /* last container */
-div.nblast {
+div.nblast.container {
     padding-bottom: 5px;
 }
 
 /* input prompt */
-div.nbinput div.prompt pre {
+div.nbinput.container div.prompt pre {
     color: #307FC1;
 }
 
 /* output prompt */
-div.nboutput div.prompt pre {
+div.nboutput.container div.prompt pre {
     color: #BF5B3D;
 }
 
 /* all prompts */
-div.nbinput div.prompt,
-div.nboutput div.prompt {
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
     min-width: 5ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
@@ -252,56 +257,56 @@ div.nboutput div.prompt {
     flex: 0;
 }
 @media (max-width: 540px) {
-    div.nbinput div.prompt,
-    div.nboutput div.prompt {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
         text-align: left;
         padding: 0.4em;
     }
-    div.nboutput div.prompt.empty {
+    div.nboutput.container div.prompt.empty {
         padding: 0;
     }
 }
 
 /* disable scrollbars on prompts */
-div.nbinput div.prompt pre,
-div.nboutput div.prompt pre {
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
     overflow: hidden;
 }
 
 /* input/output area */
-div.nbinput div.input_area,
-div.nboutput div.output_area {
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
     padding: 0.4em;
     -webkit-flex: 1;
     flex: 1;
     overflow: auto;
 }
 @media (max-width: 540px) {
-    div.nbinput div.input_area,
-    div.nboutput div.output_area {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
         width: 100%;
     }
 }
 
 /* input area */
-div.nbinput div.input_area {
+div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
     background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
-div.nboutput div[class*=MathJax] {
+div.nboutput.container div[class*=MathJax] {
     text-align: left !important;
 }
 
 /* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput div.math p {
+div.nboutput.container div.math p {
     text-align: left;
 }
 
 /* standard error */
-div.nboutput div.output_area.stderr {
+div.nboutput.container div.output_area.stderr {
     background: #fdd;
 }
 
@@ -382,13 +387,13 @@ div.rendered_html tbody tr:hover {
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -413,12 +418,12 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>import numpy as np
-import sys
-import emcee
-import pickle as pickle
-import time
-from emcee.utils import MPIPool
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">emcee</span>
+<span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">emcee.utils</span> <span class="kn">import</span> <span class="n">MPIPool</span>
 </pre></div>
 </div>
 </div>
@@ -429,10 +434,10 @@ from emcee.utils import MPIPool
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>from petitRADTRANS import Radtrans
-from petitRADTRANS import nat_cst as nc
-import master_retrieval_model as rm
-import rebin_give_width as rgw
+<span></span><span class="kn">from</span> <span class="nn">petitRADTRANS</span> <span class="kn">import</span> <span class="n">Radtrans</span>
+<span class="kn">from</span> <span class="nn">petitRADTRANS</span> <span class="kn">import</span> <span class="n">nat_cst</span> <span class="k">as</span> <span class="n">nc</span>
+<span class="kn">import</span> <span class="nn">master_retrieval_model</span> <span class="k">as</span> <span class="nn">rm</span>
+<span class="kn">import</span> <span class="nn">rebin_give_width</span> <span class="k">as</span> <span class="nn">rgw</span>
 </pre></div>
 </div>
 </div>
@@ -446,25 +451,25 @@ import rebin_give_width as rgw
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>retrieval_name = &#39;JWST_transmission_petitRADTRANSpaper&#39;
-absolute_path = &#39;&#39; # end with forward slash!
-observation_files = {}
-observation_files[&#39;NIRISS SOSS&#39;] = &#39;NIRISS_SOSS.dat&#39;
-observation_files[&#39;NIRSpec G395M&#39;] = &#39;NIRSpec_G395M.dat&#39;
-observation_files[&#39;MIRI LRS&#39;] = &#39;MIRI_LRS.dat&#39;
+<span></span><span class="n">retrieval_name</span> <span class="o">=</span> <span class="s1">&#39;JWST_transmission_petitRADTRANSpaper&#39;</span>
+<span class="n">absolute_path</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># end with forward slash!</span>
+<span class="n">observation_files</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">observation_files</span><span class="p">[</span><span class="s1">&#39;NIRISS SOSS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NIRISS_SOSS.dat&#39;</span>
+<span class="n">observation_files</span><span class="p">[</span><span class="s1">&#39;NIRSpec G395M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NIRSpec_G395M.dat&#39;</span>
+<span class="n">observation_files</span><span class="p">[</span><span class="s1">&#39;MIRI LRS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MIRI_LRS.dat&#39;</span>
 </pre></div>
 </div>
 </div>
-<p>If you want to plot the spectra for testing purposes (i.e.&nbsp;when running locally on your machine, on a single core), set <code class="docutils literal notranslate"><span class="pre">plotting</span> <span class="pre">=</span> <span class="pre">True</span></code>. Don’t do this when you run the actual retrieval:</p>
+<p>If you want to plot the spectra for testing purposes (i.e. when running locally on your machine, on a single core), set <code class="docutils literal notranslate"><span class="pre">plotting</span> <span class="pre">=</span> <span class="pre">True</span></code>. Don’t do this when you run the actual retrieval:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># For testing purposes only
-plotting = False
-if plotting:
-    import pylab as plt
+<span></span><span class="c1"># For testing purposes only</span>
+<span class="n">plotting</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="n">plotting</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
 </pre></div>
 </div>
 </div>
@@ -474,10 +479,10 @@ if plotting:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Retrieval hyperparameters
-stepsize = 1.75
-n_walkers = 240
-n_iter = 4200
+<span></span><span class="c1"># Retrieval hyperparameters</span>
+<span class="n">stepsize</span> <span class="o">=</span> <span class="mf">1.75</span>
+<span class="n">n_walkers</span> <span class="o">=</span> <span class="mi">240</span>
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">4200</span>
 </pre></div>
 </div>
 </div>
@@ -488,9 +493,9 @@ n_iter = 4200
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>cluster = False       # Submit to cluster
-n_threads = 1         # Use mutliprocessing (local = 1)
-write_threshold = 200 # number of iterations after which diagnostics are updated
+<span></span><span class="n">cluster</span> <span class="o">=</span> <span class="kc">False</span>       <span class="c1"># Submit to cluster</span>
+<span class="n">n_threads</span> <span class="o">=</span> <span class="mi">1</span>         <span class="c1"># Use mutliprocessing (local = 1)</span>
+<span class="n">write_threshold</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1"># number of iterations after which diagnostics are updated</span>
 </pre></div>
 </div>
 </div>
@@ -500,10 +505,10 @@ write_threshold = 200 # number of iterations after which diagnostics are updated
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>WLEN = [0.8, 14.0]
-LOG_G =  2.58
-R_pl =   1.84*nc.r_jup_mean
-R_star = 1.81*nc.r_sun
+<span></span><span class="n">WLEN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]</span>
+<span class="n">LOG_G</span> <span class="o">=</span>  <span class="mf">2.58</span>
+<span class="n">R_pl</span> <span class="o">=</span>   <span class="mf">1.84</span><span class="o">*</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span>
+<span class="n">R_star</span> <span class="o">=</span> <span class="mf">1.81</span><span class="o">*</span><span class="n">nc</span><span class="o">.</span><span class="n">r_sun</span>
 </pre></div>
 </div>
 </div>
@@ -516,22 +521,22 @@ R_star = 1.81*nc.r_sun
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Read in data, convert all to cgs!
-data_wlen = {}
-data_flux_lambda = {}
-data_flux_lambda_error = {}
-data_wlen_bins = {}
+<span></span><span class="c1"># Read in data, convert all to cgs!</span>
+<span class="n">data_wlen</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">data_flux_lambda</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">data_flux_lambda_error</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">data_wlen_bins</span> <span class="o">=</span> <span class="p">{}</span>
 
-for name in observation_files.keys():
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">observation_files</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
-    dat_obs = np.genfromtxt(observation_files[name])
-    data_wlen[name] = dat_obs[:,0]*1e-4
-    data_flux_lambda[name] = dat_obs[:,1]
-    data_flux_lambda_error[name] = dat_obs[:,2]
+    <span class="n">dat_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">observation_files</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">data_wlen</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat_obs</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-4</span>
+    <span class="n">data_flux_lambda</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat_obs</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data_flux_lambda_error</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat_obs</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
 
-    data_wlen_bins[name] = np.zeros_like(data_wlen[name])
-    data_wlen_bins[name][:-1] = np.diff(data_wlen[name])
-    data_wlen_bins[name][-1] = data_wlen_bins[name][-2]
+    <span class="n">data_wlen_bins</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data_wlen</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">data_wlen_bins</span><span class="p">[</span><span class="n">name</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">data_wlen</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">data_wlen_bins</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_wlen_bins</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -544,28 +549,28 @@ for name in observation_files.keys():
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>### Create and setup radiative transfer object
-# Create random P-T profile to create RT arrays of the Radtrans object.
-temp_params = {}
-temp_params[&#39;log_delta&#39;] = -6.
-temp_params[&#39;log_gamma&#39;] = np.log10(0.4)
-temp_params[&#39;t_int&#39;] = 750.
-temp_params[&#39;t_equ&#39;] = 0.
-temp_params[&#39;log_p_trans&#39;] = -3.
-temp_params[&#39;alpha&#39;] = 0.
-p, t = nc.make_press_temp(temp_params)
+<span></span><span class="c1">### Create and setup radiative transfer object</span>
+<span class="c1"># Create random P-T profile to create RT arrays of the Radtrans object.</span>
+<span class="n">temp_params</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;log_delta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.</span>
+<span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;log_gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;t_int&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">750.</span>
+<span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;t_equ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;log_p_trans&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.</span>
+<span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">p</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">make_press_temp</span><span class="p">(</span><span class="n">temp_params</span><span class="p">)</span>
 
-# Create the Ratrans object here
-rt_object = Radtrans(line_species=[&#39;H2&#39;, &#39;CO_all_iso&#39;, &#39;H2O&#39;, \
-                                  &#39;CH4&#39;, &#39;NH3&#39;, &#39;CO2&#39;, &#39;H2S&#39;, \
-                                  &#39;Na&#39;, &#39;K&#39;], \
-                    rayleigh_species=[&#39;H2&#39;,&#39;He&#39;], \
-                    continuum_opacities = [&#39;H2-H2&#39;,&#39;H2-He&#39;], \
-                    mode=&#39;c-k&#39;, \
-                    wlen_bords_micron = WLEN)
+<span class="c1"># Create the Ratrans object here</span>
+<span class="n">rt_object</span> <span class="o">=</span> <span class="n">Radtrans</span><span class="p">(</span><span class="n">line_species</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">,</span> <span class="s1">&#39;CO_all_iso&#39;</span><span class="p">,</span> <span class="s1">&#39;H2O&#39;</span><span class="p">,</span> \
+                                  <span class="s1">&#39;CH4&#39;</span><span class="p">,</span> <span class="s1">&#39;NH3&#39;</span><span class="p">,</span> <span class="s1">&#39;CO2&#39;</span><span class="p">,</span> <span class="s1">&#39;H2S&#39;</span><span class="p">,</span> \
+                                  <span class="s1">&#39;Na&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">],</span> \
+                    <span class="n">rayleigh_species</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">,</span><span class="s1">&#39;He&#39;</span><span class="p">],</span> \
+                    <span class="n">continuum_opacities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H2-H2&#39;</span><span class="p">,</span><span class="s1">&#39;H2-He&#39;</span><span class="p">],</span> \
+                    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;c-k&#39;</span><span class="p">,</span> \
+                    <span class="n">wlen_bords_micron</span> <span class="o">=</span> <span class="n">WLEN</span><span class="p">)</span>
 
-# Create the RT arrays of appropriate lengths
-rt_object.setup_opa_structure(p)
+<span class="c1"># Create the RT arrays of appropriate lengths</span>
+<span class="n">rt_object</span><span class="o">.</span><span class="n">setup_opa_structure</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -589,39 +594,39 @@ rt_object.setup_opa_structure(p)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>def b_range(x, b):
-    if x &gt; b:
-        return -np.inf
-    else:
-        return 0.
+<span></span><span class="k">def</span> <span class="nf">b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.</span>
 
-def a_b_range(x, a, b):
-    if x &lt; a:
-        return -np.inf
-    elif x &gt; b:
-        return -np.inf
-    else:
-        return 0.
+<span class="k">def</span> <span class="nf">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.</span>
 
-log_priors = {}
-log_priors[&#39;log_delta&#39;]      = lambda x: -((x-(-5.5))/2.5)**2./2.
-log_priors[&#39;log_gamma&#39;]      = lambda x: -((x-(-0.0))/2.)**2./2.
-log_priors[&#39;t_int&#39;]          = lambda x: a_b_range(x, 0., 1500.)
-log_priors[&#39;t_equ&#39;]          = lambda x: a_b_range(x, 0., 4000.)
-log_priors[&#39;log_p_trans&#39;]    = lambda x: -((x-(-3))/3.)**2./2.
-log_priors[&#39;alpha&#39;]          = lambda x: -((x-0.25)/0.4)**2./2.
-log_priors[&#39;log_g&#39;]          = lambda x: a_b_range(x, 2.0, 3.7)
-log_priors[&#39;log_P0&#39;]         = lambda x: a_b_range(x, -4, 2.)
+<span class="n">log_priors</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_delta&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">5.5</span><span class="p">))</span><span class="o">/</span><span class="mf">2.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="o">/</span><span class="mf">2.</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_gamma&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="o">/</span><span class="mf">2.</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;t_int&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1500.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;t_equ&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">4000.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_p_trans&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="o">/</span><span class="mf">2.</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mf">0.25</span><span class="p">)</span><span class="o">/</span><span class="mf">0.4</span><span class="p">)</span><span class="o">**</span><span class="mf">2.</span><span class="o">/</span><span class="mf">2.</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_g&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_P0&#39;</span><span class="p">]</span>         <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)</span>
 
-# Priors for log mass fractions
-log_priors[&#39;CO_all_iso&#39;]     = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;H2O&#39;]            = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;CH4&#39;]            = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;NH3&#39;]            = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;CO2&#39;]            = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;H2S&#39;]            = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;Na&#39;]             = lambda x: a_b_range(x, -10., 0.)
-log_priors[&#39;K&#39;]              = lambda x: a_b_range(x, -10., 0.)
+<span class="c1"># Priors for log mass fractions</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;NH3&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;H2S&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span>             <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+<span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>              <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">a_b_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -634,15 +639,15 @@ log_priors[&#39;K&#39;]              = lambda x: a_b_range(x, -10., 0.)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Declare diagnostics
-function_calls = 0
-computed_spectra = 0
-NaN_spectra = 0
-delta_wt = write_threshold
+<span></span><span class="c1"># Declare diagnostics</span>
+<span class="n">function_calls</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">computed_spectra</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">NaN_spectra</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">delta_wt</span> <span class="o">=</span> <span class="n">write_threshold</span>
 
-start_time = time.time()
-file_object = open(absolute_path + &#39;diag_&#39; + \
-                       retrieval_name + &#39;.dat&#39;, &#39;w&#39;).close()
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">file_object</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">absolute_path</span> <span class="o">+</span> <span class="s1">&#39;diag_&#39;</span> <span class="o">+</span> \
+                       <span class="n">retrieval_name</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -652,144 +657,144 @@ file_object = open(absolute_path + &#39;diag_&#39; + \
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>def calc_log_prob(params):
+<span></span><span class="k">def</span> <span class="nf">calc_log_prob</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
 
-    log_delta, log_gamma, t_int, t_equ, log_p_trans, alpha, \
-      log_g, log_P0 = params[:-8]
+    <span class="n">log_delta</span><span class="p">,</span> <span class="n">log_gamma</span><span class="p">,</span> <span class="n">t_int</span><span class="p">,</span> <span class="n">t_equ</span><span class="p">,</span> <span class="n">log_p_trans</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> \
+      <span class="n">log_g</span><span class="p">,</span> <span class="n">log_P0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">8</span><span class="p">]</span>
 
-    # Make dictionary for modified Guillot parameters
-    temp_params = {}
-    temp_params[&#39;log_delta&#39;] = log_delta
-    temp_params[&#39;log_gamma&#39;] = log_gamma
-    temp_params[&#39;t_int&#39;] = t_int
-    temp_params[&#39;t_equ&#39;] = t_equ
-    temp_params[&#39;log_p_trans&#39;] = log_p_trans
-    temp_params[&#39;alpha&#39;] = alpha
+    <span class="c1"># Make dictionary for modified Guillot parameters</span>
+    <span class="n">temp_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;log_delta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_delta</span>
+    <span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;log_gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_gamma</span>
+    <span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;t_int&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_int</span>
+    <span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;t_equ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_equ</span>
+    <span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;log_p_trans&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_p_trans</span>
+    <span class="n">temp_params</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span>
 
-    # Make dictionary for log &#39;metal&#39; abundances
-    ab_metals = {}
-    ab_metals[&#39;CO_all_iso&#39;]     = params[-8:][0]
-    ab_metals[&#39;H2O&#39;]            = params[-8:][1]
-    ab_metals[&#39;CH4&#39;]            = params[-8:][2]
-    ab_metals[&#39;NH3&#39;]            = params[-8:][3]
-    ab_metals[&#39;CO2&#39;]            = params[-8:][4]
-    ab_metals[&#39;H2S&#39;]            = params[-8:][5]
-    ab_metals[&#39;Na&#39;]             = params[-8:][6]
-    ab_metals[&#39;K&#39;]              = params[-8:][7]
+    <span class="c1"># Make dictionary for log &#39;metal&#39; abundances</span>
+    <span class="n">ab_metals</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;NH3&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;H2S&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span>             <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">ab_metals</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>              <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:][</span><span class="mi">7</span><span class="p">]</span>
 
-    global function_calls
-    global computed_spectra
-    global NaN_spectra
-    global write_threshold
+    <span class="k">global</span> <span class="n">function_calls</span>
+    <span class="k">global</span> <span class="n">computed_spectra</span>
+    <span class="k">global</span> <span class="n">NaN_spectra</span>
+    <span class="k">global</span> <span class="n">write_threshold</span>
 
-    function_calls += 1
+    <span class="n">function_calls</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    # Prior calculation of all input parameters
-    log_prior = 0.
+    <span class="c1"># Prior calculation of all input parameters</span>
+    <span class="n">log_prior</span> <span class="o">=</span> <span class="mf">0.</span>
 
-    # Alpha should not be smaller than -1, this
-    # would lead to negative temperatures!
-    if alpha &lt; -1:
-        return -np.inf
+    <span class="c1"># Alpha should not be smaller than -1, this</span>
+    <span class="c1"># would lead to negative temperatures!</span>
+    <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-    for key in temp_params.keys():
-        log_prior += log_priors[key](temp_params[key])
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">temp_params</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">log_prior</span> <span class="o">+=</span> <span class="n">log_priors</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">temp_params</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
-    log_prior += log_priors[&#39;log_g&#39;](log_g)
-    log_prior += log_priors[&#39;log_P0&#39;](log_P0)
+    <span class="n">log_prior</span> <span class="o">+=</span> <span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_g&#39;</span><span class="p">](</span><span class="n">log_g</span><span class="p">)</span>
+    <span class="n">log_prior</span> <span class="o">+=</span> <span class="n">log_priors</span><span class="p">[</span><span class="s1">&#39;log_P0&#39;</span><span class="p">](</span><span class="n">log_P0</span><span class="p">)</span>
 
-    # Metal abundances: check that their
-    # summed mass fraction is below 1.
-    metal_sum = 0.
-    for name in ab_metals.keys():
-        log_prior += log_priors[name](ab_metals[name])
-        metal_sum += 1e1**ab_metals[name]
+    <span class="c1"># Metal abundances: check that their</span>
+    <span class="c1"># summed mass fraction is below 1.</span>
+    <span class="n">metal_sum</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ab_metals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">log_prior</span> <span class="o">+=</span> <span class="n">log_priors</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="n">ab_metals</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="n">metal_sum</span> <span class="o">+=</span> <span class="mf">1e1</span><span class="o">**</span><span class="n">ab_metals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
-    if metal_sum &gt; 1.:
-        log_prior += -np.inf
+    <span class="k">if</span> <span class="n">metal_sum</span> <span class="o">&gt;</span> <span class="mf">1.</span><span class="p">:</span>
+        <span class="n">log_prior</span> <span class="o">+=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-    # Return -inf if parameters fall outside prior distribution
-    if (log_prior == -np.inf):
-        return -np.inf
+    <span class="c1"># Return -inf if parameters fall outside prior distribution</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">log_prior</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-    # Calculate the log-likelihood
-    log_likelihood = 0.
+    <span class="c1"># Calculate the log-likelihood</span>
+    <span class="n">log_likelihood</span> <span class="o">=</span> <span class="mf">0.</span>
 
-    # Calculate the forward model, this
-    # returns the wavelengths in cm and the planet radius
-    # in R_jup.
-    wlen, flux_lambda = \
-            rm.retrieval_model_plain(rt_object, temp_params, log_g, \
-                                         log_P0, R_pl, ab_metals)
+    <span class="c1"># Calculate the forward model, this</span>
+    <span class="c1"># returns the wavelengths in cm and the planet radius</span>
+    <span class="c1"># in R_jup.</span>
+    <span class="n">wlen</span><span class="p">,</span> <span class="n">flux_lambda</span> <span class="o">=</span> \
+            <span class="n">rm</span><span class="o">.</span><span class="n">retrieval_model_plain</span><span class="p">(</span><span class="n">rt_object</span><span class="p">,</span> <span class="n">temp_params</span><span class="p">,</span> <span class="n">log_g</span><span class="p">,</span> \
+                                         <span class="n">log_P0</span><span class="p">,</span> <span class="n">R_pl</span><span class="p">,</span> <span class="n">ab_metals</span><span class="p">)</span>
 
-    # Just to make sure that a long chain does not die
-    # unexpectedly:
-    # Return -inf if retrieval model returns NaN values
-    if np.sum(np.isnan(flux_lambda)) &gt; 0:
-        print(&quot;NaN spectrum encountered&quot;)
-        NaN_spectra += 1
-        return -np.inf
+    <span class="c1"># Just to make sure that a long chain does not die</span>
+    <span class="c1"># unexpectedly:</span>
+    <span class="c1"># Return -inf if retrieval model returns NaN values</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">flux_lambda</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NaN spectrum encountered&quot;</span><span class="p">)</span>
+        <span class="n">NaN_spectra</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-    # Convert to observation for transmission case
-    flux_sq = (flux_lambda*nc.r_jup_mean/R_star)**2
+    <span class="c1"># Convert to observation for transmission case</span>
+    <span class="n">flux_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">flux_lambda</span><span class="o">*</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="o">/</span><span class="n">R_star</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
 
-    # Calculate log-likelihood
-    for instrument in data_wlen.keys():
+    <span class="c1"># Calculate log-likelihood</span>
+    <span class="k">for</span> <span class="n">instrument</span> <span class="ow">in</span> <span class="n">data_wlen</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
-        # Rebin model to observation
-        flux_rebinned = rgw.rebin_give_width(wlen, flux_sq, \
-                        data_wlen[instrument], data_wlen_bins[instrument])
+        <span class="c1"># Rebin model to observation</span>
+        <span class="n">flux_rebinned</span> <span class="o">=</span> <span class="n">rgw</span><span class="o">.</span><span class="n">rebin_give_width</span><span class="p">(</span><span class="n">wlen</span><span class="p">,</span> <span class="n">flux_sq</span><span class="p">,</span> \
+                        <span class="n">data_wlen</span><span class="p">[</span><span class="n">instrument</span><span class="p">],</span> <span class="n">data_wlen_bins</span><span class="p">[</span><span class="n">instrument</span><span class="p">])</span>
 
-        if plotting:
-            plt.errorbar(data_wlen[instrument], \
-                             data_flux_lambda[instrument], \
-                             data_flux_lambda_error[instrument], \
-                             fmt = &#39;o&#39;, \
-                             zorder = -20, \
-                             color = &#39;red&#39;)
+        <span class="k">if</span> <span class="n">plotting</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">data_wlen</span><span class="p">[</span><span class="n">instrument</span><span class="p">],</span> \
+                             <span class="n">data_flux_lambda</span><span class="p">[</span><span class="n">instrument</span><span class="p">],</span> \
+                             <span class="n">data_flux_lambda_error</span><span class="p">[</span><span class="n">instrument</span><span class="p">],</span> \
+                             <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> \
+                             <span class="n">zorder</span> <span class="o">=</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> \
+                             <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
 
-            plt.plot(data_wlen[instrument], \
-                             flux_rebinned, \
-                             &#39;s&#39;, \
-                             zorder = -20, \
-                             color = &#39;blue&#39;)
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_wlen</span><span class="p">[</span><span class="n">instrument</span><span class="p">],</span> \
+                             <span class="n">flux_rebinned</span><span class="p">,</span> \
+                             <span class="s1">&#39;s&#39;</span><span class="p">,</span> \
+                             <span class="n">zorder</span> <span class="o">=</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> \
+                             <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span>
 
-        # Calculate log-likelihood
-        log_likelihood += \
-               -np.sum(((flux_rebinned - data_flux_lambda[instrument])/ \
-                    data_flux_lambda_error[instrument])**2.)/2.
+        <span class="c1"># Calculate log-likelihood</span>
+        <span class="n">log_likelihood</span> <span class="o">+=</span> \
+               <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(((</span><span class="n">flux_rebinned</span> <span class="o">-</span> <span class="n">data_flux_lambda</span><span class="p">[</span><span class="n">instrument</span><span class="p">])</span><span class="o">/</span> \
+                    <span class="n">data_flux_lambda_error</span><span class="p">[</span><span class="n">instrument</span><span class="p">])</span><span class="o">**</span><span class="mf">2.</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>
 
-    if plotting:
-        plt.plot(wlen, flux_sq, color = &#39;black&#39;)
-        plt.xscale(&#39;log&#39;)
-        plt.show()
+    <span class="k">if</span> <span class="n">plotting</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wlen</span><span class="p">,</span> <span class="n">flux_sq</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-    computed_spectra += 1
+    <span class="n">computed_spectra</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    # Write diagnostics file
-    if (function_calls &gt;= write_threshold):
+    <span class="c1"># Write diagnostics file</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">function_calls</span> <span class="o">&gt;=</span> <span class="n">write_threshold</span><span class="p">):</span>
 
-        write_threshold += delta_wt
-        hours = (time.time() - start_time)/3600.0
-        info_list = [function_calls, computed_spectra, NaN_spectra, \
-                 log_prior + log_likelihood, hours]
+        <span class="n">write_threshold</span> <span class="o">+=</span> <span class="n">delta_wt</span>
+        <span class="n">hours</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="mf">3600.0</span>
+        <span class="n">info_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">function_calls</span><span class="p">,</span> <span class="n">computed_spectra</span><span class="p">,</span> <span class="n">NaN_spectra</span><span class="p">,</span> \
+                 <span class="n">log_prior</span> <span class="o">+</span> <span class="n">log_likelihood</span><span class="p">,</span> <span class="n">hours</span><span class="p">]</span>
 
-        file_object = open(absolute_path + &#39;diag_&#39; + \
-                               retrieval_name + &#39;.dat&#39;, &#39;a&#39;)
+        <span class="n">file_object</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">absolute_path</span> <span class="o">+</span> <span class="s1">&#39;diag_&#39;</span> <span class="o">+</span> \
+                               <span class="n">retrieval_name</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
 
-        for i in np.arange(len(info_list)):
-            if (i == len(info_list) - 1):
-                file_object.write(str(info_list[i]).ljust(15) + &quot;\n&quot;)
-            else:
-                file_object.write(str(info_list[i]).ljust(15) + &quot; &quot;)
-        file_object.close()
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">info_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">info_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">info_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">info_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">file_object</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    print(log_prior + log_likelihood)
-    print(&quot;--&gt; &quot;, function_calls, &quot; --&gt; &quot;, computed_spectra)
-    return log_prior + log_likelihood
+    <span class="nb">print</span><span class="p">(</span><span class="n">log_prior</span> <span class="o">+</span> <span class="n">log_likelihood</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&gt; &quot;</span><span class="p">,</span> <span class="n">function_calls</span><span class="p">,</span> <span class="s2">&quot; --&gt; &quot;</span><span class="p">,</span> <span class="n">computed_spectra</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_prior</span> <span class="o">+</span> <span class="n">log_likelihood</span>
 
-def lnprob(x):
-    return calc_log_prob(x)
+<span class="k">def</span> <span class="nf">lnprob</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">calc_log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -803,7 +808,7 @@ def lnprob(x):
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>n_dim = len(log_priors)
+<span></span><span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_priors</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -813,24 +818,24 @@ def lnprob(x):
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Set initial position vectors in parameter space
-p0 = [np.array([np.random.normal(loc = -5.5, scale = 2.5, size=1)[0], \
-                np.random.normal(loc = 0., scale = 2., size=1)[0], \
-                0.+1500.*np.random.uniform(size=1)[0], \
-                0.+4000.*np.random.uniform(size=1)[0], \
-                np.random.normal(loc = -3., scale = 3., size=1)[0], \
-                np.random.normal(loc = -0.25, scale = 0.4, size=1)[0], \
-                LOG_G,
-                -4.+6.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0], \
-                -10.+10.*np.random.uniform(size=1)[0]] \
-                ) for i in range(n_walkers)]
+<span></span><span class="c1"># Set initial position vectors in parameter space</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="mf">0.</span><span class="o">+</span><span class="mf">1500.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="mf">0.</span><span class="o">+</span><span class="mf">4000.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="n">LOG_G</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">4.</span><span class="o">+</span><span class="mf">6.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> \
+                <span class="o">-</span><span class="mf">10.</span><span class="o">+</span><span class="mf">10.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> \
+                <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -840,23 +845,23 @@ p0 = [np.array([np.random.normal(loc = -5.5, scale = 2.5, size=1)[0], \
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>if cluster:
-    pool = MPIPool()
-    if not pool.is_master():
-        pool.wait()
-        sys.exit(0)
-    sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \
-                                        a = stepsize, pool = pool)
-else:
-    if n_threads &gt; 1:
-        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \
-                                            a = stepsize, threads = n_threads)
-    else:
-        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \
-                                            a = stepsize)
+<span></span><span class="k">if</span> <span class="n">cluster</span><span class="p">:</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">MPIPool</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pool</span><span class="o">.</span><span class="n">is_master</span><span class="p">():</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">lnprob</span><span class="p">,</span> \
+                                        <span class="n">a</span> <span class="o">=</span> <span class="n">stepsize</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">pool</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">n_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">lnprob</span><span class="p">,</span> \
+                                            <span class="n">a</span> <span class="o">=</span> <span class="n">stepsize</span><span class="p">,</span> <span class="n">threads</span> <span class="o">=</span> <span class="n">n_threads</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">lnprob</span><span class="p">,</span> \
+                                            <span class="n">a</span> <span class="o">=</span> <span class="n">stepsize</span><span class="p">)</span>
 
-pre_burn_in_runs = int(np.min([399, n_iter/10])) + 3
-pos, prob, state = sampler.run_mcmc(p0, pre_burn_in_runs)
+<span class="n">pre_burn_in_runs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="mi">399</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">/</span><span class="mi">10</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">pre_burn_in_runs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -870,33 +875,33 @@ pos, prob, state = sampler.run_mcmc(p0, pre_burn_in_runs)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Get the best-fit position
-highest_prob_index = np.unravel_index(sampler.lnprobability.argmax(), \
-                                          sampler.lnprobability.shape)
-best_position = sampler.chain[highest_prob_index]
+<span></span><span class="c1"># Get the best-fit position</span>
+<span class="n">highest_prob_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">lnprobability</span><span class="o">.</span><span class="n">argmax</span><span class="p">(),</span> \
+                                          <span class="n">sampler</span><span class="o">.</span><span class="n">lnprobability</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">best_position</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span><span class="p">[</span><span class="n">highest_prob_index</span><span class="p">]</span>
 
-f = open(&#39;best_position_pre_burn_in_&#39; + retrieval_name + &#39;.dat&#39;, &#39;w&#39;)
-f.write(str(best_position))
-f.close()
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;best_position_pre_burn_in_&#39;</span> <span class="o">+</span> <span class="n">retrieval_name</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">best_position</span><span class="p">))</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-# Run actual chain
-p0 = [np.array([best_position[0]+np.random.normal(size=1)[0]*0.8, \
-                best_position[1]+np.random.normal(size=1)[0]*0.5, \
-                best_position[2]+np.random.normal(size=1)[0]*70., \
-                best_position[3]+np.random.normal(size=1)[0]*200., \
-                best_position[4]+np.random.normal(size=1)[0]*0.5, \
-                best_position[5]+np.random.normal(size=1)[0]*0.1, \
-                LOG_G, \
-                best_position[7]+np.random.normal(size=1)[0]*0.2, \
-                best_position[8]+np.random.normal(size=1)[0]*0.3, \
-                best_position[9]+np.random.normal(size=1)[0]*0.3, \
-                best_position[10]+np.random.normal(size=1)[0]*0.3, \
-                best_position[11]+np.random.normal(size=1)[0]*0.3, \
-                best_position[12]+np.random.normal(size=1)[0]*0.3, \
-                best_position[13]+np.random.normal(size=1)[0]*0.3, \
-                best_position[14]+np.random.normal(size=1)[0]*0.3, \
-                best_position[15]+np.random.normal(size=1)[0]*0.3] \
-                   ) for i in range(n_walkers)]
+<span class="c1"># Run actual chain</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">best_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.8</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">70.</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">200.</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> \
+                <span class="n">LOG_G</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.2</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> \
+                <span class="n">best_position</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.3</span><span class="p">]</span> \
+                   <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -906,21 +911,21 @@ p0 = [np.array([best_position[0]+np.random.normal(size=1)[0]*0.8, \
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>if cluster:
-    sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \
-                                        a = stepsize, pool = pool)
-else:
-    if n_threads &gt; 1:
-        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \
-                                            a = stepsize, threads = n_threads)
-    else:
-        sampler = emcee.EnsembleSampler(n_walkers, n_dim, lnprob, \
-                                            a = stepsize)
+<span></span><span class="k">if</span> <span class="n">cluster</span><span class="p">:</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">lnprob</span><span class="p">,</span> \
+                                        <span class="n">a</span> <span class="o">=</span> <span class="n">stepsize</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">pool</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">n_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">lnprob</span><span class="p">,</span> \
+                                            <span class="n">a</span> <span class="o">=</span> <span class="n">stepsize</span><span class="p">,</span> <span class="n">threads</span> <span class="o">=</span> <span class="n">n_threads</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">,</span> <span class="n">lnprob</span><span class="p">,</span> \
+                                            <span class="n">a</span> <span class="o">=</span> <span class="n">stepsize</span><span class="p">)</span>
 
-pos, prob, state = sampler.run_mcmc(p0, n_iter)
+<span class="n">pos</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
 
-if cluster:
-    pool.close()
+<span class="k">if</span> <span class="n">cluster</span><span class="p">:</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -933,17 +938,17 @@ if cluster:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>f = open(&#39;chain_pos_&#39; + retrieval_name + &#39;.pickle&#39;,&#39;wb&#39;)
-pickle.dump(pos,f)
-pickle.dump(prob,f)
-pickle.dump(state,f)
-samples = sampler.chain[:, :, :].reshape((-1, n_dim))
-pickle.dump(samples,f)
-f.close()
+<span></span><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;chain_pos_&#39;</span> <span class="o">+</span> <span class="n">retrieval_name</span> <span class="o">+</span> <span class="s1">&#39;.pickle&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">chain</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span>
+<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-with open(&#39;chain_lnprob_&#39; + retrieval_name + &#39;.pickle&#39;, &#39;wb&#39;) as f:
-    pickle.dump([sampler.lnprobability], \
-                f, protocol=pickle.HIGHEST_PROTOCOL)
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;chain_lnprob_&#39;</span> <span class="o">+</span> <span class="n">retrieval_name</span> <span class="o">+</span> <span class="s1">&#39;.pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">sampler</span><span class="o">.</span><span class="n">lnprobability</span><span class="p">],</span> \
+                <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -961,7 +966,7 @@ with open(&#39;chain_lnprob_&#39; + retrieval_name + &#39;.pickle&#39;, &#39;wb&
         <a href="ret_transmission_retrieval_model.html" class="btn btn-neutral float-right" title="Master retrieval model: transmission case" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../ret_transmission.html" class="btn btn-neutral" title="Transmission spectrum retrieval" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../ret_transmission.html" class="btn btn-neutral float-left" title="Transmission spectrum retrieval" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -987,28 +992,16 @@ with open(&#39;chain_lnprob_&#39; + retrieval_name + &#39;.pickle&#39;, &#39;wb&
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

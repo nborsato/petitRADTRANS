@@ -17,33 +17,38 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="content/installation.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -52,7 +57,7 @@
 
           
             
-            <img src="_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="_static/petitlogo.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -160,13 +165,13 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -187,8 +192,8 @@ of exoplanets, at low (<span class="math notranslate nohighlight">\(\lambda/\Del
 (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>) resolution, for clear and cloudy
 atmospheres.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Scattering is currently not included for
+<p class="admonition-title">Important</p>
+<p>Scattering is currently not included for
 emission spectra in petitRADTRANS (but it is for the transmission
 spectra). We intend to migrate the scattering implementation of
 <a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a>
@@ -204,15 +209,15 @@ Also, we give a tutorial on how to calculate opacities that may be
 missing from our database.</p>
 <div class="section" id="news">
 <h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>27 May 2019: high-temperature atom and ion opacities now available</dt>
-<dd>We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
+<dl class="simple">
+<dt><strong>27 May 2019: high-temperature atom and ion opacities now available</strong></dt><dd><p>We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
 Si, Si+, O, O+, Al, Al+, Ti, Ti+, V and V+, up to temperatures of
 4000 K. As usual, if the atmospheric temperatures increase
 above 4000 K, petitRADTRANS will use the absorbers respective
 opacities at 4000 K. <strong>Please make sure to install the latest
 petitRADTRANS version to make use of the high-temperature
-points of the new opacity tables!</strong></dd>
+points of the new opacity tables!</strong></p>
+</dd>
 </dl>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Guide:</span></p>
@@ -303,28 +308,16 @@ points of the new opacity tables!</strong></dd>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

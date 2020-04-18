@@ -34,14 +34,14 @@ missing from our database.
 News
 ____
 
-27 May 2019: high-temperature atom and ion opacities now available
-       We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
-       Si, Si+, O, O+, Al, Al+, Ti, Ti+, V and V+, up to temperatures of
-       4000 K. As usual, if the atmospheric temperatures increase
-       above 4000 K, petitRADTRANS will use the absorbers respective
-       opacities at 4000 K. **Please make sure to install the latest
-       petitRADTRANS version to make use of the high-temperature
-       points of the new opacity tables!**
+**27 May 2019: high-temperature atom and ion opacities now available**
+    We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
+    Si, Si+, O, O+, Al, Al+, Ti, Ti+, V and V+, up to temperatures of
+    4000 K. As usual, if the atmospheric temperatures increase
+    above 4000 K, petitRADTRANS will use the absorbers respective
+    opacities at 4000 K. **Please make sure to install the latest
+    petitRADTRANS version to make use of the high-temperature
+    points of the new opacity tables!**
 
 .. toctree::
    :maxdepth: 2

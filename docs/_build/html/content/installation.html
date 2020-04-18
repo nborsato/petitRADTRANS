@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
     <link rel="prev" title="petitRADTRANS documentation" href="../index.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -53,7 +58,7 @@
 
           
             
-            <img src="../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="../_static/petitlogo.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -169,13 +174,13 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -193,8 +198,8 @@
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>A working Python installation, including the numpy package.</li>
-<li>A Fortran compiler (e.g. “gfortran”)</li>
+<li><p>A working Python installation, including the numpy package.</p></li>
+<li><p>A Fortran compiler (e.g. “gfortran”)</p></li>
 </ul>
 </div>
 <div class="section" id="download-code">
@@ -204,8 +209,8 @@
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">We are working on making petitRADTRANS available via pip install and anaconda, and providing as setup script. In the meantime, please carry out the (few) steps below.</p>
+<p class="admonition-title">Note</p>
+<p>We are working on making petitRADTRANS available via pip install and anaconda, and providing as setup script. In the meantime, please carry out the (few) steps below.</p>
 </div>
 </div>
 <div class="section" id="download-opacity-data">
@@ -227,19 +232,19 @@ species you downloaded in there.</p>
 <div class="section" id="id1">
 <h2>Installation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>In the terminal, enter the petitRADTRANS folder containing the source
-(.py and .f90 files) (<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">petitRADTRANS</span></code>).</li>
-<li>Type the following in the terminal <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">make.sh</span></code>, and press Enter.</li>
-<li>Type the following in the terminal <code class="docutils literal notranslate"><span class="pre">./make.sh</span></code>, and press Enter. A lot of text will appear while the Fortran subroutines are being built. If you use Anaconda, see the first installation tip below before carrying out this step.</li>
-<li>Type <code class="docutils literal notranslate"><span class="pre">ls</span></code> in the terminal and press Enter. If everything has worked you should see three files with the “.so” extension in the folder. If you are experiencing problems see the installation tips below.</li>
-<li>Open the “.bash_profile” or “.bashrc” file (depending on your operating system) in your home directory. Add the following as a new line to the file (you may have to use sudo for modifying this file).</li>
+<li><p>In the terminal, enter the petitRADTRANS folder containing the source
+(.py and .f90 files) (<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">petitRADTRANS</span></code>).</p></li>
+<li><p>Type the following in the terminal <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">make.sh</span></code>, and press Enter.</p></li>
+<li><p>Type the following in the terminal <code class="docutils literal notranslate"><span class="pre">./make.sh</span></code>, and press Enter. A lot of text will appear while the Fortran subroutines are being built. If you use Anaconda, see the first installation tip below before carrying out this step.</p></li>
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">ls</span></code> in the terminal and press Enter. If everything has worked you should see three files with the “.so” extension in the folder. If you are experiencing problems see the installation tips below.</p></li>
+<li><p>Open the “.bash_profile” or “.bashrc” file (depending on your operating system) in your home directory. Add the following as a new line to the file (you may have to use sudo for modifying this file).</p></li>
 </ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span>Path of the folder containing the petitRADTRANS source/:<span class="nv">$PYTHONPATH</span>
 </pre></div>
 </div>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">Don’t forget to adapt the path in the line above :) ! If you clone petitRADTRANS from gitlab, this
+<p class="admonition-title">Attention</p>
+<p>Don’t forget to adapt the path in the line above :) ! If you clone petitRADTRANS from gitlab, this
 should be the path of the top-level petitRADTRANS folder
 <em>containing</em> the petitRADTRANS source folder. If you are
 uncertain what the absolute path of the folder containing the
@@ -253,9 +258,9 @@ Close and reopen the terminal such that it will set the Python path correctly.</
 <div class="section" id="installation-tips">
 <h2>Installation tips<a class="headerlink" href="#installation-tips" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>When running “make.sh”, the shell script will call a program named “f2py”. f2py will compile the Fortran subroutines used by petitRADTRANS, and wrap them for use in Python. f2py is part of the Python numpy package. If you are running Anaconda and use different Python environments, it is important that you activate the Python environment that you want to run petitRADTRANS in before running “make.sh”. Only then will the Fortran subroutines be build with the correct f2py version (using the Python and numpy version valid within the Anaconda environment).</li>
-<li>If you put the petitRADTRANS folder in a protected area of your file system (like “/Applications” on Mac OS) you may have to carry out all installation steps with the “sudo” command preceding the actual terminal commands <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">…</span></code> and <code class="docutils literal notranslate"><span class="pre">./make.sh</span></code>, otherwise you may run into “Permission denied” errors. You will have to enter your password when doing this.</li>
-<li>Sometimes <code class="docutils literal notranslate"><span class="pre">./make.sh</span></code> will not work. In this case copy the lines contained within “make.sh” individually to the clipboard, paste them to the terminal, and press Enter.</li>
+<li><p>When running “make.sh”, the shell script will call a program named “f2py”. f2py will compile the Fortran subroutines used by petitRADTRANS, and wrap them for use in Python. f2py is part of the Python numpy package. If you are running Anaconda and use different Python environments, it is important that you activate the Python environment that you want to run petitRADTRANS in before running “make.sh”. Only then will the Fortran subroutines be build with the correct f2py version (using the Python and numpy version valid within the Anaconda environment).</p></li>
+<li><p>If you put the petitRADTRANS folder in a protected area of your file system (like “/Applications” on Mac OS) you may have to carry out all installation steps with the “sudo” command preceding the actual terminal commands <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">…</span></code> and <code class="docutils literal notranslate"><span class="pre">./make.sh</span></code>, otherwise you may run into “Permission denied” errors. You will have to enter your password when doing this.</p></li>
+<li><p>Sometimes <code class="docutils literal notranslate"><span class="pre">./make.sh</span></code> will not work. In this case copy the lines contained within “make.sh” individually to the clipboard, paste them to the terminal, and press Enter.</p></li>
 </ul>
 </div>
 <div class="section" id="testing-the-installation">
@@ -284,7 +289,7 @@ Done.
         <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../index.html" class="btn btn-neutral" title="petitRADTRANS documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="petitRADTRANS documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -310,28 +315,16 @@ Done.
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

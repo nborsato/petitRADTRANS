@@ -17,34 +17,39 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Code documentation" href="code.html" />
     <link rel="prev" title="Plotting temperature envelopes" href="notebooks/plot_temp_enve.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -53,7 +58,7 @@
 
           
             
-            <img src="../_static/petitlogo.jpg" class="logo" alt="Logo"/>
+            <img src="../_static/petitlogo.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -166,13 +171,13 @@
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
-.nbinput.nblast,
-.nboutput.nblast {
+.nbinput.nblast.container,
+.nboutput.nblast.container {
     margin-bottom: 19px;  /* padding has already 5px */
 }
 
 /* ... except between code cells! */
-.nblast + .nbinput {
+.nblast.container + .nbinput.container {
     margin-top: -19px;
 }
 
@@ -232,9 +237,9 @@ All necessary files for calculating opacities can be found on the Exomol
 website, just <a class="reference external" href="http://www.exomol.com/data/molecules/NaH/23Na-1H/Rivlin/">click here</a>.</p>
 <p>The following files need to be downloaded:</p>
 <ul class="simple">
-<li>23Na-1H__Rivlin.states.bz2</li>
-<li>23Na-1H__Rivlin.trans.bz2</li>
-<li>23Na-1H__Rivlin.pf</li>
+<li><p>23Na-1H__Rivlin.states.bz2</p></li>
+<li><p>23Na-1H__Rivlin.trans.bz2</p></li>
+<li><p>23Na-1H__Rivlin.pf</p></li>
 </ul>
 <p>Please unzip the .bz2 files before use.</p>
 <p>Next, make an input file for carrying out the calculations, in this
@@ -261,35 +266,35 @@ end
 </div>
 <p>This calculates the opacity of NaH with the following settings</p>
 <ul class="simple">
-<li><a href="#id2"><span class="problematic" id="id3">``</span></a>offset `` results in a line cutoff of 60 <span class="math notranslate nohighlight">\({\rm
+<li><p><a href="#id2"><span class="problematic" id="id3">``</span></a>offset `` results in a line cutoff of 60 <span class="math notranslate nohighlight">\({\rm
 cm}^{-1}\)</span>. While being an important effect that also speeds up
 calculations, the choice of a cutoff is often arbitrary because the
 physics behind it remain difficult to model, see, for example the
 discussion in <a class="reference external" href="https://arxiv.org/abs/1503.03806">Grimm &amp; Heng
 (2015)</a>. Here we use the equivalent width of the line decrease
 function given by <a class="reference external" href="http://adsabs.harvard.edu/abs/2002JQSRT..72..117H">Hartmann et al. (2002)</a>, for <span class="math notranslate nohighlight">\(\rm CH_4\)</span>
-broadened by <span class="math notranslate nohighlight">\(\rm H_2\)</span>.</li>
-<li>NaH has a mass of 24 (in amu)</li>
-<li>The opacity is calculated at a temperature of 1000 K</li>
-<li>The opacity is calculated at a pressure of <span class="math notranslate nohighlight">\(10^{-5}\)</span> bar</li>
-<li>The opacity is calculated in the range from 39 to 91000 <span class="math notranslate nohighlight">\({\rm
+broadened by <span class="math notranslate nohighlight">\(\rm H_2\)</span>.</p></li>
+<li><p>NaH has a mass of 24 (in amu)</p></li>
+<li><p>The opacity is calculated at a temperature of 1000 K</p></li>
+<li><p>The opacity is calculated at a pressure of <span class="math notranslate nohighlight">\(10^{-5}\)</span> bar</p></li>
+<li><p>The opacity is calculated in the range from 39 to 91000 <span class="math notranslate nohighlight">\({\rm
 cm}^{-1}\)</span>. This corresponds to a wavelength range from 0.1099 to
 256.4103 micron, therefore bracketing the full petitRADTRANS
 wavelength range (0.11 to 250 micron at low resolution). This large
 a range is needed. Therefore, do not change this. Note that the opacities in
 the high-resolution mode of petitRADTRANS ultimately only go from
-0.3 to 28 microns.</li>
-<li>The resolution of the calculations carried out here is for a
-wavelength spacing of <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>.</li>
-<li>The <code class="docutils literal notranslate"><span class="pre">pfile</span></code> line gives the relative path to the partition function
-file, that you have already downloaded from Exomol.</li>
-<li>The <code class="docutils literal notranslate"><span class="pre">states</span></code> line gives the relative path to the states
-file, that you have already downloaded from Exomol.</li>
-<li>The lines below <code class="docutils literal notranslate"><span class="pre">transitions</span></code> line give the relative paths to the transition
+0.3 to 28 microns.</p></li>
+<li><p>The resolution of the calculations carried out here is for a
+wavelength spacing of <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">pfile</span></code> line gives the relative path to the partition function
+file, that you have already downloaded from Exomol.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">states</span></code> line gives the relative path to the states
+file, that you have already downloaded from Exomol.</p></li>
+<li><p>The lines below <code class="docutils literal notranslate"><span class="pre">transitions</span></code> line give the relative paths to the transition
 files, that you have already downloaded from Exomol. For NaH this is
 only one file. For molecules with a lot more lines this can be
-multiple files.</li>
-<li>The lines below <code class="docutils literal notranslate"><span class="pre">species</span></code> define the pressure broadening to be
+multiple files.</p></li>
+<li><p>The lines below <code class="docutils literal notranslate"><span class="pre">species</span></code> define the pressure broadening to be
 used. This pressure boradening (width of the Lorentz profile) is of
 the form <span class="math notranslate nohighlight">\(\gamma \cdot (T_{0}/T)^n ({\rm ratio}\cdot
 P/{\rm 1 \ bar})\)</span>, in units of <span class="math notranslate nohighlight">\(\rm cm^{-1}\)</span>.  The choice here is a compromise between the
@@ -297,7 +302,7 @@ various values reported for the broadening by <span class="math notranslate nohi
 various absorbers, e.g. in <a class="reference external" href="https://arxiv.org/abs/1402.0814">Amundsen et al. (2014)</a>, <a class="reference external" href="https://arxiv.org/abs/1809.02548v2">Gharib-Nezhad &amp;
 Line (2018)</a>. Also see the text around Equation 12 in <a class="reference external" href="https://arxiv.org/abs/astro-ph/0607211">Sharp &amp;
 Burrows (2007)</a> for more information. Sometimes more detailed
-broadening information is available on Exomol, <a class="reference external" href="http://www.exomol.com/data/data-types/broadening_coefficients/">see here</a>.</li>
+broadening information is available on Exomol, <a class="reference external" href="http://www.exomol.com/data/data-types/broadening_coefficients/">see here</a>.</p></li>
 </ul>
 <p>If more detailed broadening information is avaiable (not for NaH) you can replace
 the lines below <code class="docutils literal notranslate"><span class="pre">species</span></code> with something like</p>
@@ -351,8 +356,8 @@ petitRADTRANS to use the high-temperature grid (<a class="reference external" hr
 be added ASAP. Shoot us a <a class="reference external" href="mailto:molliere&#37;&#52;&#48;mpia&#46;de">email</a> to find out when / pressuring us to do
 this even more quickly.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">For later use in petitRADTRANS it is important that the opacity
+<p class="admonition-title">Important</p>
+<p>For later use in petitRADTRANS it is important that the opacity
 files have the correct names. Every molecule needs to be assigned
 a random two digit integer (e.g. “06”). It does not matter if two
 different molecules have the same number. Then, the opacity file
@@ -407,15 +412,15 @@ np.savetxt<span class="o">(</span><span class="s1">&#39;NaH_1000K_1em5bar_petit_
 these formatted files. Please <a class="reference external" href="mailto:molliere&#37;&#52;&#48;mpia&#46;de">email</a> us to get the relevant Fortran
 source to do this, we will send you four files called</p>
 <ul class="simple">
-<li>calc_k_g_r1000_ptrad.f90: this converts the opacity data to
+<li><p>calc_k_g_r1000_ptrad.f90: this converts the opacity data to
 petitRADTRANS k-tables (these are the opacities for the
-low-resolution mode of petitRADTRANS, at <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>.</li>
-<li>retrieval_NP_16_ggrid.dat: this is the 16-point Gaussian quadrature
-grid that petitRADTRANS uses as the g-coordinate for the k-tables.</li>
-<li>make_short.f90: this cuts the opacities to the right 0.3 to 28
+low-resolution mode of petitRADTRANS, at <span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>.</p></li>
+<li><p>retrieval_NP_16_ggrid.dat: this is the 16-point Gaussian quadrature
+grid that petitRADTRANS uses as the g-coordinate for the k-tables.</p></li>
+<li><p>make_short.f90: this cuts the opacities to the right 0.3 to 28
 micron range for the high-resolution calculations
-<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>.</li>
-<li>short_stream_lambs_mass.dat: input file for make_short.f90.</li>
+<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>.</p></li>
+<li><p>short_stream_lambs_mass.dat: input file for make_short.f90.</p></li>
 </ul>
 <p>You do not need to understand anything about k-tables to do this step
 here, we just wanted to explain what the routines are for.</p>
@@ -527,7 +532,7 @@ installed and ready for use!</p>
         <a href="code.html" class="btn btn-neutral float-right" title="Code documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="notebooks/plot_temp_enve.html" class="btn btn-neutral" title="Plotting temperature envelopes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="notebooks/plot_temp_enve.html" class="btn btn-neutral float-left" title="Plotting temperature envelopes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -553,28 +558,16 @@ installed and ready for use!</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

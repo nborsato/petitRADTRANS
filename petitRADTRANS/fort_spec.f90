@@ -179,14 +179,15 @@ subroutine flux_ck(freq,tau,temp,mu,w_gauss_mu, &
            flux_mu(i_freq) = flux_mu(i_freq)+ &
                 (r(i_str)+r(i_str+1))*(transm_all_loc(i_str)-transm_all_loc(i_str+1))/2d0
            if (contribution) then
-              contr_em(i_str,i_freq) = (r(i_str)+r(i_str+1)) * &
+              contr_em(i_str,i_freq) = contr_em(i_str,i_freq) + (r(i_str)+r(i_str+1)) * &
                    (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
                    *mu(i_mu)*w_gauss_mu(i_mu)              
            end if
         end do
         flux_mu(i_freq) = flux_mu(i_freq) + r(struc_len)*transm_all_loc(struc_len)
         if (contribution) then
-           contr_em(struc_len,i_freq) = 2d0*r(struc_len)*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
+           contr_em(struc_len,i_freq) = contr_em(struc_len,i_freq) + &
+                2d0*r(struc_len)*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
         end if
      end do
      ! angle integ, factor 1/2 needed for flux calc. from upward pointing intensity
@@ -796,14 +797,15 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
 
   DOUBLE PRECISION, intent(in)                :: gravity
   DOUBLE PRECISION, intent(in)                :: w_gauss(g_len), continuum_opa_scat(freq_len,struc_len)
+  LOGICAL, intent(in)                         :: var_grav
   LOGICAL, intent(in)                         :: scat
   DOUBLE PRECISION, intent(in)                :: transm_in(freq_len)
   DOUBLE PRECISION, intent(out)               :: contr_tr(struc_len,freq_len)
+  
 
   ! Internal
   DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len),radius_var(struc_len)
   INTEGER                                     :: i_str, i_freq, i_g, i_spec, j_str, i_leave_str
-  LOGICAL                                     :: var_grav
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
   DOUBLE PRECISION                            :: t_graze(g_len,freq_len,N_species,struc_len), s_1, s_2, &
        t_graze_wlen_int(struc_len,freq_len), alpha_t2_scat(freq_len,struc_len-1), t_graze_scat(freq_len,struc_len), &

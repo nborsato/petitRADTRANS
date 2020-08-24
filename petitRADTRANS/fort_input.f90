@@ -450,7 +450,7 @@ subroutine interpol_opa_ck(press,temp,opa_TP_grid,custom_grid, &
   INTEGER                               :: i_str, ind_take
   INTEGER                               :: s_temp_ind_own, press_ind_own
   INTEGER                               :: PT_ind_Ts_Ps, PT_ind_Ts_Pl,PT_ind_Tl_Ps, &
-       PT_ind_Tl_Pl
+       PT_ind_Tl_Pl, buffer_scalar_array(1)
   DOUBLE PRECISION                      :: PorT(g_len,freq_len), &
        slopes(g_len,freq_len), &
        buffer1(g_len,freq_len),buffer2(g_len,freq_len), &
@@ -475,8 +475,10 @@ subroutine interpol_opa_ck(press,temp,opa_TP_grid,custom_grid, &
 
      if (custom_grid) then
 
-        call search_intp_ind(diff_Ts_vals,diffTs,temp(i_str),1,s_temp_ind_own)
-        call search_intp_ind(diff_Ps_vals,diffPs,press(i_str),1,press_ind_own)
+        call search_intp_ind(diff_Ts_vals,diffTs,temp(i_str),1,buffer_scalar_array)
+        s_temp_ind_own = buffer_scalar_array(1)
+        call search_intp_ind(diff_Ps_vals,diffPs,press(i_str),1,buffer_scalar_array)
+        press_ind_own = buffer_scalar_array(1)
 
         ! Opacity N_PT_grid indice at smaller P and T than point of interest
         PT_ind_Ts_Ps = (s_temp_ind_own-1)*diffPs+press_ind_own

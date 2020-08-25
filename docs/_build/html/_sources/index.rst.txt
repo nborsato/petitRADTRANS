@@ -34,6 +34,13 @@ missing from our database.
 News
 ____
 
+**May 2020: petitRADTRANS opacities now available on the Exomol website**
+    Opacity tables created specifically in the petitRADTRANS format
+    are now available on the `Exomol website <http://www.exomol.com>`_.
+    They can be installed in petitRADTRANS in an easy plug-and-play fashion.
+    Please see Section `Adding opacities <content/opa_add.html>`_ for more information.
+
+
 **27 May 2019: high-temperature atom and ion opacities now available**
     We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
     Si, Si+, O, O+, Al, Al+, Ti, Ti+, V and V+, up to temperatures of

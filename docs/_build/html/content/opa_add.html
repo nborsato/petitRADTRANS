@@ -97,9 +97,14 @@
 <li class="toctree-l1"><a class="reference internal" href="available_opacities.html">Available opacity species</a></li>
 <li class="toctree-l1"><a class="reference internal" href="retrieval_examples.html">Retrieval Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Adding opacities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#from-line-lists-to-opacities-using-exocross">From line lists to opacities (using ExoCross)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#preparing-exocross-opacities-for-petitradtrans">Preparing ExoCross opacities for petitRADTRANS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installing-the-new-opacity-files-in-petitradtrans">Installing the new opacity files in petitRADTRANS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importing-custom-made-opacity-tables-from-the-exomol-website">Importing custom-made opacity tables from the Exomol website</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#converting-cross-section-grids-from-opacity-world">Converting cross-section grids from opacity.world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#from-line-lists-to-opacities-using-exocross">From line lists to opacities (using ExoCross)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-exocross-opacities-for-petitradtrans">Preparing ExoCross opacities for petitRADTRANS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-the-new-opacity-files-in-petitradtrans">Installing the new opacity files in petitRADTRANS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-arbitrary-but-rectangular-p-t-opacity-grids-in-petitradtrans">Using arbitrary (but rectangular) P-T opacity grids in petitRADTRANS</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -198,15 +203,168 @@
 <h1>Adding opacities<a class="headerlink" href="#adding-opacities" title="Permalink to this headline">¶</a></h1>
 <p>petitRADTRANS has an extensive database of line opacities. However, it is very
 likely that we are missing the one atom / molecule that you want.
-Here we give an example on how to calculate opacities and reformatting
-them for use in petitRADTRANS. In this way you will be able to add
-additional species, that we do not have added yet. If you are
-particularly nice, you can share these opacities with us, we will then
+There are three options of adding external opacities to petitRADTRANS:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#exomolprt"><span class="std std-ref">Importing custom-made opacity tables from the Exomol website</span></a>. These are already in the petitRADTRANS format and can be used in a plug-and-play fashion. The opacities are available for the low-resolution mode of petitRADTRANS only (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>).</p></li>
+<li><p><a class="reference internal" href="#owtoprt"><span class="std std-ref">Converting cross-section grids from opacity.world</span></a>.</p></li>
+<li><p><a class="reference internal" href="#ectoprt"><span class="std std-ref">Calculating opacities from line lists yourself</span></a>, and converting them to the petitRADTRANS format.</p></li>
+</ol>
+<p>These different options are explained in more detail below.</p>
+<p>If you add opacities which are not available through the Exomol website with Option 2 or 3, and if you are
+particularly nice, you can share these opacities with us. We would then
 make them available to the other petitRADTRANS users via this website, while properly
 attributing your contribution.</p>
+<div class="section" id="importing-custom-made-opacity-tables-from-the-exomol-website">
+<span id="exomolprt"></span><h2>Importing custom-made opacity tables from the Exomol website<a class="headerlink" href="#importing-custom-made-opacity-tables-from-the-exomol-website" title="Permalink to this headline">¶</a></h2>
+<p>All linelists available on the <a class="reference external" href="http://www.exomol.com">Exomol website</a> were recently converted into opacity tables in the custom format of various retrieval codes, see <a class="reference external" href="http://add.add.add">Chubb et al. (2020)</a>. Opacity tables in the petitRADTRANS format are available on the Exomol website. These opacity grids have been calculated for temperatures ranging from 100 to 3400 K (<span class="math notranslate nohighlight">\(\Delta T = 100 \ {\rm K}\)</span>) and 22 pressure points spaced equidistantly in log-space, from <span class="math notranslate nohighlight">\(10^{-5}\)</span> to 100 bar. Thermal and pressure broadening have also been included, see <a class="reference external" href="http://add.add.add">Chubb et al. (2020)</a> for more information. If you use petitRADTRANS at pressures and temperatures outside of this grid, petitRADTRANS will use the opacity at the gridpoint closest to the pressure and temperature specified in your calculation. These Exomol grids, in the hdf5 format, can simply be dropped into the opacity folder of petitRADTRANS to use them. <strong>This is arguably the easiest option to install external opacities, which we always recommend, if the species of interest is available from Exomol.</strong> Note that Exomol tables are available for the low-resolution mode of petitRADTRANS only (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>). The installation is outlined below.</p>
+<ol class="arabic simple">
+<li><p>In this example we will look at the Exomol <a class="reference external" href="https://academic.oup.com/mnras/article/480/2/2597/5054049">POKAZATEL</a> line list for water.
+Navigate <a class="reference external" href="http://www.exomol.com/data/molecules/H2O/1H2-16O/POKAZATEL/">to its entry</a> on the Exomol website. And scroll to the bottom of the page to the “POKAZATEL: opacity” section (see screenshot). Click on the link to download the petitRADTRANS opacity table.</p></li>
+</ol>
+<a class="reference internal image-reference" href="../_images/POKAZATEL_screenshot.png"><img alt="../_images/POKAZATEL_screenshot.png" src="../_images/POKAZATEL_screenshot.png" style="width: 600px;" /></a>
+<p>2. Navigate to your petitRADTRANS opacity folder, which is the <code class="docutils literal notranslate"><span class="pre">path</span> <span class="pre">to</span> <span class="pre">input_data/opacities/lines/corr_k/</span></code> folder.
+Make a new folder called, for example, <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> and place the <code class="docutils literal notranslate"><span class="pre">1H2-16O__POKAZATEL__R1000_0.3-50mu.ktable.petitRADTRANS.h5</span></code> file inside.</p>
+<p>You’re done! pRT will check automatically if an <code class="docutils literal notranslate"><span class="pre">*.h5</span></code> file is in the opacity folder, so as long as you keep the <code class="docutils literal notranslate"><span class="pre">.h5</span></code> extension, the file in the <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> folder can be called whatever you like. The name of the folder, which we chose to be <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> here, can also be anything. After dropping the <code class="docutils literal notranslate"><span class="pre">.h5</span></code> file in the <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> folder, the opacity species <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> is now ready for use! Note that also the abundances must be specified for <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> when using petitRADTRANS with this opacity table.</p>
+</div>
+<div class="section" id="converting-cross-section-grids-from-opacity-world">
+<span id="owtoprt"></span><h2>Converting cross-section grids from <a class="reference external" href="http://opacity.world/">opacity.world</a><a class="headerlink" href="#converting-cross-section-grids-from-opacity-world" title="Permalink to this headline">¶</a></h2>
+<p>Pre-computed opacities are also available from <a class="reference external" href="http://opacity.world/">opacity.world</a>,
+which have been generated using the method presented in <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0004-637X/808/2/182">Grimm &amp; Heng
+(2015)</a> .
+The website allows to download the cross-section tables as a function
+of pressure and temperature.</p>
+<p>Simply decide on any P-T and wavelength range that you are interested
+in. Note that their spectral coordinate is wavenumber, in units of
+<span class="math notranslate nohighlight">\({\rm cm}^{-1}\)</span>.</p>
+<p>Then transform the resulting binary files, that you downloaded from
+<a class="reference external" href="http://opacity.world/">opacity.world</a>, like described in the following. This script was
+developed together with Mantas Zilinskas, for <a class="reference external" href="https://arxiv.org/abs/2003.05354">Ziliniskas et
+al. (2020)</a>.</p>
+<p>First we load the relevant packages.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+<p>Then we define where the input file are and where ouput files are
+supposed to be put. This example here is for the HDO opacity.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Paths to opacity world files and output directory (ADJUST ACCORDINGLY)</span>
+<span class="n">path_to_files</span> <span class="o">=</span> <span class="s1">&#39;opacity.world.s3/generateddata/1H-2H-16O__VTT_e2b/&#39;</span>
+<span class="n">path_to_output</span> <span class="o">=</span> <span class="s1">&#39;sigmas_adapted_pRT/&#39;</span>
+<span class="n">filelist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_to_files</span><span class="p">)</span>  <span class="c1"># Find all opacity world files in the directory</span>
+</pre></div>
+</div>
+<p>Opacity.world saves the opacities in units of <span class="math notranslate nohighlight">\({\rm cm}^{2}{\rm
+g}^{-1}\)</span>, but the petitRADTRANS conversions scripts need <span class="math notranslate nohighlight">\({\rm
+cm}^{2}\)</span>. So we will have to convert below. For this it is important
+that the mass of the absorber species is defined, in units of
+amu. <strong>Do not forget to adapt this for every new species!</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Properties of chosen species</span>
+<span class="n">species_mass</span> <span class="o">=</span> <span class="mf">19.</span>
+</pre></div>
+</div>
+<p>This function below will read the binary files downloaded from
+<a class="reference external" href="http://opacity.world/">opacity.world</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_bin_single</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read a binary opacity world file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Open file</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="c1"># Read content</span>
+    <span class="n">cont</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># The number of bytes per entry is 4</span>
+    <span class="c1"># Get the number of datapoints</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cont</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># Create array of the appropriate length</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="c1"># Read the binary data into the array</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">points</span><span class="p">)):</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="n">cont</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="mi">4</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Finally we define the function that reads the binary <a class="reference external" href="http://opacity.world/">opacity.world</a>
+files, and saves them in the format that can be used by the opacity input
+generating scripts of petitRADTRANS. For this you also need the file
+that defines the petitRADTRANS wavelength grid, which can be
+downloaded here: <a class="reference external" href="https://www.dropbox.com/s/2lyo8ot3nq4rx43/wlen_petitRADTRANS.dat?dl=0">wlen_petitRADTRANS.dat</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">convert</span><span class="p">():</span>
+
+    <span class="sd">&quot;&quot;&quot; Converts opacity.world binary files for further pRT processing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Read the fiducial petitRADTRANS wavelength grid</span>
+    <span class="n">wavelength_petit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;wlen_petitRADTRANS.dat&#39;</span><span class="p">)</span>
+
+
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+
+        <span class="c1"># Reads oworld file</span>
+        <span class="n">opa</span> <span class="o">=</span> <span class="n">read_bin_single</span><span class="p">(</span><span class="n">path_to_files</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
+
+        <span class="c1"># Temp and pressure for naming files</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">21</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">file</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c1"># Wavenumber points from range given in the file names</span>
+        <span class="n">wl_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+        <span class="n">wl_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">15</span><span class="p">])</span>
+        <span class="n">wlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">wl_start</span><span class="p">,</span> <span class="n">wl_end</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">opa</span><span class="p">))</span>
+        <span class="c1"># Convert to cm or [micron]</span>
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">wlen</span><span class="c1">#/1e-4</span>
+
+        <span class="c1"># Invert them to go from a accending wavenumber ordering</span>
+        <span class="c1"># to an accending wavelength ordering.</span>
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">opa</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># OW opacities cm^2/g, convert to cm^2 by *species_mass*amu</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">*</span><span class="n">species_mass</span><span class="o">*</span><span class="mf">1.66053892e-24</span>
+
+        <span class="c1"># Interpolate</span>
+        <span class="n">sig_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">sig_interpolated_petit</span> <span class="o">=</span> <span class="n">sig_interp</span><span class="p">(</span><span class="n">wavelength_petit</span><span class="p">)</span>
+
+        <span class="c1"># Check if interp values are below 0 or NaN</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sig_interpolated_petit</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1">#### SAVING REBINNED #### Around 300 MB per grid point</span>
+        <span class="c1"># New file name is &#39;sigma_+ temp + .K_ + Pressure + bar.dat&#39;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">path_to_output</span> <span class="o">+</span> <span class="s1">&#39;sigma_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.K_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;bar.dat&#39;</span><span class="p">,</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">wavelength_petit</span><span class="p">,</span> \
+            <span class="n">sig_interpolated_petit</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Then you just need to start the conversion:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">convert</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Finally, these input files need to be converted to petitRADTRANS
+k-tables. This is done in an analogous way as explained in Section
+<a class="reference internal" href="#extopprt"><span class="std std-ref">Preparing ExoCross opacities for petitRADTRANS</span></a> below. When doing this, note that you can omit the step rebinning the cross-section
+files to the petitRADTRANS wavelength grid, because this was already
+done in <code class="docutils literal notranslate"><span class="pre">convert()</span></code> above!</p>
+<p>The opacities can then be installed as described in Section
+<a class="reference internal" href="#install"><span class="std std-ref">Installing the new opacity files in petitRADTRANS</span></a> below.</p>
+</div>
 <div class="section" id="from-line-lists-to-opacities-using-exocross">
-<h2>From line lists to opacities (using ExoCross)<a class="headerlink" href="#from-line-lists-to-opacities-using-exocross" title="Permalink to this headline">¶</a></h2>
-<p>First, a line list needs to be converted into actual opacities.
+<span id="ectoprt"></span><h2>From line lists to opacities (using ExoCross)<a class="headerlink" href="#from-line-lists-to-opacities-using-exocross" title="Permalink to this headline">¶</a></h2>
+<p>Before we can use it, any line list needs to be converted into actual opacities.
 In this example we will show you how to do this using ExoCross, the
 open-source opacity calculator of the <a class="reference external" href="http://www.exomol.com">Exomol</a> database.
 ExoCross can be downloaded <a class="reference external" href="https://github.com/Trovemaster/exocross">here</a>, is described in
@@ -270,12 +428,12 @@ end
 </div>
 <p>This calculates the opacity of NaH with the following settings</p>
 <ul class="simple">
-<li><p><a href="#id2"><span class="problematic" id="id3">``</span></a>offset `` results in a line cutoff of 60 <span class="math notranslate nohighlight">\({\rm
+<li><p><a href="#id3"><span class="problematic" id="id4">``</span></a>offset `` results in a line cutoff of 60 <span class="math notranslate nohighlight">\({\rm
 cm}^{-1}\)</span>. While being an important effect that also speeds up
 calculations, the choice of a cutoff is often arbitrary because the
 physics behind it remain difficult to model, see, for example the
-discussion in <a class="reference external" href="https://arxiv.org/abs/1503.03806">Grimm &amp; Heng
-(2015)</a>. Here we use the equivalent width of the line decrease
+discussion in <a href="#id6"><span class="problematic" id="id7">`Grimm &amp; Heng
+(2015)`_</span></a>. Here we use the equivalent width of the line decrease
 function given by <a class="reference external" href="http://adsabs.harvard.edu/abs/2002JQSRT..72..117H">Hartmann et al. (2002)</a>, for <span class="math notranslate nohighlight">\(\rm CH_4\)</span>
 broadened by <span class="math notranslate nohighlight">\(\rm H_2\)</span>.</p></li>
 <li><p>NaH has a mass of 24 (in amu)</p></li>
@@ -330,7 +488,7 @@ terminal command line via</p>
 <p>The resulting wavelength-dependent opacity will be in the “NaH_1000K_1em5bar.out.xsec” file, in our
 example here.
 In the end quite a few opacity points need to be calculated for
-petitRADTRANS (at 130 or 200 different pressure-temperature
+petitRADTRANS (for example at 130 or 200 different pressure-temperature
 conbinations, see below). This is doable on a local machine for smaller
 linelists such as NaH, but may require the use of a cluster for much
 larger linelists. There also exsists the so-called superline
@@ -339,38 +497,22 @@ treatment <a class="reference external" href="https://arxiv.org/abs/1801.09803">
 up calculations a lot, but is not recommended if you want to calculate
 high-resolution spectra with petitRADTRANS (because line positions
 will shift if multiple lines are combined into one on a fixed
-wavelength grid).</p>
-</div>
+wavelength grid during the superline treatment).</p>
 <div class="section" id="preparing-exocross-opacities-for-petitradtrans">
-<h2>Preparing ExoCross opacities for petitRADTRANS<a class="headerlink" href="#preparing-exocross-opacities-for-petitradtrans" title="Permalink to this headline">¶</a></h2>
+<span id="extopprt"></span><h3>Preparing ExoCross opacities for petitRADTRANS<a class="headerlink" href="#preparing-exocross-opacities-for-petitradtrans" title="Permalink to this headline">¶</a></h3>
 <p>For creating opacities for use in petitRADTRANS, calculate the
 molecular opacities from Exomol with ExoCross using the settings
 outlined above. Change parameters where applicable (temperature,
 pressure, molecule mass, broadening information…).</p>
-<p>The opacities need to be calculated at the 130 pressure temperature points
+<p>The opacities can be calculated on any rectangular pressure temperature grid (the disctance between grid points may be variable, but it <strong>must</strong> be rectangular for use in petitRADTRANS). An example are the original 130 P-T points
 of petitRADTRANS which you can find in the file
 <a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid.dat">PTgrid.dat</a>. Temeratures go from 80 up to 3000 K,
-in a log-uniform way. If you want to be ready for the future, please calculate opacities
+in a log-uniform way. You can also calculate opacities
 using <a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid_new.dat">PTgrid_new.dat</a>, where we have added a
 few more points at high temperatures (increasing the temperature resolution there) and extend
 the temperature range to 4000 K (note that currently petitRADTRANS sets
 <span class="math notranslate nohighlight">\(\kappa(T&gt;3000 K)\)</span> to <span class="math notranslate nohighlight">\(\kappa(T=3000 K)\)</span> for the opacity
-<span class="math notranslate nohighlight">\(\kappa\)</span>, if tempertatures get too high). The new grid has 200 points in total. The ability of
-petitRADTRANS to use the high-temperature grid (<a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTgrid_new.dat">PTgrid_new.dat</a>) will
-be added ASAP. Shoot us a <a class="reference external" href="mailto:molliere&#37;&#52;&#48;mpia&#46;de">email</a> to find out when / pressuring us to do
-this even more quickly.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>For later use in petitRADTRANS it is important that the opacity
-files have the correct names. Every molecule needs to be assigned
-a random two digit integer (e.g. “06”). It does not matter if two
-different molecules have the same number. Then, the opacity file
-at (for example) T = 200 K, P = 1 bar must be called
-“sigma_06_200.K_1.000000bar.dat”. The exact names of the files
-used in petitRADTRANS can be found <a class="reference external" href="https://gitlab.com/mauricemolli/petitRADTRANS/blob/b4e305de65f298c5c0b09568756aa005477489b2/docs/content/files/PTnames.dat">in this file here</a>. petitRADTRANS will be
-looking for these files, and throw an error message and crash if
-they are not named properly.</p>
-</div>
+<span class="math notranslate nohighlight">\(\kappa\)</span> in the old 130-point grid, if temperatures get too high). The new grid has 200 points in total.</p>
 <p>Now, let’s turn towards preparing the ExoCross results for
 petitRADTRANS. We will assume that you have calculated the opacites at
 all 130 (or 200) pressure-temperature points. The high-resolution
@@ -476,10 +618,9 @@ are all in the same folder. And that you are in this folder. Type</p>
 <p>and all k-tables will be generated and placed into the kappa_gs_r1000
 folder.</p>
 <p>For the high resolution mode, generate a folder called “short_stream”.
-Next open the short_stream_lambs_mass.dat file and adapt its content
-to have the correct molecule mass. Do not change the wavelength
-boundary values in this file. For NaH, with mass 24, it should look
-like this:</p>
+Next, open the short_stream_lambs_mass.dat file and adapt its content
+to have the correct molecule mass. <strong>Do not change the wavelength boundary values in this file.</strong>
+For NaH, with mass 24, it should look like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Minimum wavelength in cm</span>
 <span class="m">0</span>.3d-4
 <span class="c1"># Maximum wavelength in cm</span>
@@ -502,7 +643,7 @@ are all in the same folder. And that you are in this folder. Type</p>
 folder.</p>
 </div>
 <div class="section" id="installing-the-new-opacity-files-in-petitradtrans">
-<h2>Installing the new opacity files in petitRADTRANS<a class="headerlink" href="#installing-the-new-opacity-files-in-petitradtrans" title="Permalink to this headline">¶</a></h2>
+<span id="install"></span><h3>Installing the new opacity files in petitRADTRANS<a class="headerlink" href="#installing-the-new-opacity-files-in-petitradtrans" title="Permalink to this headline">¶</a></h3>
 <p>The new opacity files are now ready to be installed. Before that
 create a file called “molparam_id.txt” with the following content</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Species ID (A2) format</span>
@@ -511,9 +652,7 @@ create a file called “molparam_id.txt” with the following content</p>
 <span class="m">1</span>.0
 </pre></div>
 </div>
-<p>Simply exchange the “06” two-digit integer with the one that you have
-chosen for your molecule (or leave it at 06 if you chose to keep it).
-Copy the “molparam_id.txt” file to the short_stream and kappa_gs_r1000
+<p>Simply leave the “06” two-digit integer unchanged, this is not needed for the custom opacities calculated here. Also the molparam value should not be changed. Copy the “molparam_id.txt” file to the short_stream and kappa_gs_r1000
 folders. Now we are ready for installation. In the folder where
 petitRADTRANS is installed, there also is a input_data folder. To
 install a new species (e.g. NaH), create a folder called NaH in the
@@ -521,7 +660,30 @@ input_data/opacities/lines/corr_k/ and
 input_data/opacities/lines/line_by_line folders. Copy the contents of
 the kappa_gs_r1000 and short_stream folders to the NaH folders in the
 corr_k and line_by_line folders, respectively. The opacities are now
-installed and ready for use!</p>
+<em>almost</em> installed and ready for use, just carry out this last step below (almost there…).</p>
+</div>
+<div class="section" id="using-arbitrary-but-rectangular-p-t-opacity-grids-in-petitradtrans">
+<h3>Using arbitrary (but rectangular) P-T opacity grids in petitRADTRANS<a class="headerlink" href="#using-arbitrary-but-rectangular-p-t-opacity-grids-in-petitradtrans" title="Permalink to this headline">¶</a></h3>
+<p>For the new opacity grid of a species that is not defined on the “classical” petitRADTRANS grid (13x10
+T-P points) and/or uses another opacity file naming convention, simply add a
+PTpaths.ls file to its opacity folder.
+petitRADTRANS will be looking for this file, and will try the usual (old) grid and naming scheme if this file is missing.
+So, if you don’t put this file in the folder containing opacities petitRADTRANS will crash!</p>
+<p>PTpaths.ls lines contain (without a header):</p>
+<ul class="simple">
+<li><p>1st column: pressure (in bar) where opacity file is defined</p></li>
+<li><p>2nd column: temperature (in K) where opacity file is defined</p></li>
+<li><p>3rd column: name of file (can be anything) that contains the opacities at this P-T grid point, in the usual petitRADTRANS format.</p></li>
+</ul>
+<p>The order of the lines of entries of PTpaths.ls can be whatever you
+like (e.g. random, sorted by pressure, sorted by temperature), it does
+not matter. petitRADTRANS will sort them by pressure and temperature internally.
+<strong>The only important criterion is that the grid must be rectangular</strong>:
+the delta T or delta P spacing is allowed to vary, but for every T value all P values must exist.</p>
+<p>in your petitRADTRANS calculations you can combine species with different P-T grids,
+for different species, petitRADTRANS will simply interpolate within the species’ respective T-P grid.
+If the atmospheric T and P leave the respective grid, it will take the opacity of that species at the values of the nearest grid boundary point.</p>
+</div>
 </div>
 </div>
 

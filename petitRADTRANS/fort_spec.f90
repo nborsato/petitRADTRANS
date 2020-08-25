@@ -584,10 +584,15 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
 
               nm1 = nm1 - 1d0
               fk = 1.0
-              rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
-                   + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(d(i_str)/18d0/amu)**2d0* &
+
+              retVal = 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(d(i_str)/18d0/amu)**2d0* &
                    (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_h2o * &
                    abund(i_str)
+
+              if (.NOT. (retVal .NE. retVal)) then
+                 rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
+                      + retVal
+              end if
 
            end do
         end if

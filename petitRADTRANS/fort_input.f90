@@ -28,7 +28,7 @@ subroutine get_freq_len(path,freq_len,g_len)
 
   implicit none
   ! I/O
-  character*250, intent(in) :: path
+  character*2500, intent(in) :: path
   integer, intent(out) :: freq_len, g_len
 
   g_len = 1
@@ -47,16 +47,17 @@ end subroutine get_freq_len
 
 !!$ Subroutine to read in frequency grid
 
-subroutine get_freq(path,freq_len,freq)
+subroutine get_freq(path,freq_len,freq,freq_use_ck)
 
   implicit none
   ! I/O
-  character*150, intent(in) :: path
+  character*1500, intent(in) :: path
   integer, intent(in) :: freq_len
-  double precision, intent(out) :: freq(freq_len)
+  double precision, intent(out) :: freq(freq_len), &
+       freq_use_ck(freq_len+1)
   ! internal
   integer :: i_freq, freq_len_use_ck
-  double precision :: buffer, freq_use_ck(freq_len+1)
+  double precision :: buffer
 
   ! Because freqs fot c-k are stored as borders!
   freq_len_use_ck = freq_len + 1
@@ -84,8 +85,8 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
 
   implicit none
   ! I/O
-  character*150, intent(in) :: path
-  character*5000, intent(in) :: species_names_tot
+  character*1500, intent(in) :: path
+  character*50000, intent(in) :: species_names_tot
   character*100000, intent(in) :: custom_file_names
   integer, intent(in) :: freq_len,g_len,species_len, opa_TP_grid_len, arr_min, arr_max
   character*3, intent(in) :: mode
@@ -93,8 +94,8 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
   logical :: custom_grid
   ! Internal
   character*2 :: species_id
-  character*150 :: path_names(opa_TP_grid_len)
-  character*400 :: path_read_stream
+  character*1500 :: path_names(opa_TP_grid_len)
+  character*4000 :: path_read_stream
   !character*150 :: species_names(species_len)
   integer :: species_name_inds(2,species_len)
   integer :: opa_file_names_inds(2,opa_TP_grid_len)
@@ -247,8 +248,8 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
   integer, parameter :: N_cloud_rad_bins = 130
   
   ! I/O
-  character*150, intent(in) :: path
-  character*5000, intent(in) :: species_names_tot,species_modes_tot
+  character*1500, intent(in) :: path
+  character*50000, intent(in) :: species_names_tot,species_modes_tot
   integer, intent(in) :: N_cloud_spec,N_cloud_lambda_bins
 
   double precision, intent(out) :: rho_cloud_particles(N_cloud_spec)
@@ -671,147 +672,65 @@ end subroutine mix_opas_ck
 !!$ #########################################################################
 !!$ #########################################################################
 
-!!$ Subroutine to interpolate the CIA opacities
-
-subroutine CIA_interpol(freq,temp,CIA_cpair_lambda,CIA_cpair_temp,CIA_cpair_alpha_grid, &
-     press,mmw,mfrac,mu_part,CIA_cpair_intp_out,struc_len,freq_len)
-
-  use constants_block
-  implicit none
-  ! I/O
-  INTEGER, intent(in)                          :: struc_len, freq_len
-  DOUBLE PRECISION, intent(in)                 :: CIA_cpair_alpha_grid(5000,30)
-  DOUBLE PRECISION, intent(in)                 :: CIA_cpair_lambda(5000)
-  DOUBLE PRECISION, intent(in)                 :: CIA_cpair_temp(30)
-  DOUBLE PRECISION, intent(in)                 :: press(struc_len), mmw(struc_len), &
-       mfrac(struc_len), mu_part
-  DOUBLE PRECISION, intent(in)                 :: freq(freq_len), temp(struc_len)
-  DOUBLE PRECISION, intent(out)                :: CIA_cpair_intp_out(freq_len,struc_len)
-  ! Internal
-  DOUBLE PRECISION                             :: buff1,buff2
-  DOUBLE PRECISION                             :: lambda(freq_len), factor(struc_len)
-  INTEGER                                      :: temp_ind_lower, lamb_ind_lower, i_lamb, i_struc
-  
-
-  !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  lambda = c_l / freq
-  CIA_cpair_intp_out = 0d0
-
-  factor = (mfrac/mu_part)**2d0*mmw/amu/(L0**2d0)*press/kB/temp
-
-  do i_struc = 1, struc_len
-
-     do i_lamb = 1, freq_len
-
-!!$        if (mod(i_lamb-1,10) .NE. 0) then
-!!$           CIA_cpair_intp_out(i_lamb,i_struc) = CIA_cpair_intp_out(i_lamb-1,i_struc)
-!!$           cycle
-!!$        end if
-        
-        if (lambda(i_lamb) < CIA_cpair_lambda(1)) then
-           CIA_cpair_intp_out(i_lamb,i_struc) = 0d0
-        else if (lambda(i_lamb) > CIA_cpair_lambda(5000)) then
-           CIA_cpair_intp_out(i_lamb,i_struc) = 0d0
-        else
-           if (lambda(i_lamb) > CIA_cpair_lambda(4999)) then
-              lamb_ind_lower = 4999
-           else if (lambda(i_lamb) < CIA_cpair_lambda(2)) then
-              lamb_ind_lower = 1
-           else
-              lamb_ind_lower = IDINT((log10(lambda(i_lamb)) - &
-                   log10(0.607d0*1d-4))/(log10(250d0*1d-4) - log10(0.607d0*1d-4)) * &
-                   (5d3-1d0))+1
-           end if
-
-
-           if (temp(i_struc) < CIA_cpair_temp(2)) then
-              temp_ind_lower = 1
-           else if (temp(i_struc) > CIA_cpair_temp(29)) then
-              temp_ind_lower = 29
-           else
-              temp_ind_lower = IDINT((temp(i_struc)-100d0)/(3000d0-100d0)*(30d0-1d0))+1
-           end if
-
-           buff1 = CIA_cpair_alpha_grid(lamb_ind_lower,temp_ind_lower) + &
-                (CIA_cpair_alpha_grid(lamb_ind_lower,temp_ind_lower+1) - &
-                CIA_cpair_alpha_grid(lamb_ind_lower,temp_ind_lower)) / &
-                (CIA_cpair_temp(temp_ind_lower+1)-CIA_cpair_temp(temp_ind_lower)) * &
-                (temp(i_struc) - CIA_cpair_temp(temp_ind_lower))
-
-           buff2 = CIA_cpair_alpha_grid(lamb_ind_lower+1,temp_ind_lower) + &
-                (CIA_cpair_alpha_grid(lamb_ind_lower+1,temp_ind_lower+1) - &
-                CIA_cpair_alpha_grid(lamb_ind_lower+1,temp_ind_lower)) / &
-                (CIA_cpair_temp(temp_ind_lower+1)-CIA_cpair_temp(temp_ind_lower)) * &
-                (temp(i_struc) - CIA_cpair_temp(temp_ind_lower))
-
-           CIA_cpair_intp_out(i_lamb,i_struc) = buff1 + &
-                (buff2-buff1)/(CIA_cpair_lambda(lamb_ind_lower+1) - &
-                CIA_cpair_lambda(lamb_ind_lower)) * &
-                (lambda(i_lamb)-CIA_cpair_lambda(lamb_ind_lower))
-
-        end if
-
-        if (CIA_cpair_intp_out(i_lamb,i_struc) < 0d0) then
-           CIA_cpair_intp_out(i_lamb,i_struc) = 0d0
-        end if
-
-     end do
-
-     CIA_cpair_intp_out(:,i_struc) = CIA_cpair_intp_out(:,i_struc)*factor(i_struc)
-
-  end do
-
-  !--------------
-  !-- CHANGE to rather giving
-  !-- the opacity at the largest / smallest
-  !-- temperature grid point if temperature
-  !-- is smaller or larger than the min / max
-  !-- grid temperature!
-  !--------------
-
-end subroutine CIA_interpol
-
-!!$ #########################################################################
-!!$ #########################################################################
-!!$ #########################################################################
-!!$ #########################################################################
-
 !!$ Subroutine to read the CIA opacities
 
 subroutine CIA_read(cpair,opacity_path_str,CIA_cpair_lambda, &
-     CIA_cpair_temp,CIA_cpair_alpha_grid)
+     CIA_cpair_temp,CIA_cpair_alpha_grid,temp, wlen)
 
   implicit none
   ! I/O
   CHARACTER*20, intent(in)              :: cpair
-  DOUBLE PRECISION, intent(out)         :: CIA_cpair_alpha_grid(5000,30)
-  DOUBLE PRECISION, intent(out)         :: CIA_cpair_lambda(5000)
-  DOUBLE PRECISION, intent(out)         :: CIA_cpair_temp(30)
-  CHARACTER*150, intent(in)             :: opacity_path_str
+  DOUBLE PRECISION, intent(out)         :: CIA_cpair_alpha_grid(10000,50)
+  DOUBLE PRECISION, intent(out)         :: CIA_cpair_lambda(10000)
+  DOUBLE PRECISION, intent(out)         :: CIA_cpair_temp(50)
+  CHARACTER*1500, intent(in)             :: opacity_path_str
+  INTEGER,intent(out)                   :: temp,wlen
+
   ! internal
-  INTEGER                               :: i,j
+  INTEGER                               :: i,j,stat
+
 
   !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+  ! ELALEI allowing the tables to have whatever shape
+  !BUT the PYTHON CODE NEEDS TO TRIM THE OUTPUTS ACCORDING TO temp AND WLEN SO I CREATE NEW OUTPUTS
   open(unit=10,file=trim(adjustl(opacity_path_str)) &
        //'/opacities/continuum/CIA/'//trim(adjustl(cpair))//'/temps.dat')
-  do i = 1,30
-     read(10,*) CIA_cpair_temp(i)
+  i=0
+  do
+     i =i+1
+     if (i>50) exit
+     read(10,*,iostat=stat) CIA_cpair_temp(i)
+     if (stat /= 0) exit
   end do
   close(10)
+  temp=i-1
 
   open(unit=11,file=trim(adjustl(opacity_path_str)) &
        //'/opacities/continuum/CIA/'//trim(adjustl(cpair)) &
        //'/CIA_'//trim(adjustl(cpair))//'_final.dat')
   read(11,*)
   read(11,*)
-  do i = 1, 5000
+  i=0
+  do
+     i=i+1
+     if (i>10000) exit
+     read(11,'(G22.12)',iostat=stat) CIA_cpair_lambda(i)
+     if (stat /= 0) exit
+  end do
+  close(11)
+
+  open(unit=11,file=trim(adjustl(opacity_path_str)) &
+       //'/opacities/continuum/CIA/'//trim(adjustl(cpair)) &
+       //'/CIA_'//trim(adjustl(cpair))//'_final.dat')
+  read(11,*)
+  read(11,*)
+  wlen=i-1
+  do i=1,wlen
      read(11,'(G22.12)',advance='no') CIA_cpair_lambda(i)
-     do j = 1, 29
+     do j = 1, temp-1
         read(11,'(G22.12)',advance='no') CIA_cpair_alpha_grid(i,j)
      end do
-     read(11,'(G22.12)') CIA_cpair_alpha_grid(i,30)
+     read(11,'(G22.12)') CIA_cpair_alpha_grid(i,temp)
   end do
   close(11)
 
@@ -831,7 +750,7 @@ subroutine get_arr_len_array_bords(wlen_min_read, wlen_max_read, &
 
   ! I/O
   double precision, intent(in) :: wlen_min_read, wlen_max_read
-  character*400, intent(in)    :: file_path
+  character*4000, intent(in)    :: file_path
   integer, intent(out)         :: arr_len, arr_min, arr_max
   ! Internal
   double precision :: curr_wlen, last_wlen
@@ -911,7 +830,7 @@ subroutine read_wlen(arr_min, arr_max, arr_len, file_path, wlen)
   ! I/O
   integer, intent(in)           :: arr_min, arr_max
   integer, intent(in)           :: arr_len
-  character*400, intent(in)     :: file_path
+  character*4000, intent(in)     :: file_path
   double precision, intent(out) :: wlen(arr_len)
 
   integer          :: i_lamb
@@ -941,7 +860,7 @@ subroutine read_kappa(arr_min, arr_max, arr_len, file_path, kappa)
   ! I/O
   integer, intent(in)           :: arr_min, arr_max
   integer, intent(in)           :: arr_len
-  character*400, intent(in)     :: file_path
+  character*4000, intent(in)     :: file_path
   double precision, intent(out) :: kappa(arr_len)
 
   integer          :: i_lamb

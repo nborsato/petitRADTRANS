@@ -25,7 +25,7 @@ nA = 6.0221413e23
 R = 8.3144598
 m_earth = 5.9722e27
 r_earth = 637813660.
-
+L0  = 2.68676e19
 # Molecular weights in amu
 molecular_weight = {}
 molecular_weight['H2O'] = 18.
@@ -45,7 +45,7 @@ def b(T,nu):
         nu:
             numpy array containing the frequency in Hz.
     '''
-    
+
     retVal = 2.*h*nu**3./c**2.
     retVal = retVal / (np.exp(h*nu/kB/T)-1.)
     return retVal
@@ -99,7 +99,7 @@ def get_PHOENIX_spec(temperature):
     :math:`\\rm erg/cm^2/s/Hz`, at the surface of the star.
     The spectra are PHOENIX models from (Husser et al. 2013), the spectral
     grid used here was described in van Boekel et al. (2012).
-    
+
     Args:
         temperature (float):
             stellar effective temperature in K.
@@ -120,7 +120,7 @@ def get_PHOENIX_spec(temperature):
         print('Warning, input temperature is higher than maximum grid temperature.')
         print('Taking F = F_grid(maximum grid temperature), normalized to desired')
         print('input temperature.')
-        
+
     else:
 
         weightHigh = (logTemp-logTempGrid[interpolationIndex-1]) / \
@@ -153,7 +153,7 @@ def get_PHOENIX_spec(temperature):
 
 ### Box car conv. average, found on stackoverflow somewhere
 def running_mean(x, N):
-    cumsum = np.cumsum(np.insert(x, 0, 0)) 
+    cumsum = np.cumsum(np.insert(x, 0, 0))
     return (cumsum[N:] - cumsum[:-N]) / float(N)
 
 ### Global Guillot P-T formula with kappa/grav replaced by delta
@@ -193,6 +193,23 @@ def make_press_temp(rad_trans_params):
     index_new      = (press_many_new <= 1e3) & (press_many_new >= 1e-6)
     temp_new       = t_new[index_new][::2]
     press_new      = press_many_new[index_new][::2]
-    
+
     return press_new, temp_new
 
+
+
+
+### Function to make temp
+def make_press_temp_iso(rad_trans_params):
+
+    press_many = np.logspace(-8,5,260)
+    t_no_ave = rad_trans_params['t_equ']  * np.ones_like(press_many)
+
+    # new
+    press_many_new = 1e1**running_mean(np.log10(press_many), 25)
+    t_new          = running_mean(t_no_ave  , 25)
+    index_new      = (press_many_new <= 1e3) & (press_many_new >= 1e-6)
+    temp_new       = t_new[index_new][::2]
+    press_new      = press_many_new[index_new][::2]
+
+    return press_new, temp_new

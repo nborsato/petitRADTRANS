@@ -434,6 +434,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+
   Read CIA opacities for H2-H2...
   Read CIA opacities for H2-He...
  Done.
@@ -476,15 +477,15 @@ cross-sections for the <span class="math notranslate nohighlight">\(\rm H_2\)</s
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">1200.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">pressures</span><span class="p">)</span>
 
-<span class="n">abundances</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
 <span class="n">MMW</span> <span class="o">=</span> <span class="mf">2.33</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 </pre></div>
@@ -514,7 +515,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
+<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -537,26 +538,34 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_getting_started_21_0.png" src="../../_images/content_notebooks_getting_started_21_0.png" />
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
+</div>
 </div>
 <div class="section" id="Calculating-an-emission-spectrum">
 <h2>Calculating an emission spectrum<a class="headerlink" href="#Calculating-an-emission-spectrum" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
-<p><strong>Scattering and petitRADTRANS:</strong> scattering is not included for emission spectra in petitRADTRANS (but it is for the transmission spectra). We plan to migrate the scattering implementation of <a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a> to petitRADTRANS soon.</p>
+<p><strong>Scattering and petitRADTRANS:</strong> scattering is included for emission spectra in petitRADTRANS only if requested specifically when generating the Radtrans object, as it increases the runtime (see <a class="reference external" href="emis_scat.html">“Scattering for Emission Spectra”</a> for an example how to do this). We neglect the scattering here.</p>
 </div>
 <p>Let’s calculate an emission spectrum. Using an isothermal temperature structure as above would simply result in a black body spectrum:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">)</span>
+<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">flux</span><span class="o">/</span><span class="mf">1e-6</span><span class="p">)</span>
 
@@ -568,12 +577,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_getting_started_25_0.png" src="../../_images/content_notebooks_getting_started_25_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 <p>So let’s try something different instead, namely the often-used analytical atmospheric P-T profile from <a class="reference external" href="http://adsabs.harvard.edu/abs/2010A%26A...520A..27G">Guillot (2010)</a>, his Equation 29:</p>
 <p><span class="math">\begin{equation}
@@ -581,7 +598,7 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 \end{equation}</span></p>
 <p>with <span class="math notranslate nohighlight">\(\tau = P\kappa_{\rm IR}/g\)</span>. Here, <span class="math notranslate nohighlight">\(\tau\)</span> is the optical depth, <span class="math notranslate nohighlight">\(P\)</span> the pressure, <span class="math notranslate nohighlight">\(\kappa_{\rm IR}\)</span> is the atmospheric opacity in the IR wavelengths (i.e. the cross-section per unit mass), <span class="math notranslate nohighlight">\(\gamma\)</span> is the ratio between the optical and IR opacity, <span class="math notranslate nohighlight">\(T_{\rm equ}\)</span> the atmospheric equilibrium temperature, and <span class="math notranslate nohighlight">\(T_{\rm int}\)</span> is the planetary internal temperature.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -596,7 +613,7 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 </div>
 <p>Let’s plot the P-T profile:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -610,20 +627,28 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_getting_started_31_0.png" src="../../_images/content_notebooks_getting_started_31_0.png" />
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
+</div>
 <p>An recalculate the spectrum:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">)</span>
+<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">flux</span><span class="o">/</span><span class="mf">1e-6</span><span class="p">)</span>
 
@@ -635,12 +660,20 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_getting_started_33_0.png" src="../../_images/content_notebooks_getting_started_33_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 </div>
 </div>

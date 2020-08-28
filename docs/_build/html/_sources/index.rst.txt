@@ -14,7 +14,7 @@ atmospheres.
 
 .. important::
 
-   In addition to transmission spectra, **pRT now includes scattering also for emission spectra**, if specifically turned on (note that scattering increases the runtime), see `Scattering for Emission Spectra <content/emis_scat.html>`_. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. The scattering of stellar light, following the implementation of
+   In addition to transmission spectra, **pRT now includes scattering also for emission spectra**, if specifically turned on (note that scattering increases the runtime), see `Scattering for Emission Spectra <content/notebooks/emis_scat.html>`_. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. The scattering of stellar light, following the implementation of
    `petitCODE <http://www.mpia.de/homes/molliere/#petitcode>`_,
    is currently being tested in pRT and will be published soon.
 

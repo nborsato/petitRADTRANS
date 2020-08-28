@@ -190,22 +190,20 @@
 </style>
 <div class="section" id="petitradtrans-documentation">
 <h1>petitRADTRANS documentation<a class="headerlink" href="#petitradtrans-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Welcome to the <strong>petitRADTRANS</strong> documentation. petitRADTRANS is a
+<p>Welcome to the <strong>petitRADTRANS</strong> (pRT) documentation. pRT is a
 Python package for calculating transmission and emission spectra
 of exoplanets, at low (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>) and high
 (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=10^6\)</span>) resolution, for clear and cloudy
 atmospheres.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Scattering is currently not included for
-emission spectra in petitRADTRANS (but it is for the transmission
-spectra). We intend to migrate the scattering implementation of
-<a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a>
-to petitRADTRANS soon.</p>
+<p>In addition to transmission spectra, <strong>pRT now includes scattering also for emission spectra</strong>, if specifically turned on (note that scattering increases the runtime), see <a class="reference external" href="content/emis_scat.html">Scattering for Emission Spectra</a>. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. The scattering of stellar light, following the implementation of
+<a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a>,
+is currently being tested in pRT and will be published soon.</p>
 </div>
 <p>petitRADTRANS is available under the MIT License, and documented in
-<a class="reference external" href="https://arxiv.org/abs/1904.11504">Mollière et al. (2019)</a>.
-Please cite this paper if you make use of petitRADTRANS in your work.</p>
+<a class="reference external" href="https://arxiv.org/abs/1904.11504">Mollière et al. (2019)</a>, for the general code, and <a class="reference external" href="https://arxiv.org/abs/2006.09394">Mollière et al. (2020)</a>, for the scattering implementation.
+Please cite these papers if you make use of petitRADTRANS in your work.</p>
 <p>This documentation webpage currently contains an installation guide, a
 tutorial, a first code documentation, and an implemented retrieval
 example for mock JWST emission and transmission spectra.
@@ -214,12 +212,18 @@ missing from our database.</p>
 <div class="section" id="news">
 <h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
-<dt><strong>May 2020: petitRADTRANS opacities now available on the Exomol website</strong></dt><dd><p>Opacity tables created specifically in the petitRADTRANS format
-are now available on the <a class="reference external" href="http://www.exomol.com">Exomol website</a>.
+<dt><strong>September 2020: petitRADTRANS opacities available on the Exomol website</strong></dt><dd><p>Opacity tables created specifically in the petitRADTRANS format
+will soon be available on the <a class="reference external" href="http://www.exomol.com">Exomol website</a> (water is already available), also see <a class="reference external" href="http://add.add.add">Chubb et al. (submitted)</a>.
 They can be installed in petitRADTRANS in an easy plug-and-play fashion.
 Please see Section <a class="reference external" href="content/opa_add.html">Adding opacities</a> for more information.</p>
 </dd>
-<dt><strong>27 May 2019: high-temperature atom and ion opacities now available</strong></dt><dd><p>We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
+<dt><strong>September 2020: More high-temperature atom and ion opacities available</strong></dt><dd><p>We have added more atom and ion opacities, bringing the total list to
+Al, AlII, AlIII, AlIV, AlV, AlVI, B, BII, BIII, Be, BeII, C, CII, CIII, CIV,
+Ca, CaII, Cr, Fe, FeII, K, KII, KIII, KIV, KV, KVI, Li, Mg, MgII, MgIII, MgIV,
+MgV, MgVI, N, NII, NIII, NIV, NV, Na, NaII, NaIII, NaIV, NaV, NaVI, Si, SiII, Ti,
+TiII, V, VII, Y</p>
+</dd>
+<dt><strong>May 2019: high-temperature atom and ion opacities now available</strong></dt><dd><p>We have added the opacities of Fe, Fe+, Mg, Mg+, Li, Ca, Ca+,
 Si, Si+, O, O+, Al, Al+, Ti, Ti+, V and V+, up to temperatures of
 4000 K. As usual, if the atmospheric temperatures increase
 above 4000 K, petitRADTRANS will use the absorbers respective

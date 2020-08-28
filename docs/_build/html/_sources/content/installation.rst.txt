@@ -25,7 +25,7 @@ _____________________
 
 Download the `opacity and input data
 <https://www.dropbox.com/s/a9yryemdg083sed/input_data_r.zip?dl=0>`_
-(4.3 GB), unzip them, and put the "input_data" folder into the
+(6.3 GB), unzip them, and put the "input_data" folder into the
 "petitRADTRANS" folder (i.e. the same folder where the source is, if
 you clone from gitlab, this should be the
 petitRADTRANS folder *in* the petitRADTRANS folder). This contains the

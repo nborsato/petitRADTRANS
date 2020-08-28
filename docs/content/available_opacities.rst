@@ -7,7 +7,7 @@ Line absorbers
 ______________
 
 Please see the `Installation <installation.html>`_ section for how to
-obtain and use the opacities listed below.
+obtain and use the opacities listed below. For adding more opacity species not listed here, please see `Adding opacities <opa_add.html>`_, among them the Exomol opacities calculated in the pRT format, available from the Exomol website.
 
 **Line absorbers, low resolution mode** (``"c-k"``, with :math:`\lambda/\Delta\lambda=1000`)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -112,109 +112,251 @@ the opacities.
      - Ref. line list / broad.
      - P (bar), T (K) range
      - Contributor
-
-   * - Ca
-     - Ca
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Ca+
-     - Ca+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Fe
-     - Fe
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Fe+
-     - Fe+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Ti
-     - Ti
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Ti+
-     - Ti+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Mg
-     - Mg
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Mg+
-     - Mg+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - O
-     - O
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - O+
-     - O+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Si
-     - Si
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Si+
-     - Si+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - V
-     - V
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - V+
-     - V+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
    * - Al
      - Al
      - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
      - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
      - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Al+
-     - Al+
+   * - AlII
+     - AlII
      - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
      - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
      - `K. Molaverdikhani <karan@mpia.de>`_
-
+   * - AlIII
+     - AlIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - AlIV
+     - AlIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - AlV
+     - AlV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - AlVI
+     - AlVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - B
+     - B
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - BII
+     - BII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - BIII
+     - BIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - Be
+     - Be
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - BeII
+     - BeII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Ca
+     - Ca
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CaII
+     - CaII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - C
+     - C
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CII
+     - CII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CIII
+     - CIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CIV
+     - CIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Cr
+     - Cr
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Fe
+     - Fe
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - FeII
+     - FeII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KII
+     - KII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KIII
+     - KIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KIV
+     - KIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KV
+     - KV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KVI
+     - KVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
    * - Li
      - Li
      - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
      - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_    
+   * - Mg
+     - Mg
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
      - `K. Molaverdikhani <karan@mpia.de>`_
-
+   * - MgII
+     - MgII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgIII
+     - MgIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgIV
+     - MgIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgV
+     - MgV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgVI
+     - MgVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - N
+     - N
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - NII
+     - NII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - NIII
+     - NIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NIV
+     - NIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NV
+     - NV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaII
+     - NaII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaIII
+     - NaIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaIV
+     - NaIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaV
+     - NaV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaVI
+     - NaVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Si
+     - Si
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - SiII
+     - SiII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Ti
+     - Ti
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - TiII
+     - TiII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - V
+     - V
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - VII
+     - VII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Y
+     - Y
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
 
 **Line absorbers, high resolution mode** (``"lbl"``, with :math:`\lambda/\Delta\lambda=10^6`)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -310,6 +452,36 @@ the opacities.
    * - TiO_all_iso
      - TiO_all_iso
      - All isotopologues, B. Plez
+   * - TiO_46_Plez
+     - TiO_46_Plez
+     - :math:`\rm \ ^{46}TiO`, B. Plez
+   * - TiO_47_Plez
+     - TiO_47_Plez
+     - :math:`\rm \ ^{47}TiO`, B. Plez
+   * - TiO_48_Plez
+     - TiO_48_Plez
+     - :math:`\rm \ ^{48}TiO`, B. Plez
+   * - TiO_49_Plez
+     - TiO_49_Plez
+     - :math:`\rm \ ^{49}TiO`, B. Plez
+   * - TiO_50_Plez
+     - TiO_50_Plez
+     - :math:`\rm \ ^{50}TiO`, B. Plez
+   * - TiO_46_Exomol_McKemmish
+     - TiO_46_Exomol_McKemmish
+     - :math:`\rm \ ^{46}TiO`, Exomol
+   * - TiO_47_Exomol_McKemmish
+     - TiO_47_Exomol_McKemmish
+     - :math:`\rm \ ^{47}TiO`, Exomol
+   * - TiO_48_Exomol_McKemmish
+     - TiO_48_Exomol_McKemmish
+     - :math:`\rm \ ^{48}TiO`, Exomol
+   * - TiO_49_Exomol_McKemmish
+     - TiO_49_Exomol_McKemmish
+     - :math:`\rm \ ^{49}TiO`, Exomol
+   * - TiO_50_Exomol_McKemmish
+     - TiO_50_Exomol_McKemmish
+     - :math:`\rm \ ^{50}TiO`, Exomol
    * - VO
      - VO
      - Main isotopologue, B. Plez
@@ -334,105 +506,248 @@ the opacities.
      - Ref. line list / broad.
      - P (bar), T (K) range
      - Contributor
-
-   * - Ca
-     - Ca
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Ca+
-     - Ca+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Fe
-     - Fe
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Fe+
-     - Fe+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Ti
-     - Ti
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Ti+
-     - Ti+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Mg
-     - Mg
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Mg+
-     - Mg+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - O
-     - O
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - O+
-     - O+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Si
-     - Si
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Si+
-     - Si+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - V
-     - V
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - V+
-     - V+
-     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
-     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
-     - `K. Molaverdikhani <karan@mpia.de>`_
-
    * - Al
      - Al
      - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
      - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
      - `K. Molaverdikhani <karan@mpia.de>`_
-
-   * - Al+
-     - Al+
+   * - AlII
+     - AlII
      - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
      - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
      - `K. Molaverdikhani <karan@mpia.de>`_
-
+   * - AlIII
+     - AlIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - AlIV
+     - AlIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - AlV
+     - AlV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - AlVI
+     - AlVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - B
+     - B
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - BII
+     - BII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - BIII
+     - BIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - Be
+     - Be
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - BeII
+     - BeII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Ca
+     - Ca
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CaII
+     - CaII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - C
+     - C
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CII
+     - CII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CIII
+     - CIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - CIV
+     - CIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Cr
+     - Cr
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Fe
+     - Fe
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - FeII
+     - FeII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KII
+     - KII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KIII
+     - KIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KIV
+     - KIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KV
+     - KV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - KVI
+     - KVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
    * - Li
      - Li
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_    
+   * - Mg
+     - Mg
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgII
+     - MgII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgIII
+     - MgIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgIV
+     - MgIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgV
+     - MgV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - MgVI
+     - MgVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - N
+     - N
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - NII
+     - NII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_       
+   * - NIII
+     - NIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NIV
+     - NIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NV
+     - NV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaII
+     - NaII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaIII
+     - NaIII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaIV
+     - NaIV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaV
+     - NaV
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - NaVI
+     - NaVI
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Si
+     - Si
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - SiII
+     - SiII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Ti
+     - Ti
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - TiII
+     - TiII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - V
+     - V
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - VII
+     - VII
+     - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
+     - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
+     - `K. Molaverdikhani <karan@mpia.de>`_
+   * - Y
+     - Y
      - `Kurucz <http://kurucz.harvard.edu>`_, :math:`\gamma_{\rm nat+VdW},\sigma_{\rm therm}`
      - :math:`10^{-6}`-:math:`10^{3}`, 80-4000
      - `K. Molaverdikhani <karan@mpia.de>`_

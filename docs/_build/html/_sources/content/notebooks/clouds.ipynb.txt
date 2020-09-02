@@ -104,7 +104,7 @@
    "source": [
     "<div class=\"alert alert-warning\">\n",
     "\n",
-    "**Abundances in petitRADTRANS:** remember that abundances in petitCODE are in units of **mass fractions**, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using\n",
+    "**Abundances in petitRADTRANS:** remember that abundances in pRT are in units of **mass fractions**, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using\n",
     "\\begin{equation}\n",
     "X_i = \\frac{\\mu_i}{\\mu}n_i,\n",
     "\\end{equation}\n",
@@ -870,7 +870,7 @@
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python [conda env:python3]",
+   "display_name": "Python [conda env:python3] *",
    "language": "python",
    "name": "conda-env-python3-py"
   },

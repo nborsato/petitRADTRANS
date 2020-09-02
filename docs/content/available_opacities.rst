@@ -7,7 +7,7 @@ Line absorbers
 ______________
 
 Please see the `Installation <installation.html>`_ section for how to
-obtain and use the opacities listed below. For adding more opacity species not listed here, please see `Adding opacities <opa_add.html>`_, among them the Exomol opacities calculated in the pRT format, available from the Exomol website.
+obtain and use the opacities listed below. For adding more opacity species not listed here, please see `Adding opacities <opa_add.html>`_, among them how to plug-and-play install the Exomol opacities calculated in the pRT format, available from the `Exomol website <http://www.exomol.com/data/data-types/opacity/>`_. The references of the non-contributed opacities can be found in `Mollière et al. (2019) <https://arxiv.org/abs/1904.11504>`_.
 
 **Line absorbers, low resolution mode** (``"c-k"``, with :math:`\lambda/\Delta\lambda=1000`)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -469,19 +469,19 @@ the opacities.
      - :math:`\rm \ ^{50}TiO`, B. Plez
    * - TiO_46_Exomol_McKemmish
      - TiO_46_Exomol_McKemmish
-     - :math:`\rm \ ^{46}TiO`, Exomol
+     - :math:`\rm \ ^{46}TiO`, Exomol, `McKemmish et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.2836M/abstract>`_
    * - TiO_47_Exomol_McKemmish
      - TiO_47_Exomol_McKemmish
-     - :math:`\rm \ ^{47}TiO`, Exomol
+     - :math:`\rm \ ^{47}TiO`, Exomol, `McKemmish et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.2836M/abstract>`_
    * - TiO_48_Exomol_McKemmish
      - TiO_48_Exomol_McKemmish
-     - :math:`\rm \ ^{48}TiO`, Exomol
+     - :math:`\rm \ ^{48}TiO`, Exomol, `McKemmish et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.2836M/abstract>`_
    * - TiO_49_Exomol_McKemmish
      - TiO_49_Exomol_McKemmish
-     - :math:`\rm \ ^{49}TiO`, Exomol
+     - :math:`\rm \ ^{49}TiO`, Exomol, `McKemmish et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.2836M/abstract>`_
    * - TiO_50_Exomol_McKemmish
      - TiO_50_Exomol_McKemmish
-     - :math:`\rm \ ^{50}TiO`, Exomol
+     - :math:`\rm \ ^{50}TiO`, Exomol, `McKemmish et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.2836M/abstract>`_
    * - VO
      - VO
      - Main isotopologue, B. Plez

@@ -97,8 +97,10 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">High-resolution spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clouds.html">Including clouds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emis_scat.html">Scattering for Emission Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html">Analysis tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nat_cst_utility.html">Utility functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poor_man.html">Interpolating chemical equilibrium abundances</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
@@ -468,7 +470,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="admonition warning">
-<p><strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
+<p><strong>Abundances in petitRADTRANS:</strong> remember that abundances in pRT are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
 X_i = \frac{\mu_i}{\mu}n_i,
 \end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</p>
 </div>

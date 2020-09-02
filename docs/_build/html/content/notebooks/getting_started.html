@@ -102,8 +102,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="highres.html">High-resolution spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clouds.html">Including clouds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emis_scat.html">Scattering for Emission Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html">Analysis tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nat_cst_utility.html">Utility functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poor_man.html">Interpolating chemical equilibrium abundances</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
@@ -491,8 +493,9 @@ cross-sections for the <span class="math notranslate nohighlight">\(\rm H_2\)</s
 </pre></div>
 </div>
 </div>
+<p><strong>Note that these are freely made up values, however. The P-T profile of a real planet may well be different, and not isothermal. Also the abundances are just made up for this simple example here</strong> (see <a class="reference external" href="poor_man.html">“Interpolating chemical equilibrium abundances”</a> for how to improve this.)</p>
 <div class="admonition warning">
-<p><strong>Abundances in petitRADTRANS:</strong> abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
+<p><strong>Abundances in petitRADTRANS:</strong> abundances in pRT are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
 X_i = \frac{\mu_i}{\mu}n_i,
 \end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</p>
 </div>
@@ -542,7 +545,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_getting_started_21_0.png" src="../../_images/content_notebooks_getting_started_21_0.png" />
+<img alt="../../_images/content_notebooks_getting_started_22_0.png" src="../../_images/content_notebooks_getting_started_22_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -581,7 +584,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_getting_started_25_0.png" src="../../_images/content_notebooks_getting_started_25_0.png" />
+<img alt="../../_images/content_notebooks_getting_started_26_0.png" src="../../_images/content_notebooks_getting_started_26_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -631,7 +634,7 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_getting_started_31_0.png" src="../../_images/content_notebooks_getting_started_31_0.png" />
+<img alt="../../_images/content_notebooks_getting_started_32_0.png" src="../../_images/content_notebooks_getting_started_32_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -664,7 +667,7 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/content_notebooks_getting_started_33_0.png" src="../../_images/content_notebooks_getting_started_33_0.png" />
+<img alt="../../_images/content_notebooks_getting_started_34_0.png" src="../../_images/content_notebooks_getting_started_34_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">

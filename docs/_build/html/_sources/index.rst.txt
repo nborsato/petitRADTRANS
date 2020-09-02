@@ -27,16 +27,19 @@ Please cite these papers if you make use of petitRADTRANS in your work.
 This documentation webpage currently contains an installation guide, a
 tutorial, a first code documentation, and an implemented retrieval
 example for mock JWST emission and transmission spectra.
-Also, we give a tutorial on how to calculate opacities that may be
+Also, we give a tutorial on how to include opacities that may be
 missing from our database.
 
 News
 ____
 
+**September 2020: self-scattering for emission spectra and chemical equilibrium interpolation now available**
+    pRT now includes scattering also for emission spectra, if specifically turned on (note that scattering increases the runtime), see `Scattering for Emission Spectra <content/notebooks/emis_scat.html>`_. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. In addition, you can now download our chemical equilibrium interpolation package, which is documented in `Interpolating chemical equilibrium abundances <content/notebooks/poor_man.html>`_
+    
 **September 2020: petitRADTRANS opacities available on the Exomol website**
     Opacity tables created specifically in the petitRADTRANS format
-    will soon be available on the `Exomol website <http://www.exomol.com>`_ (water is already available), also see `Chubb et al. (submitted) <http://add.add.add>`_.
-    They can be installed in petitRADTRANS in an easy plug-and-play fashion.
+    are now available on the `Exomol website <http://www.exomol.com/data/data-types/opacity/>`_, also see `Chubb et al. (2020) <http://add.add.add>`_ for the accompanying paper.
+    The opacities can be installed in petitRADTRANS in an easy plug-and-play fashion.
     Please see Section `Adding opacities <content/opa_add.html>`_ for more information.
 
 **September 2020: More high-temperature atom and ion opacities available**

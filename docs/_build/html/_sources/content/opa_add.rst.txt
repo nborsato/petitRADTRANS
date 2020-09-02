@@ -4,7 +4,7 @@ Adding opacities
 
 petitRADTRANS has an extensive database of line opacities. However, it is very
 likely that we are missing the one atom / molecule that you want.
-There are three options of adding external opacities to petitRADTRANS:
+There are three options for adding external opacities to petitRADTRANS:
 
 1. :ref:`ExoMolpRT`. These are already in the petitRADTRANS format and can be used in a plug-and-play fashion. The opacities are available for the low-resolution mode of petitRADTRANS only (:math:`\lambda/\Delta\lambda=1000`).
 2. :ref:`OWtopRT`.
@@ -23,10 +23,10 @@ attributing your contribution.
  Importing custom-made opacity tables from the Exomol website
 -------------------------------------------------------------
 
-All linelists available on the `Exomol website <http://www.exomol.com>`_ were recently converted into opacity tables in the custom format of various retrieval codes, see `Chubb et al. (submitted) <http://add.add.add>`_. Opacity tables in the petitRADTRANS format will be available on the Exomol website soon. These opacity grids have been calculated for temperatures ranging from 100 to 3400 K (:math:`\Delta T = 100 \ {\rm K}` for :math:`T \in [100-2000] \ {\rm K}` and :math:`\Delta T = 200 \ {\rm K}` for :math:`T \in [2000-3400] \ {\rm K}`) and 22 pressure points spaced equidistantly in log-space, from :math:`10^{-5}` to 100 bar. Thermal and pressure broadening have also been included, see `Chubb et al. (submitted) <http://add.add.add>`_ for more information. If you use petitRADTRANS at pressures and temperatures outside of this grid, petitRADTRANS will use the opacity at the gridpoint closest to the pressure and temperature specified in your calculation. These Exomol grids, in the hdf5 format, can simply be dropped into the opacity folder of petitRADTRANS to use them. **This is arguably the easiest option to install external opacities, which we always recommend, if the species of interest is available from Exomol.** Note that Exomol tables are available for the low-resolution mode of petitRADTRANS only (:math:`\lambda/\Delta\lambda=1000`). The installation is outlined below.
+The linelists available on the `Exomol website <http://www.exomol.com>`_ were recently converted into opacity tables in the custom format of various retrieval codes, see `Chubb et al. (2020) <http://add.add.add>`_. Opacity tables in the petitRADTRANS can be downloaded `on this page of the Exomol website <http://www.exomol.com/data/data-types/opacity/>`_. These opacity grids have been calculated for temperatures ranging from 100 to 3400 K (:math:`\Delta T = 100 \ {\rm K}` for :math:`T \in [100-2000] \ {\rm K}` and :math:`\Delta T = 200 \ {\rm K}` for :math:`T \in [2000-3400] \ {\rm K}`) and 22 pressure points spaced equidistantly in log-space, from :math:`10^{-5}` to 100 bar. Thermal and pressure broadening have also been included, see `Chubb et al. (2020) <http://add.add.add>`_ for more information. If you use petitRADTRANS at pressures and temperatures outside of this grid, petitRADTRANS will use the opacity at the gridpoint closest to the pressure and temperature specified in your calculation. These Exomol grids, in the hdf5 format, can simply be dropped into the opacity folder of petitRADTRANS to use them. **This is arguably the easiest option to install external opacities, which we always recommend, if the species of interest is available from Exomol.** Note that Exomol tables are available for the low-resolution mode of petitRADTRANS only (:math:`\lambda/\Delta\lambda=1000`). The installation is outlined below.
 
-1. In this example we will look at the Exomol `POKAZATEL <https://academic.oup.com/mnras/article/480/2/2597/5054049>`_ line list for water, for which the pRT opacities have already been uploaded to the Exomol website.
-   Navigate `to its entry <http://www.exomol.com/data/molecules/H2O/1H2-16O/POKAZATEL/>`_ on the Exomol website. And scroll to the bottom of the page to the "POKAZATEL: opacity" section (see screenshot). Click on the link to download the petitRADTRANS opacity table.
+1. In this example we will look at the Exomol `POKAZATEL <https://academic.oup.com/mnras/article/480/2/2597/5054049>`_ line list for water.
+   Navigate `to its entry <http://www.exomol.com/data/molecules/H2O/1H2-16O/POKAZATEL/>`_ on the Exomol website and scroll to the bottom of the page to the "POKAZATEL: opacity" section (see screenshot). Click on the link to download the petitRADTRANS opacity table.
 
 .. image:: images/POKAZATEL_screenshot.png
    :width: 600
@@ -588,6 +588,6 @@ not matter. petitRADTRANS will sort them by pressure and temperature internally.
 **The only important criterion is that the grid must be rectangular**:
 the delta T or delta P spacing is allowed to vary, but for every T value all P values must exist.
 
-in your petitRADTRANS calculations you can combine species with different P-T grids,
+In your petitRADTRANS calculations you can combine species with different P-T grids,
 for different species, petitRADTRANS will simply interpolate within the species' respective T-P grid.
 If the atmospheric T and P leave the respective grid, it will take the opacity of that species at the values of the nearest grid boundary point.

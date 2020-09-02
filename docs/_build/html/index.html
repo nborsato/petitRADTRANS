@@ -207,14 +207,16 @@ Please cite these papers if you make use of petitRADTRANS in your work.</p>
 <p>This documentation webpage currently contains an installation guide, a
 tutorial, a first code documentation, and an implemented retrieval
 example for mock JWST emission and transmission spectra.
-Also, we give a tutorial on how to calculate opacities that may be
+Also, we give a tutorial on how to include opacities that may be
 missing from our database.</p>
 <div class="section" id="news">
 <h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
+<dt><strong>September 2020: self-scattering for emission spectra and chemical equilibrium interpolation now available</strong></dt><dd><p>pRT now includes scattering also for emission spectra, if specifically turned on (note that scattering increases the runtime), see <a class="reference external" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a>. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. In addition, you can now download our chemical equilibrium interpolation package, which is documented in <a class="reference external" href="content/notebooks/poor_man.html">Interpolating chemical equilibrium abundances</a></p>
+</dd>
 <dt><strong>September 2020: petitRADTRANS opacities available on the Exomol website</strong></dt><dd><p>Opacity tables created specifically in the petitRADTRANS format
-will soon be available on the <a class="reference external" href="http://www.exomol.com">Exomol website</a> (water is already available), also see <a class="reference external" href="http://add.add.add">Chubb et al. (submitted)</a>.
-They can be installed in petitRADTRANS in an easy plug-and-play fashion.
+are now available on the <a class="reference external" href="http://www.exomol.com/data/data-types/opacity/">Exomol website</a>, also see <a class="reference external" href="http://add.add.add">Chubb et al. (2020)</a> for the accompanying paper.
+The opacities can be installed in petitRADTRANS in an easy plug-and-play fashion.
 Please see Section <a class="reference external" href="content/opa_add.html">Adding opacities</a> for more information.</p>
 </dd>
 <dt><strong>September 2020: More high-temperature atom and ion opacities available</strong></dt><dd><p>We have added more atom and ion opacities, bringing the total list to
@@ -249,9 +251,9 @@ points of the new opacity tables!</strong></p>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/highres.html">High-resolution spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/clouds.html">Including clouds</a></li>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="content/notebooks/emis_scat.html#Use-better-P-T,-also-talk-about-parametrized-scattering…">Use better P-T, also talk about parametrized scattering…</a></li>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/analysis.html">Analysis tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="content/notebooks/nat_cst_utility.html">Utility functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/notebooks/poor_man.html">Interpolating chemical equilibrium abundances</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="content/available_opacities.html">Available opacity species</a><ul>

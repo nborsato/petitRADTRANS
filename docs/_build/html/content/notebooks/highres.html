@@ -97,8 +97,10 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">High-resolution spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clouds.html">Including clouds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emis_scat.html">Scattering for Emission Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html">Analysis tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nat_cst_utility.html">Utility functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="poor_man.html">Interpolating chemical equilibrium abundances</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../available_opacities.html">Available opacity species</a></li>
@@ -424,6 +426,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+
   Read CIA opacities for H2-H2...
   Read CIA opacities for H2-He...
  Done.
@@ -452,22 +455,22 @@ div.rendered_html tbody tr:hover {
 <span class="n">T_equ</span> <span class="o">=</span> <span class="mf">1500.</span>
 <span class="n">temperature</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">guillot_global</span><span class="p">(</span><span class="n">pressures</span><span class="p">,</span> <span class="n">kappa_IR</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">T_int</span><span class="p">,</span> <span class="n">T_equ</span><span class="p">)</span>
 
-<span class="n">abundances</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2O_main_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO2_main_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CH4_main_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2O_main_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO2_main_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CH4_main_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
 <span class="n">MMW</span> <span class="o">=</span> <span class="mf">2.33</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="admonition warning">
-<p><strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
+<p><strong>Abundances in petitRADTRANS:</strong> remember that abundances in pRT are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
 X_i = \frac{\mu_i}{\mu}n_i,
 \end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</p>
 </div>
@@ -477,7 +480,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
+<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
@@ -491,12 +494,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_highres_9_0.png" src="../../_images/content_notebooks_highres_9_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 <p>Let’s zoom-in a bit, to see individual lines</p>
 <div class="nbinput docutils container">
@@ -515,12 +526,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_highres_11_0.png" src="../../_images/content_notebooks_highres_11_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 <p>As before, the flux can be calculated like this</p>
 <div class="nbinput docutils container">
@@ -528,26 +547,33 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">)</span>
+<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">flux</span><span class="o">/</span><span class="mf">1e-6</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (microns)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Planet flux $F_\nu$ (10$^{-6}$ erg cm$^{-2}$ s$^{-1}$ Hz$^{-1}$)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_highres_13_0.png" src="../../_images/content_notebooks_highres_13_0.png" />
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
+</div>
 <div class="admonition warning">
-<p><strong>Scattering and petitRADTRANS:</strong> remember that scattering is not included for emission spectra in petitRADTRANS (but it is for the transmission spectra). We plan to migrate the scattering implementation of <a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a> to petitRADTRANS soon.</p>
+<p><strong>Scattering and petitRADTRANS:</strong> remember that scattering is included for emission spectra in petitRADTRANS only if requested specifically when generating the Radtrans object, as it increases the runtime (see <a class="reference external" href="emis_scat.html">“Scattering for Emission Spectra”</a> for an example how to do this). We neglect the scattering here.</p>
 </div>
 <p>Zooming in here as well:</p>
 <div class="nbinput docutils container">
@@ -565,12 +591,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../_images/content_notebooks_highres_16_0.png" src="../../_images/content_notebooks_highres_16_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 </div>
 

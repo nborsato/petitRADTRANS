@@ -199,17 +199,17 @@
 <h1>Radtrans class<a class="headerlink" href="#radtrans-class" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="petitRADTRANS.Radtrans">
-<em class="property">class </em><code class="sig-prename descclassname">petitRADTRANS.</code><code class="sig-name descname">Radtrans</code><span class="sig-paren">(</span><em class="sig-param">line_species=[], rayleigh_species=[], cloud_species=[], continuum_opacities=[], H2H2CIA=False, H2HeCIA=False, wlen_bords_micron=[0.05, 300.0], mode='c-k'</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">petitRADTRANS.</code><code class="sig-name descname">Radtrans</code><span class="sig-paren">(</span><em class="sig-param">line_species=[], rayleigh_species=[], cloud_species=[], continuum_opacities=[], H2H2CIA=False, H2HeCIA=False, N2N2CIA=False, wlen_bords_micron=[0.05, 300.0], mode='c-k', test_ck_shuffle_comp=False, do_scat_emis=False</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class defining objects for carrying out spectral calculations for a
 given set of opacities</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt>line_species (Optional):</dt><dd><p>list of strings, denoting which line absorber species to include.</p>
 </dd>
-<dt>rayleigh_species (Optional):</dt><dd><p>list of strings, denoting which Rayleigh scattering species to 
+<dt>rayleigh_species (Optional):</dt><dd><p>list of strings, denoting which Rayleigh scattering species to
 include.</p>
 </dd>
-<dt>cloud_species (Optional): </dt><dd><p>list of strings, denoting which cloud opacity species to include.</p>
+<dt>cloud_species (Optional):</dt><dd><p>list of strings, denoting which cloud opacity species to include.</p>
 </dd>
 <dt>continuum_species (Optional):</dt><dd><p>list of strings, denoting which continuum absorber species to
 include.</p>
@@ -222,6 +222,11 @@ into continuum_species list).</p>
 <dt>H2HeCIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
 If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add H2-He Collision induced
 absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'H2-He'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>N2N2CIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add N2-N2 Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'N2-N2'</span></code>
 into continuum_species list).</p>
 </dd>
 <dt>wlen_bords_micron (Optional):</dt><dd><p>list containing left and right border of wavelength region to be
@@ -479,7 +484,7 @@ respective species.</p></li>
 <dl class="method">
 <dt id="petitRADTRANS.Radtrans.setup_opa_structure">
 <code class="sig-name descname">setup_opa_structure</code><span class="sig-paren">(</span><em class="sig-param">P</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.setup_opa_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Setup opacity arrays at atmospheric structure dimensions, 
+<dd><p>Setup opacity arrays at atmospheric structure dimensions,
 and set the atmospheric pressure array.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">

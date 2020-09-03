@@ -919,9 +919,6 @@ class Radtrans:
 
         # This included scattering plus absorption
         self.cloud_total_opa_retrieval_check = cloud_abs_plus_scat_aniso
-            
-        return
-
 
     def add_rayleigh(self,abundances):
         # Add Rayleigh scattering cross-sections
@@ -1090,7 +1087,8 @@ class Radtrans:
                              add_cloud_scat_as_abs = add_cloud_scat_as_abs)
         self.calc_opt_depth(gravity)
         self.calc_RT(contribution)
-        
+        self.calc_tau_cloud(gravity)
+
         if ((self.mode == 'lbl') or self.test_ck_shuffle_comp) \
           and (int(len(self.line_species)) > 1):
             
@@ -1303,3 +1301,25 @@ class Radtrans:
                 resh_wgauss, axis = 0)
 
         return nc.c/self.freq, return_opas
+
+    def calc_tau_cloud(self,gravity):
+        ''' Method to calculate the optical depth of the clouds as function of
+        frequency and pressure. The array with the optical depths is set to the
+        ``tau_cloud`` attribute. The optical depth is calculate from the top of
+        the atmosphere (i.e. the smallest pressure). Therefore, below the cloud
+        base, the optical depth is constant and equal to the value at the cloud
+        base.
+
+            Args:
+                gravity (float):
+                    Surface gravity in cgs. Vertically constant for emission
+                    spectra.
+        '''
+
+        if len(self.cloud_species) > 0:
+            opacity_shape = (1, self.freq_len, 1, len(self.press))
+            cloud_opacity = self.cloud_total_opa_retrieval_check.reshape(opacity_shape)
+            self.tau_cloud = fs.calc_tau_g_tot_ck(gravity, self.press, cloud_opacity)
+
+        else:
+            self.tau_cloud = None

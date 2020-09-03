@@ -84,13 +84,22 @@ class Radtrans:
         self.H2H2CIA = H2H2CIA
         self.H2HeCIA = H2HeCIA
         self.N2N2CIA = N2N2CIA
-
+        self.O2O2CIA = False
+        self.N2O2CIA = False
+        self.CO2CO2CIA = False
+        
         self.H2H2temp = 0
         self.H2Hetemp = 0
         self.N2N2temp = 0
+        self.O2O2temp = 0
+        self.N2O2temp = 0
+        self.C2CO2temp = 0
         self.H2H2wlen = 0
         self.H2Hewlen = 0
         self.N2N2wlen = 0
+        self.O2O2wlen = 0
+        self.N2O2wlen = 0
+        self.CO2CO2wlen = 0
         # New species
         self.Hminus = False
         # Check what is supposed to be included.
@@ -102,6 +111,12 @@ class Radtrans:
                     self.H2HeCIA = True
                 elif c == 'N2-N2':
                     self.N2N2CIA = True
+                elif c == 'O2-O2':
+                    self.O2O2CIA = True
+                elif c == 'N2-O2':
+                    self.N2O2CIA = True
+                elif c == 'CO2-CO2':
+                    self.CO2CO2CIA = True
                 elif c == 'H-':
                     self.Hminus = True
 
@@ -241,9 +256,6 @@ class Radtrans:
             self.cia_h2h2_alpha_grid = \
                       self.cia_h2h2_alpha_grid[:self.H2H2wlen,:self.H2H2temp]
 
-
-
-
         if self.H2HeCIA:
             print('  Read CIA opacities for H2-He...')
             self.cia_h2he_lambda, self.cia_h2he_temp, self.cia_h2he_alpha_grid,\
@@ -267,8 +279,46 @@ class Radtrans:
             self.cia_n2n2_alpha_grid = \
               self.cia_n2n2_alpha_grid[:self.N2N2wlen,:self.N2N2temp]
 
+        if self.O2O2CIA:
+            print('  Read CIA opacities for O2-O2...')
+            self.cia_o2o2_lambda, self.cia_o2o2_temp, \
+              self.cia_o2o2_alpha_grid,self.O2O2temp,self.O2O2wlen = \
+                  fi.cia_read('O2O2',self.path)
+            self.cia_o2o2_alpha_grid = np.array(self.cia_o2o2_alpha_grid, \
+                                                   dtype='d',order='F')
+            self.cia_o2o2_temp = self.cia_o2o2_temp[:self.O2O2temp]
+            self.cia_o2o2_lambda = self.cia_o2o2_lambda[:self.O2O2wlen]
+            self.cia_o2o2_alpha_grid = \
+              self.cia_o2o2_alpha_grid[:self.O2O2wlen,:self.O2O2temp]
 
-        if self.H2H2CIA or self.H2HeCIA or self.N2N2CIA:
+        if self.N2O2CIA:
+            print('  Read CIA opacities for N2-O2...')
+            self.cia_n2o2_lambda, self.cia_n2o2_temp, \
+              self.cia_n2o2_alpha_grid,self.N2O2temp,self.N2O2wlen = \
+                  fi.cia_read('N2O2',self.path)
+            self.cia_n2o2_alpha_grid = np.array(self.cia_n2o2_alpha_grid, \
+                                                   dtype='d',order='F')
+            self.cia_n2o2_temp = self.cia_n2o2_temp[:self.N2O2temp]
+            self.cia_n2o2_lambda = self.cia_n2o2_lambda[:self.N2O2wlen]
+            self.cia_n2o2_alpha_grid = \
+              self.cia_n2o2_alpha_grid[:self.N2O2wlen,:self.N2O2temp]
+
+        if self.CO2CO2CIA:
+            print('  Read CIA opacities for CO2-CO2...')
+            self.cia_co2co2_lambda, self.cia_co2co2_temp, \
+              self.cia_co2co2_alpha_grid,self.CO2CO2temp,self.CO2CO2wlen = \
+                  fi.cia_read('CO2CO2',self.path)
+            self.cia_co2co2_alpha_grid = np.array(self.cia_co2co2_alpha_grid, \
+                                                   dtype='d',order='F')
+            self.cia_co2co2_temp = self.cia_co2co2_temp[:self.CO2CO2temp]
+            self.cia_co2co2_lambda = self.cia_co2co2_lambda[:self.CO2CO2wlen]
+            self.cia_co2co2_alpha_grid = \
+              self.cia_co2co2_alpha_grid[:self.CO2CO2wlen,:self.CO2CO2temp]
+
+
+
+        if self.H2H2CIA or self.H2HeCIA or self.N2N2CIA or self.O2O2CIA \
+           or self.N2O2CIA or self.CO2CO2CIA:
             print(' Done.')
             print()
 
@@ -700,6 +750,25 @@ class Radtrans:
                 self.interpolate_cia(self.cia_n2n2_lambda,\
                 self.cia_n2n2_temp, self.cia_n2n2_alpha_grid,\
                 abundances['N2'],28.)
+
+        if self.O2O2CIA:
+            self.continuum_opa = self.continuum_opa + \
+                self.interpolate_cia(self.cia_o2o2_lambda,\
+                self.cia_o2o2_temp, self.cia_o2o2_alpha_grid,\
+                abundances['O2'],32.)
+
+        if self.N2O2CIA:
+            self.continuum_opa = self.continuum_opa + \
+                self.interpolate_cia(self.cia_n2o2_lambda,\
+                self.cia_n2o2_temp, self.cia_n2o2_alpha_grid,\
+                np.sqrt(abundances['N2']*abundances['O2']),np.sqrt(896.))
+
+        if self.CO2CO2CIA:
+            self.continuum_opa = self.continuum_opa + \
+                self.interpolate_cia(self.cia_co2co2_lambda,\
+                self.cia_co2co2_temp, self.cia_co2co2_alpha_grid,\
+                abundances['CO2'],44.)
+
 
         # Calc. H- opacity
         if self.Hminus:

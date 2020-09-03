@@ -892,6 +892,18 @@ _________________________
    * - H2-He
      - H2, He
      - Collision induced absorption (CIA)
+   * - N2-N2
+     - N2
+     - Collision induced absorption (CIA)
+   * - O2-O2
+     - O2
+     - Collision induced absorption (CIA)
+   * - N2-O2
+     - N2, O2
+     - Collision induced absorption (CIA)
+   * - CO2-CO2
+     - CO2
+     - Collision induced absorption (CIA)
    * - H-
      - H, H-, e-
      - H- bound-free and free-free opacity

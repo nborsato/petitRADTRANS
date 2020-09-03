@@ -41,8 +41,7 @@ release = '1.3.0'
 extensions = [
     'sphinx.ext.autodoc',
     'nbsphinx',
-    'sphinx.ext.mathjax',
-    'rst2pdf.pdfbuilder'
+    'sphinx.ext.mathjax'
 ]
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 

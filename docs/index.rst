@@ -58,6 +58,20 @@ ____
     petitRADTRANS version to make use of the high-temperature
     points of the new opacity tables!**
 
+Developers
+___________
+
+- Paul Mollière
+- Eleonora Alei
+- Evert Nasedkin
+
+Contributors
+________________
+- Karan Molaverdikhani
+- Mantas Zilinskas
+
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Guide:

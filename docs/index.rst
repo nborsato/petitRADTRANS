@@ -38,7 +38,7 @@ ____
     
 **September 2020: petitRADTRANS opacities available on the Exomol website**
     Opacity tables created specifically in the petitRADTRANS format
-    are now available on the `Exomol website <http://www.exomol.com/data/data-types/opacity/>`_, also see `Chubb et al. (2020) <http://add.add.add>`_ for the accompanying paper.
+    are now available on the `Exomol website <http://www.exomol.com/data/data-types/opacity/>`_, also see `Chubb et al. (2020) <http://https://arxiv.org/abs/2009.00687>`_ for the accompanying paper.
     The opacities can be installed in petitRADTRANS in an easy plug-and-play fashion.
     Please see Section `Adding opacities <content/opa_add.html>`_ for more information.
 

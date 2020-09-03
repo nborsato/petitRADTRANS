@@ -1,5 +1,9 @@
 petitRADTRANS/input_data/
+<<<<<<< HEAD
 docs/_build/
+=======
+docs/_build/*
+>>>>>>> Exomol
 __pycache__
 .DS_Store
 *~

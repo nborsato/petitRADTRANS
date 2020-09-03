@@ -42,8 +42,11 @@ extensions = [
     'sphinx.ext.autodoc',
     'nbsphinx',
     'sphinx.ext.mathjax',
+    'rst2pdf.pdfbuilder'
 ]
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
+
+#pdf_documents = [('index', u'rst2pdf', u'pRTdoc', u'Molliere'),]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

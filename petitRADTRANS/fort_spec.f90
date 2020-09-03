@@ -104,7 +104,147 @@ subroutine calc_tau_g_tot_ck(gravity,press,total_kappa,struc_len,freq_len,g_len,
 
 end subroutine calc_tau_g_tot_ck
 
-!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+!!$ Subroutine to calculate tau_scat with 2nd order accuracy
+
+subroutine calc_tau_g_tot_ck_scat(gravity,press,total_kappa_in,do_scat_emis, &
+     continuum_opa_scat_emis,struc_len,freq_len,g_len,tau,photon_destruction_prob)
+
+  use constants_block
+  implicit none
+
+  ! I/O
+  INTEGER, parameter                           :: N_species = 1
+  INTEGER, intent(in)                          :: struc_len, freq_len, g_len
+  DOUBLE PRECISION, intent(in)                 :: total_kappa_in(g_len,freq_len,N_species,struc_len)
+  DOUBLE PRECISION, intent(in)                 :: gravity, press(struc_len)
+  LOGICAL, intent(in)                          :: do_scat_emis
+  DOUBLE PRECISION, intent(in)                 :: continuum_opa_scat_emis(freq_len,struc_len)
+  DOUBLE PRECISION, intent(out)                :: tau(g_len,freq_len,N_species,struc_len), &
+       photon_destruction_prob(g_len,freq_len,struc_len)
+  ! internal
+  integer                                      :: i_struc, i_freq, i_g, i_spec
+  DOUBLE PRECISION                             :: del_tau_lower_ord, &
+       gamma_second(g_len,freq_len,N_species), f_second, kappa_i(g_len,freq_len,N_species), &
+       kappa_im(g_len,freq_len,N_species), kappa_ip(g_len,freq_len,N_species)
+  DOUBLE PRECISION                             :: total_kappa(g_len,freq_len,N_species,struc_len)
+  LOGICAL                                      :: second_order
+  !~~~~~~~~~~~~~
+
+  tau = 0d0
+  second_order = .FALSE.
+
+  total_kappa = total_kappa_in
+
+  if (do_scat_emis) then
+     do i_g = 1, g_len
+        total_kappa(i_g,:,1,:) = total_kappa(i_g,:,1,:) + &
+             continuum_opa_scat_emis(:,:)
+        photon_destruction_prob(i_g,:,:) = continuum_opa_scat_emis(:,:) / &
+             total_kappa(i_g,:,1,:)
+     end do
+     photon_destruction_prob = 1d0 - photon_destruction_prob
+  else
+     photon_destruction_prob = 1d0
+  end if
+
+  if (second_order) then
+     do i_struc = 2, struc_len
+        if (i_struc .EQ. struc_len) then
+           tau(:,:,:,i_struc) = tau(:,:,:,i_struc-1) + &
+                (total_kappa(:,:,:,i_struc)+total_kappa(:,:,:,i_struc-1)) &
+                /2d0/gravity*(press(i_struc)-press(i_struc-1))
+        else
+           f_second = (press(i_struc+1)-press(i_struc))/(press(i_struc)-press(i_struc-1))
+           kappa_i = total_kappa(:,:,:,i_struc)
+           kappa_im = total_kappa(:,:,:,i_struc-1)
+           kappa_ip = total_kappa(:,:,:,i_struc+1)
+           gamma_second = (kappa_ip-(1d0+f_second)*kappa_i+f_second*kappa_im) / &
+                (f_second*(1d0+f_second))
+           tau(:,:,:,i_struc) = tau(:,:,:,i_struc-1) + &
+                ((kappa_i+kappa_im)/2d0-gamma_second/6d0) &
+                /gravity*(press(i_struc)-press(i_struc-1))
+           do i_spec = 1, N_species
+              do i_freq = 1, freq_len
+                 do i_g = 1, g_len
+                    if (tau(i_g,i_freq,i_spec,i_struc) < tau(i_g,i_freq,i_spec,i_struc-1)) then
+                       if (i_struc .EQ. 2) then
+                          tau(i_g,i_freq,i_spec,i_struc) = &
+                               tau(i_g,i_freq,i_spec,i_struc-1)*1.01d0
+                       else
+                          tau(i_g,i_freq,i_spec,i_struc) = &
+                               tau(i_g,i_freq,i_spec,i_struc-1) + &
+                               (tau(i_g,i_freq,i_spec,i_struc-1)- &
+                               tau(i_g,i_freq,i_spec,i_struc-2))*0.01d0
+                       end if
+                    end if
+                    del_tau_lower_ord = (kappa_i(i_g,i_freq,i_spec)+ &
+                         kappa_im(i_g,i_freq,i_spec))/2d0/gravity* &
+                         (press(i_struc)-press(i_struc-1))
+                    if ((tau(i_g,i_freq,i_spec,i_struc) - &
+                         tau(i_g,i_freq,i_spec,i_struc-1)) > del_tau_lower_ord) then
+                       tau(i_g,i_freq,i_spec,i_struc) = &
+                            tau(i_g,i_freq,i_spec,i_struc-1) + del_tau_lower_ord
+                    end if
+                 end do
+              end do
+           end do
+        end if
+     end do
+  else
+     do i_struc = 2, struc_len
+        tau(:,:,:,i_struc) = tau(:,:,:,i_struc-1) + &
+             (total_kappa(:,:,:,i_struc)+total_kappa(:,:,:,i_struc-1)) &
+             /2d0/gravity*(press(i_struc)-press(i_struc-1))
+     end do
+  end if
+
+end subroutine calc_tau_g_tot_ck_scat
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
+subroutine calc_kappa_rosseland(total_kappa, temp, w_gauss, border_freqs, &
+     do_scat_emis, continuum_opa_scat_emis, &
+     g_len, freq_len, struc_len, freq_len_p_1, kappa_rosse)
+
+  implicit none
+
+  integer,          intent(in)  :: g_len, freq_len, struc_len, freq_len_p_1
+  double precision, intent(in)  :: total_kappa(g_len, freq_len, struc_len)
+  double precision, intent(in)  :: border_freqs(freq_len_p_1)
+  double precision, intent(in)  :: temp(struc_len), w_gauss(g_len)
+  LOGICAL, intent(in)           :: do_scat_emis
+  DOUBLE PRECISION, intent(in)  :: continuum_opa_scat_emis(freq_len,struc_len)
+  double precision, intent(out) :: kappa_rosse(struc_len)
+
+  double precision              :: total_kappa_use(g_len, freq_len, struc_len)
+
+  integer                       :: i_struc, i_g
+
+  if (do_scat_emis) then
+     do i_g = 1, g_len
+        total_kappa_use(i_g,:,:) = total_kappa(i_g,:,:) + continuum_opa_scat_emis
+     end do
+  else
+     total_kappa_use = total_kappa
+  end if
+  
+  do i_struc = 1, struc_len
+     call calc_rosse_opa(total_kappa_use(:,:,i_struc), border_freqs, temp(i_struc), &
+          g_len, freq_len+1, &
+          kappa_rosse(i_struc), w_gauss)
+  end do
+
+end subroutine calc_kappa_rosseland
+
+!!$ #########################################################################
 !!$ #########################################################################
 !!$ #########################################################################
 !!$ #########################################################################
@@ -179,15 +319,15 @@ subroutine flux_ck(freq,tau,temp,mu,w_gauss_mu, &
            flux_mu(i_freq) = flux_mu(i_freq)+ &
                 (r(i_str)+r(i_str+1))*(transm_all_loc(i_str)-transm_all_loc(i_str+1))/2d0
            if (contribution) then
-              contr_em(i_str,i_freq) = contr_em(i_str,i_freq) + (r(i_str)+r(i_str+1)) * &
+              contr_em(i_str,i_freq) = contr_em(i_str,i_freq)+ (r(i_str)+r(i_str+1)) * &
                    (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
                    *mu(i_mu)*w_gauss_mu(i_mu)              
            end if
         end do
         flux_mu(i_freq) = flux_mu(i_freq) + r(struc_len)*transm_all_loc(struc_len)
         if (contribution) then
-           contr_em(struc_len,i_freq) = contr_em(struc_len,i_freq) + &
-                2d0*r(struc_len)*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
+           contr_em(struc_len,i_freq) = contr_em(struc_len,i_freq) + 2d0*r(struc_len)* &
+                transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
         end if
      end do
      ! angle integ, factor 1/2 needed for flux calc. from upward pointing intensity
@@ -250,13 +390,15 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   DOUBLE PRECISION, intent(in)                :: gravity
   DOUBLE PRECISION, intent(in)                :: w_gauss(g_len), continuum_opa_scat(freq_len,struc_len)
   LOGICAL, intent(in)                         :: scat !, contribution
+  LOGICAL, intent(in)                         :: var_grav
+  
   DOUBLE PRECISION, intent(out)               :: transm(freq_len) !, contr_tr(struc_len,freq_len)
 
   ! Internal
   DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len), &
        radius_var(struc_len), total_kappa(g_len,freq_len,N_species,struc_len)
   INTEGER                                     :: i_str, i_freq, i_g, i_spec, j_str
-  LOGICAL                                     :: var_grav
+  LOGICAL                                     :: rad_neg
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
   DOUBLE PRECISION                            :: t_graze(g_len,freq_len,N_species,struc_len), s_1, s_2, &
        t_graze_wlen_int(struc_len,freq_len), &
@@ -286,6 +428,17 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   rho = mmw*amu*press/kB/temp
   ! Calculate planetary radius (in cm), assuming hydrostatic equilibrium
   call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav,radius)
+
+  rad_neg = .FALSE.
+  do i_str = struc_len, 1, -1
+     if (radius(i_str) < 0d0) then
+        rad_neg = .TRUE.
+        radius(i_str) = radius(i_str+1)
+     end if
+  end do
+  if (rad_neg) then
+     write(*,*) 'pRT: negative radius corretion applied!'
+  end if
 
   ! Calc. mean free paths across grazing distances
   do i_str = 1, struc_len-1
@@ -360,12 +513,12 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
 !!$  if (contribution) then
 !!$     contr_tr = t_graze_wlen_int
 !!$  end if
-!!$
+
 !!$  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,.FALSE.,radius)
-!!$  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,.TRUE.,radius_var)
+!!$  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,.TRUE., radius_var)
 !!$  open(unit=10,file='rad_test.dat')
 !!$  do i_str = 1, struc_len
-!!$     write(10,*) press(i_str)*1d-6, radius(i_str)/R_jup, radius_var(i_str)/R_jup, rho(i_str)
+!!$     write(10,*) press(i_str)*1d-6, radius(i_str)/R_jup, radius_var(i_str)/R_jup
 !!$  end do
 !!$  close(10)
   
@@ -378,7 +531,8 @@ end subroutine calc_transm_spec
 
 !!$ Subroutine to calculate the radius from the pressure grid
 
-subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav,radius)
+subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs, &
+     R_pl,var_grav,radius)
 
   implicit none
   ! I/O
@@ -404,7 +558,7 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav
      !write(*,*) '####################### VARIABLE GRAVITY'
      !write(*,*) '####################### VARIABLE GRAVITY'
      !write(*,*) '####################### VARIABLE GRAVITY'
-     
+
      ! Calculate radius with vertically varying gravity, set up such that at P=P0, i.e. R=R_pl
      ! the planet has the predefined scalar gravity value
      do i_str = struc_len-1, 1, -1
@@ -482,8 +636,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
   ! I/O
   INTEGER, intent(in)                         :: freq_len, struc_len
   CHARACTER*20, intent(in)                    :: spec
-  DOUBLE PRECISION, intent(in)                :: lambda_angstroem(freq_len), &
-       abund(struc_len), &
+  DOUBLE PRECISION, intent(in)                :: lambda_angstroem(freq_len), abund(struc_len), &
        MMW(struc_len), temp(struc_len), press(struc_len)
   DOUBLE PRECISION, intent(out)               :: rayleigh_kappa(freq_len,struc_len)
 
@@ -517,7 +670,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
      
      ! He Rayleigh scattering according to Chan & Dalgarno alphas (1965)
      lambda_cm = lambda_angstroem*1d-8
-     
+
      do i_str = 1, struc_len
         if (abund(i_str) > 1d-60) then
            do i_freq = 1, freq_len
@@ -584,7 +737,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
 
               nm1 = nm1 - 1d0
               fk = 1.0
-              
+
               retVal = 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(d(i_str)/18d0/amu)**2d0* &
                    (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_h2o * &
                    abund(i_str)
@@ -804,12 +957,12 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
   DOUBLE PRECISION, intent(in)                :: w_gauss(g_len), continuum_opa_scat(freq_len,struc_len)
   LOGICAL, intent(in)                         :: scat
   DOUBLE PRECISION, intent(in)                :: transm_in(freq_len)
+  LOGICAL, intent(in)                         :: var_grav
   DOUBLE PRECISION, intent(out)               :: contr_tr(struc_len,freq_len)
 
   ! Internal
   DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len),radius_var(struc_len)
   INTEGER                                     :: i_str, i_freq, i_g, i_spec, j_str, i_leave_str
-  LOGICAL                                     :: var_grav
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
   DOUBLE PRECISION                            :: t_graze(g_len,freq_len,N_species,struc_len), s_1, s_2, &
        t_graze_wlen_int(struc_len,freq_len), alpha_t2_scat(freq_len,struc_len-1), t_graze_scat(freq_len,struc_len), &
@@ -1210,7 +1363,7 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
   ! I/O
   INTEGER, intent(in)  :: struc_len, N_cloud_spec
   DOUBLE PRECISION, intent(in) :: gravity, rho(struc_len), rho_p(N_cloud_spec), temp(struc_len), &
-       MMW(struc_len), frain, cloud_mass_fracs(struc_len,N_cloud_spec), &
+       MMW(struc_len), frain(N_cloud_spec), cloud_mass_fracs(struc_len,N_cloud_spec), &
        sigma_n, Kzz(struc_len)
   DOUBLE PRECISION, intent(out) :: r_g(struc_len,N_cloud_spec)
   ! Internal
@@ -1233,7 +1386,7 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
         r_w(i_str,i_spec) = bisect_particle_rad(1d-16,1d2,gravity,rho(i_str), &
              rho_p(i_spec),temp(i_str),MMW(i_str),w_star(i_str))
         if (r_w(i_str,i_spec) > 1d-16) then
-           if (frain > 1d0) then
+           if (frain(i_spec) > 1d0) then
               do i_rad = 1, N_fit
                  rad(i_rad) = r_w(i_str,i_spec)/max(sigma_n,1.1d0) + &
                       (r_w(i_str,i_spec)-r_w(i_str,i_spec)/max(sigma_n,1.1d0))* &
@@ -1255,7 +1408,7 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
            
            alpha(i_str,i_spec) = b
            r_w(i_str,i_spec) = exp(-a/b)
-           r_g(i_str,i_spec) = r_w(i_str,i_spec) * frain**(1d0/alpha(i_str,i_spec))* &
+           r_g(i_str,i_spec) = r_w(i_str,i_spec) * frain(i_spec)**(1d0/alpha(i_str,i_spec))* &
                 exp(-(alpha(i_str,i_spec)+6d0)/2d0*log(sigma_n)**2d0)
         else
            r_g(i_str,i_spec) = 1d-17
@@ -1322,7 +1475,7 @@ function bisect_particle_rad(x1,x2,gravity,rho,rho_p,temp,MMW,w_star)
   fb = fb - w_star
   
   if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.)) then
-     write(*,*) 'Warning: root not bracketed.'
+     write(*,*) 'warning: root must be bracketed for zbrent'
      bisect_particle_rad = 1d-17
      return 
   end if
@@ -1385,3 +1538,966 @@ SUBROUTINE fit_linear(x, y, ndata, a, b)
 
 end SUBROUTINE fit_linear
 
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+! Subroutine to randomly correlate the opacities
+
+subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
+     nsample, g_len, freq_len, N_species, struc_len, line_struc_kappas_out)
+
+  implicit none
+
+  INTEGER, INTENT(IN)          :: nsample, g_len, freq_len, N_species, struc_len
+  DOUBLE PRECISION, INTENT(IN) :: line_struc_kappas(g_len, freq_len, &
+       N_species, struc_len), g_gauss(g_len), weights(g_len)
+  DOUBLE PRECISION, INTENT(OUT) :: line_struc_kappas_out(g_len, freq_len, &
+       struc_len)
+  ! Internal
+!!$    INTEGER          :: i_freq, i_spec, i_struc, inds_avail(48), &
+  INTEGER          :: i_freq, i_spec, i_struc, inds_avail(32), &
+!!$  INTEGER          :: i_freq, i_spec, i_struc, inds_avail(16), &
+       ind_use(nsample), i_samp, intpint(g_len), i_g
+!  DOUBLE PRECISION :: r_index(nsample,freq_len, &
+  !       N_species, struc_len), weights_use(g_len), g_sample(nsample)
+  DOUBLE PRECISION :: r_index(nsample), weights_use(g_len), g_sample(nsample)
+  DOUBLE PRECISION :: sampled_opa_weights(nsample, 2, freq_len, struc_len), &
+       cum_sum, k_min(freq_len, struc_len), k_max(freq_len, struc_len), &
+       g_final(nsample+2), k_final(nsample+2)
+
+  DOUBLE PRECISION :: time_test, t1, t2, t0
+  DOUBLE PRECISION :: threshold(freq_len, struc_len)
+  INTEGER          :: take_spec(freq_len, struc_len), take_spec_ind(freq_len, struc_len)
+
+
+  inds_avail = (/ 1, 2, 3, 4, 5, 6, 7, 8, &
+       1, 2, 3, 4, 5, 6, 7, 8, &
+       1, 2, 3, 4, 5, 6, 7, 8, &
+       9, 10, 11, 12, 13, 14, 15, 16 /)
+
+!!$  inds_avail = (/ 1, 2, 3, 4, 5, 6, 7, 8, &
+!!$       9, 10, 11, 12, 13, 14, 15, 16 /)
+
+!!$  inds_avail = (/ 1, 2, 3, 4, 5, 6, 7, 8, &
+!!$       1, 2, 3, 4, 5, 6, 7, 8, &
+!!$       1, 2, 3, 4, 5, 6, 7, 8, &
+!!$       1, 2, 3, 4, 5, 6, 7, 8, &
+!!$       1, 2, 3, 4, 5, 6, 7, 8, &
+!!$       9, 10, 11, 12, 13, 14, 15, 16 /)
+
+  sampled_opa_weights(:, 1, :, :) = 0d0
+  sampled_opa_weights(:, 2, :, :) = 1d0
+  k_min = 0d0
+  k_max = 0d0
+  weights_use = weights
+  weights_use(1:8) = weights_use(1:8)/3d0
+  take_spec = 0
+  take_spec_ind = 1
+  
+!!$  weights_use(1:8) = weights_use(1:8)/5d0
+  
+  call init_random_seed()
+  !call random_number(r_index)
+
+  !time_test = TIME()
+  !t1 = time_test
+
+  ! Find threshold
+  !time_test = TIME()
+  !t0 = time_test
+
+  ! In every layer and frequency bin:
+  ! find the species with the largest kappa(g=0) value,
+  ! save that value.
+  do i_struc = 1, struc_len
+     do i_freq = 1, freq_len
+        threshold(i_freq, i_struc) = MAXVAL(line_struc_kappas(1, i_freq, :, i_struc))
+     end do
+  end do
+  
+  do i_struc = 1, struc_len
+     do i_spec = 1, N_species
+        do i_freq = 1, freq_len
+
+           ! Only consider a species if kappa(g=1) > 0.01 * treshold
+           if (line_struc_kappas(g_len, i_freq, i_spec, i_struc) < &
+                threshold(i_freq, i_struc)*1d-2) then
+              cycle
+           end if
+
+           take_spec(i_freq, i_struc) = take_spec(i_freq, i_struc)+1
+           take_spec_ind(i_freq, i_struc) = i_spec
+
+        end do
+     end do
+  end do
+
+  !time_test = TIME()
+  !t0 = time_test - t0
+          
+  do i_struc = 1, struc_len
+     do i_spec = 1, N_species
+        do i_freq = 1, freq_len
+
+           ! Only do the sampling if more than one species is to be considered.
+           if (take_spec(i_freq, i_struc) < 2) then
+              cycle
+           end if
+
+           ! Check again: really sample the current species?
+           if (line_struc_kappas(g_len, i_freq, i_spec, i_struc) < &
+                threshold(i_freq, i_struc)*1d-2) then
+              cycle
+           end if
+
+!!$           ind_use = inds_avail( &
+!!$                int(r_index(:, i_freq, i_spec, i_struc)*(8*6))+1)
+
+           call random_number(r_index)
+           !ind_use = inds_avail( &
+           !     int(r_index(:, i_freq, i_spec, i_struc)*(8*4))+1)
+           ind_use = inds_avail(int(r_index*(8*4))+1)
+
+
+!!$           ind_use = inds_avail( &
+!!$                int(r_index(:, i_freq, i_spec, i_struc)*(8*2))+1)
+           
+           sampled_opa_weights(:, 1, i_freq, i_struc) = &
+                sampled_opa_weights(:, 1, i_freq, i_struc) + &
+                line_struc_kappas(ind_use, i_freq, i_spec, i_struc)
+
+           sampled_opa_weights(:, 2, i_freq, i_struc) = &
+                sampled_opa_weights(:, 2, i_freq, i_struc) * &
+                weights_use(ind_use)
+
+           k_min(i_freq, i_struc) = k_min(i_freq, i_struc) + &
+                MINVAL(line_struc_kappas(:, i_freq, i_spec, i_struc))
+
+           k_max(i_freq, i_struc) = k_max(i_freq, i_struc) + &
+                MAXVAL(line_struc_kappas(:, i_freq, i_spec, i_struc))
+           
+        end do
+     end do
+     !write(*,*) take_spec(:, i_struc)
+  end do
+
+  !time_test = TIME()
+  !t1 = time_test - t1
+
+  !time_test = TIME()
+  !t2 = time_test
+  
+  do i_struc = 1, struc_len
+     do i_freq = 1, freq_len
+
+        ! Interpolate new corr-k table if more than one species is to be considered
+        if (take_spec(i_freq, i_struc) > 1) then
+
+           call wrap_quicksort_swap(nsample, sampled_opa_weights(:, :, i_freq, i_struc))
+
+           sampled_opa_weights(:, 2, i_freq, i_struc) = &
+                sampled_opa_weights(:, 2, i_freq, i_struc) / &
+                SUM(sampled_opa_weights(:, 2, i_freq, i_struc))
+
+           g_sample = 0d0
+           cum_sum = 0d0
+           do i_samp = 1, nsample
+              g_sample(i_samp) = &
+                   sampled_opa_weights(i_samp, 2, i_freq, i_struc)/2d0 + &
+                   cum_sum
+              cum_sum = cum_sum + &
+                   sampled_opa_weights(i_samp, 2, i_freq, i_struc)
+           end do
+
+           g_final(1) = 0d0
+           g_final(2:nsample+1) = g_sample
+           g_final(nsample+2) = 1d0
+
+           k_final(1) = k_min(i_freq, i_struc)
+           k_final(2:nsample+1) = sampled_opa_weights(:, 1, i_freq, i_struc)
+           k_final(nsample+2) = k_max(i_freq, i_struc)
+
+           call search_intp_ind(g_final, nsample+2, g_gauss, g_len, intpint)
+           !if ((i_struc == 1) .AND. (i_freq == 1)) then
+           do i_g = 1, g_len
+!!$              write(*,*) g_final(intpint(i_g)), g_gauss(i_g), &
+!!$                   g_final(intpint(i_g)+1), ((g_final(intpint(i_g)) <= &
+!!$                   g_gauss(i_g)) .AND. &
+!!$                   (g_gauss(i_g) <= g_final(intpint(i_g)+1)))
+
+              line_struc_kappas_out(i_g, i_freq, i_struc) = &
+                   k_final(intpint(i_g)) + &
+                   (k_final(intpint(i_g)+1) - k_final(intpint(i_g))) / &
+                   (g_final(intpint(i_g)+1) - g_final(intpint(i_g))) * &
+                   (g_gauss(i_g) - g_final(intpint(i_g)))
+
+           end do
+           !end if
+
+        ! Otherwise: just take the opacity of the only species as the full combined k-table
+        else
+
+           line_struc_kappas_out(:, i_freq, i_struc) = &
+                line_struc_kappas(:, i_freq, take_spec_ind(i_freq, i_struc), i_struc)
+
+        end if
+
+     end do
+  end do
+
+  !time_test = TIME()
+  !t2 = time_test - t2
+
+  !write(*,*) 'Time spend where', t0/(t0+t1+t2), t1/(t0+t1+t2), t2/(t0+t1+t2)
+
+end subroutine combine_opas_sample_ck
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
+
+  implicit none
+
+  INTEGER            :: binbordlen, arrlen, intpint(arrlen)
+  DOUBLE PRECISION   :: binbord(binbordlen),arr(arrlen)
+  INTEGER            :: i_arr
+  INTEGER            :: pivot, k0, km
+
+  ! carry out a binary search for the interpolation bin borders
+  do i_arr = 1, arrlen 
+
+     if (arr(i_arr) >= binbord(binbordlen)) then
+        intpint(i_arr) = binbordlen - 1
+     else if (arr(i_arr) <= binbord(1)) then
+        intpint(i_arr) = 1
+     else
+
+        k0 = 1
+        km = binbordlen
+        pivot = (km+k0)/2
+
+        do while(km-k0>1)
+
+           if (arr(i_arr) >= binbord(pivot)) then
+              k0 = pivot
+              pivot = (km+k0)/2
+           else
+              km = pivot
+              pivot = (km+k0)/2
+           end if
+
+        end do
+
+        intpint(i_arr) = k0
+
+     end if
+
+  end do
+  
+end subroutine search_intp_ind
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine feautrier_rad_trans(border_freqs, &
+     tau_approx_scat, &
+     temp, &
+     mu, &
+     w_gauss_mu, &
+     w_gauss_ck, &
+     photon_destruct_in, &
+     contribution, &
+     flux, &
+     contr_em, &
+     freq_len_p_1, &
+     struc_len, &
+     N_mu, &
+     N_g)
+
+  use constants_block
+  implicit none
+
+  ! I/O
+  INTEGER, INTENT(IN)             :: freq_len_p_1, struc_len, N_mu, N_g
+  DOUBLE PRECISION, INTENT(IN)    :: border_freqs(freq_len_p_1)
+  DOUBLE PRECISION, INTENT(IN)    :: tau_approx_scat(N_g,freq_len_p_1-1,struc_len)
+  DOUBLE PRECISION, INTENT(IN)    :: temp(struc_len)
+  DOUBLE PRECISION, INTENT(IN)    :: mu(N_mu)
+  DOUBLE PRECISION, INTENT(IN)    :: w_gauss_mu(N_mu), w_gauss_ck(N_g)
+  DOUBLE PRECISION, INTENT(IN)    :: photon_destruct_in(N_g,freq_len_p_1-1,struc_len)
+  LOGICAL, INTENT(IN)             :: contribution
+  DOUBLE PRECISION, INTENT(OUT)   :: flux(freq_len_p_1-1)
+  DOUBLE PRECISION, INTENT(OUT)   :: contr_em(struc_len,freq_len_p_1-1)
+
+  ! Internal
+  INTEGER                         :: j,i,k,l
+  DOUBLE PRECISION                :: I_J(struc_len,N_mu), I_H(struc_len,N_mu)
+  DOUBLE PRECISION                :: source(N_g,freq_len_p_1-1,struc_len), &
+       J_planet_scat(N_g,freq_len_p_1-1,struc_len), &
+       photon_destruct(N_g,freq_len_p_1-1,struc_len), &
+       source_planet_scat_n(N_g,freq_len_p_1-1,struc_len), &
+       source_planet_scat_n1(N_g,freq_len_p_1-1,struc_len), &
+       source_planet_scat_n2(N_g,freq_len_p_1-1,struc_len), &
+       source_planet_scat_n3(N_g,freq_len_p_1-1,struc_len)
+  
+
+  ! tridag variables
+  DOUBLE PRECISION                :: a(struc_len),b(struc_len),c(struc_len),r(struc_len)
+  DOUBLE PRECISION                :: f1,f2,f3, deriv1, deriv2
+
+  ! quantities for P-T structure iteration
+  DOUBLE PRECISION                :: J_bol(struc_len)
+  DOUBLE PRECISION                :: J_bol_a(struc_len)
+  DOUBLE PRECISION                :: J_bol_g(struc_len)
+
+  ! ALI
+  DOUBLE PRECISION                :: lambda_loc(N_g,freq_len_p_1-1,struc_len)
+
+  ! control
+  DOUBLE PRECISION                :: inv_del_tau_min
+  INTEGER                         :: iter_scat, i_iter_scat
+
+  ! GCM spec calc
+  LOGICAL                         :: GCM_read
+  DOUBLE PRECISION                :: I_GCM(N_mu,freq_len_p_1-1)
+
+  ! Variables for the contribution function calculation
+  INTEGER :: i_mu, i_str, i_freq
+  DOUBLE PRECISION :: transm_mu(N_g,freq_len_p_1-1,struc_len), &
+                     transm_all(freq_len_p_1-1,struc_len), transm_all_loc(struc_len)
+
+  GCM_read = .FALSE.
+  iter_scat = 10
+  source = 0d0
+
+  source_planet_scat_n = 0d0
+  source_planet_scat_n1 = 0d0
+  source_planet_scat_n2 = 0d0
+  source_planet_scat_n3 = 0d0
+
+  photon_destruct = photon_destruct_in
+
+  do i_iter_scat = 1, iter_scat
+
+     !write(*,*) 'i_iter_scat', i_iter_scat
+
+     lambda_loc = 0d0
+
+     J_planet_scat = 0d0
+
+     inv_del_tau_min = 1d10
+     J_bol(1) = 0d0
+     I_GCM = 0d0
+
+     do i = 1, freq_len_p_1-1
+
+        flux(i) = 0d0
+        J_bol_a = 0d0
+
+        r = 0
+
+        call planck_f_lr(struc_len,temp(1:struc_len),border_freqs(i),border_freqs(i+1),r)
+
+        do l = 1, N_g
+
+           if (i_iter_scat .EQ. 1) then
+              source(l,i,:) = r
+           else
+              r = source(l,i,:)
+           end if
+
+           do j = 1, N_mu
+
+              ! Own boundary treatment
+              f1 = mu(j)/(tau_approx_scat(l,i,1+1)-tau_approx_scat(l,i,1))
+
+              ! own test against instability
+              if (f1 > inv_del_tau_min) then
+                 f1 = inv_del_tau_min
+              end if
+              if (f1 .NE. f1) then
+                 f1 = inv_del_tau_min
+              end if
+
+              b(1) = 1d0 + 2d0 * f1 * (1d0 + f1)
+              c(1) = -2d0*f1**2d0
+              a(1) = 0d0
+
+              ! Calculate the local approximate lambda iterator
+              lambda_loc(l,i,1) = lambda_loc(l,i,1) + &
+                   w_gauss_mu(j)/(1d0 + 2d0 * f1 * (1d0 + f1))
+
+              do k = 1+1, struc_len-1
+
+                 f1 = 2d0*mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k-1))
+                 f2 = mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k))
+                 f3 = mu(j)/(tau_approx_scat(l,i,k)-tau_approx_scat(l,i,k-1))
+
+                 ! own test against instability
+                 if (f1 > 0.5d0*inv_del_tau_min) then
+                    f1 = 0.5d0*inv_del_tau_min
+                 end if
+                 if (f1 .NE. f1) then
+                    f1 = 0.5d0*inv_del_tau_min
+                 end if
+                 if (f2 > inv_del_tau_min) then
+                    f2 = inv_del_tau_min
+                 end if
+                 if (f2 .NE. f2) then
+                    f2 = inv_del_tau_min
+                 end if
+                 if (f3 > inv_del_tau_min) then
+                    f3 = inv_del_tau_min
+                 end if
+                 if (f3 .NE. f3) then
+                    f3 = inv_del_tau_min
+                 end if
+
+                 b(k) = 1d0 + f1*(f2+f3)
+                 c(k) = -f1*f2
+                 a(k) = -f1*f3
+
+                 ! Calculate the local approximate lambda iterator
+                 lambda_loc(l,i,k) = lambda_loc(l,i,k) + &
+                      w_gauss_mu(j)/(1d0+f1*(f2+f3))
+
+              end do
+
+              ! Own boundary treatment
+              f1 = mu(j)/(tau_approx_scat(l,i,struc_len)-tau_approx_scat(l,i,struc_len-1))
+
+              ! own test against instability
+              if (f1 > inv_del_tau_min) then
+                 f1 = inv_del_tau_min
+              end if
+              if (f1 .NE. f1) then
+                 f1 = inv_del_tau_min
+              end if
+
+              b(struc_len) = 1d0 + 2d0*f1**2d0
+              c(struc_len) = 0d0
+              a(struc_len) = -2d0*f1**2d0
+
+              ! Calculate the local approximate lambda iterator
+              lambda_loc(l,i,struc_len) = lambda_loc(l,i,struc_len) + &
+                   w_gauss_mu(j)/(1d0 + 2d0*f1**2d0)
+
+              call tridag_own(a,b,c,r,I_J(:,j),struc_len)
+
+              I_H(1,j) = -I_J(1,j)
+
+              do k = 1+1, struc_len-1
+                 f1 = mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k))
+                 f2 = mu(j)/(tau_approx_scat(l,i,k)-tau_approx_scat(l,i,k-1))
+                 if (f1 > inv_del_tau_min) then
+                    f1 = inv_del_tau_min
+                 end if
+                 if (f2 > inv_del_tau_min) then
+                    f2 = inv_del_tau_min
+                 end if
+                 deriv1 = f1*(I_J(k+1,j)-I_J(k,j))
+                 deriv2 = f2*(I_J(k,j)-I_J(k-1,j))
+                 I_H(k,j) = -(deriv1+deriv2)/2d0
+              end do
+
+              I_H(struc_len,j) = 0d0
+
+           end do
+
+           J_bol_g = 0d0
+
+           do j = 1, N_mu
+
+              J_bol_g = J_bol_g + I_J(:,j) * w_gauss_mu(j)
+              flux(i) = flux(i) - I_H(1,j)*mu(j) &
+                   * 4d0*pi * w_gauss_ck(l) * w_gauss_mu(j)
+           end do
+
+           ! Save angle-dependent surface flux
+           if (GCM_read) then
+              do j = 1, N_mu
+                 I_GCM(j,i) = I_GCM(j,i) - 2d0*I_H(1,j)*w_gauss_ck(l)
+              end do
+           end if
+
+           J_planet_scat(l,i,:) = J_bol_g
+
+        end do
+
+     end do
+
+     do k = 1, struc_len
+        do i = 1, freq_len_p_1-1
+           do l = 1, N_g
+              if (photon_destruct(l,i,k) < 1d-10) THEN
+                 photon_destruct(l,i,k) = 1d-10
+              end if
+           end do
+        end do
+     end do
+
+     do i = 1, freq_len_p_1-1
+        call planck_f_lr(struc_len,temp(1:struc_len),border_freqs(i),border_freqs(i+1),r)
+        do l = 1, N_g
+           source(l,i,:) = (photon_destruct(l,i,:)*r+(1d0-photon_destruct(l,i,:))* &
+                (J_planet_scat(l,i,:)-lambda_loc(l,i,:)*source(l,i,:))) / &
+                (1d0-(1d0-photon_destruct(l,i,:))*lambda_loc(l,i,:))
+        end do
+     end do
+
+     source_planet_scat_n3 = source_planet_scat_n2
+     source_planet_scat_n2 = source_planet_scat_n1
+     source_planet_scat_n1 = source_planet_scat_n
+     source_planet_scat_n  = source
+
+     if (mod(i_iter_scat,4) .EQ. 0) then
+        !write(*,*) 'Ng acceleration!'
+        call NG_source_approx(source_planet_scat_n,source_planet_scat_n1, &
+             source_planet_scat_n2,source_planet_scat_n3,source, &
+             N_g,freq_len_p_1,struc_len)
+     end if
+
+  end do
+
+  ! Calculate the contribution function.
+  ! Copied from flux_ck, here using "source" as the source function
+  ! (before it was the Planck function).
+  
+  contr_em = 0d0
+  if (contribution) then
+
+     do i_mu = 1, N_mu
+
+        ! Transmissions for a given incidence angle
+        transm_mu = exp(-tau_approx_scat/mu(i_mu))
+
+        do i_str = 1, struc_len
+           do i_freq = 1, freq_len_p_1-1
+              ! Integrate transmission over g-space
+              transm_all(i_freq,i_str) = sum(transm_mu(:,i_freq,i_str)*w_gauss_ck)
+           end do
+        end do
+
+        ! Do the actual radiative transport
+        do i_freq = 1, freq_len_p_1-1
+           ! Spatial transmissions at given wavelength
+           transm_all_loc = transm_all(i_freq,:)
+           ! Calc Eq. 9 of manuscript (em_deriv.pdf)
+           do i_str = 1, struc_len
+              r(i_str) = sum(source(:,i_freq,i_str)*w_gauss_ck)
+           end do
+           do i_str = 1, struc_len-1
+              contr_em(i_str,i_freq) = contr_em(i_str,i_freq) + &
+                   (r(i_str)+r(i_str+1)) * &
+                   (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
+                   *mu(i_mu)*w_gauss_mu(i_mu)              
+           end do
+           contr_em(struc_len,i_freq) = contr_em(struc_len,i_freq) + &
+                2d0*r(struc_len)*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
+        end do
+
+     end do
+
+     do i_freq = 1, freq_len_p_1-1
+        contr_em(:,i_freq) = contr_em(:,i_freq)/SUM(contr_em(:,i_freq))
+     end do
+
+  end if
+
+end subroutine feautrier_rad_trans
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine NG_source_approx(source_n,source_n1,source_n2,source_n3,source, &
+     N_g,freq_len_p_1,struc_len)
+
+  implicit none
+  INTEGER :: struc_len, freq_len_p_1, N_g, i, i_ng, i_freq
+  DOUBLE PRECISION :: tn(struc_len), tn1(struc_len), tn2(struc_len), &
+       tn3(struc_len), temp_buff(struc_len), &
+       source_n(N_g,freq_len_p_1-1,struc_len), source_n1(N_g,freq_len_p_1-1,struc_len), &
+       source_n2(N_g,freq_len_p_1-1,struc_len), source_n3(N_g,freq_len_p_1-1,struc_len), &
+       source(N_g,freq_len_p_1-1,struc_len), source_buff(N_g,freq_len_p_1-1,struc_len)
+  DOUBLE PRECISION :: Q1(struc_len), Q2(struc_len), Q3(struc_len)
+  DOUBLE PRECISION :: A1, A2, B1, B2, C1, C2
+  DOUBLE PRECISION :: a, b
+
+  do i_freq = 1, freq_len_p_1-1
+     do i_ng = 1, N_g
+
+        tn = source_n(i_ng,i_freq,1:struc_len)
+        tn1 = source_n1(i_ng,i_freq,1:struc_len)
+        tn2 = source_n2(i_ng,i_freq,1:struc_len)
+        tn3 = source_n3(i_ng,i_freq,1:struc_len)
+
+        Q1 = tn - 2d0*tn1 + tn2
+        Q2 = tn - tn1 - tn2 + tn3
+        Q3 = tn - tn1
+
+        ! test
+        Q1(1) = 0d0
+        Q2(1) = 0d0
+        Q3(1) = 0d0
+
+        A1 = sum(Q1*Q1)
+        A2 = sum(Q2*Q1)
+        B1 = sum(Q1*Q2)
+        B2 = sum(Q2*Q2)
+        C1 = sum(Q1*Q3)
+        C2 = sum(Q2*Q3)
+
+        if ((abs(A1) >= 1d-250) .AND. &
+             (abs(A2) >=1d-250) .AND. &
+             (abs(B1) >=1d-250) .AND. &
+             (abs(B2) >=1d-250) .AND. &
+             (abs(C1) >=1d-250) .AND. &
+             (abs(C2) >=1d-250)) THEN
+
+           a = (C1*B2-C2*B1)/(A1*B2-A2*B1)
+           b = (C2*A1-C1*A2)/(A1*B2-A2*B1)
+
+           temp_buff = (1d0-a-b)*tn + a*tn1 + b*tn2
+
+           do i = 1,struc_len
+              if (temp_buff(i) <= 0d0) then
+                 temp_buff(i) = 0d0
+              end if
+           end do
+
+           do i = 1,struc_len
+              if (temp_buff(i) .NE. temp_buff(i)) then
+                 return
+              end if
+           end do
+        
+           source_buff(i_ng,i_freq,1:struc_len) = temp_buff
+
+        else
+
+           source_buff(i_ng,i_freq,1:struc_len) = source(i_ng,i_freq,1:struc_len)
+
+        end if
+
+     end do
+  end do
+
+  source = source_buff
+
+end subroutine NG_source_approx
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+!**********************************************************
+! RANDOM SEED GENERATOR BELOW TAKEN FROM
+! http://gcc.gnu.org/onlinedocs/gfortran/RANDOM_005fSEED.html#RANDOM_005fSEED
+!**********************************************************
+
+subroutine init_random_seed()
+  use iso_fortran_env, only: int64
+  implicit none
+  integer, allocatable :: seed(:)
+  integer :: i, n, un, istat, dt(8), pid, getpid
+  integer(int64) :: t
+
+  call random_seed(size = n)
+  allocate(seed(n))
+  ! First try if the OS provides a random number generator
+  open(newunit=un, file="/dev/urandom", access="stream", &
+       form="unformatted", action="read", status="old", iostat=istat)
+  if (istat == 0) then
+     read(un) seed
+     close(un)
+  else
+     ! Fallback to OR:ing the current time and pid. The PID is
+     ! useful in case one launches multiple instances of the same
+     ! program in parallel.
+     call system_clock(t)
+     if (t == 0) then
+        call date_and_time(values=dt)
+        t = (dt(1) - 1970) * 365_int64 * 24 * 60 * 60 * 1000 &
+             + dt(2) * 31_int64 * 24 * 60 * 60 * 1000 &
+             + dt(3) * 24_int64 * 60 * 60 * 1000 &
+             + dt(5) * 60 * 60 * 1000 &
+             + dt(6) * 60 * 1000 + dt(7) * 1000 &
+             + dt(8)
+     end if
+     pid = getpid()
+     t = ieor(t, int(pid, kind(t)))
+     do i = 1, n
+        seed(i) = lcg(t)
+     end do
+  end if
+  call random_seed(put=seed)
+contains
+  ! This simple PRNG might not be good enough for real work, but is
+  ! sufficient for seeding a better PRNG.
+  function lcg(s)
+    integer :: lcg
+    integer(int64) :: s
+    if (s == 0) then
+       s = 104729
+    else
+       s = mod(s, 4294967296_int64)
+    end if
+    s = mod(s * 279470273_int64, 4294967291_int64)
+    lcg = int(mod(s, int(huge(0), int64)), kind(0))
+  end function lcg
+end subroutine init_random_seed
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine wrap_quicksort_swap(length, array)
+
+  implicit none
+  integer, intent(in) :: length
+  double precision, intent(inout) :: array(length, 2)
+  double precision :: swapped_array(2, length)
+
+  swapped_array(1, :) = array(:, 1)
+  swapped_array(2, :) = array(:, 2)
+  call quicksort_own_2d_swapped(length, swapped_array)
+  array(:,1) = swapped_array(1,:)
+  array(:,2) = swapped_array(2,:)
+
+end subroutine wrap_quicksort_swap
+
+recursive subroutine quicksort_own_2d_swapped(length, array)
+
+  implicit none
+  integer, intent(in) :: length
+  double precision, intent(inout) :: array(2,length)
+  integer :: partition_index
+  integer :: ind_up, &
+       ind_down, &
+       ind_down_start
+  double precision :: buffer(2), compare(2)
+  logical :: found
+
+  found = .False.
+
+  partition_index = length
+  compare = array(:, partition_index)
+
+  ind_down_start = length-1
+
+  do ind_up = 1, length-1
+
+     if (array(1,ind_up) > compare(1)) then
+
+        found = .True.
+
+        do ind_down = ind_down_start, 1, -1
+
+           if (ind_down == ind_up) then
+
+              array(:,partition_index) = array(:,ind_down)
+              array(:,ind_down) = compare
+
+              if ((length-ind_down) > 1) then
+                 call quicksort_own_2d_swapped(length-ind_down, array(:,ind_down+1:length))
+              end if
+              if ((ind_down-1) > 1) then
+                 call quicksort_own_2d_swapped(ind_down-1, array(:,1:ind_down-1))
+              end if              
+              return
+              
+           else if (array(1,ind_down) < compare(1)) then
+
+              buffer = array(:,ind_up)
+              array(:,ind_up) = array(:,ind_down)
+              array(:,ind_down) = buffer
+              ind_down_start = ind_down
+              exit
+
+           end if
+           
+        end do
+     
+     end if
+
+  end do
+
+  if (found .EQV. .FALSE.) then
+
+     if ((length-1) > 1 ) then
+        call quicksort_own_2d_swapped(length-1, array(:,1:length-1))
+     end if     
+  end if
+
+end subroutine quicksort_own_2d_swapped
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+! Tridag, own implementation, following the numerical recipes book.
+
+subroutine tridag_own(a,b,c,res,solution,length)
+
+  implicit none
+  
+  ! I/O
+  integer, intent(in) :: length
+  double precision, intent(in) :: a(length), &
+       b(length), &
+       c(length), &
+       res(length)
+  double precision, intent(out) :: solution(length)
+
+  ! Internal variables
+  integer :: ind
+  double precision :: buffer_scalar, &
+       buffer_vector(length)
+
+  ! Test if b(1) == 0:
+  if (b(1) .EQ. 0) then
+     stop "Error in tridag routine, b(1) must not be zero!"
+  end if
+
+  ! Begin inversion
+  buffer_scalar = b(1)
+  solution(1) = res(1) / buffer_scalar
+
+  do ind = 2, length
+     buffer_vector(ind) = c(ind-1)/buffer_scalar
+     buffer_scalar = b(ind) - a(ind) * buffer_vector(ind)
+     if (buffer_scalar .EQ. 0) then
+        write(*,*) "Tridag routine failed!"
+        solution = 0d0
+        return
+     end if
+     solution(ind) = (res(ind) - &
+          a(ind)*solution(ind-1))/buffer_scalar
+  end do
+
+  do ind = length-1, 1, -1
+     solution(ind) = solution(ind) &
+          - buffer_vector(ind+1) * solution(ind + 1)
+  end do
+
+end subroutine tridag_own
+
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine planck_f_lr(PT_length,T,nul,nur,B_nu)
+
+  use constants_block
+  implicit none
+  INTEGER                         :: PT_length,i, integ
+  DOUBLE PRECISION                :: T(PT_length),B_nu(PT_length)
+  DOUBLE PRECISION                :: buffer, nu1, nu2, nu3, nu4, nu5, nu_large, nu_small, &
+       nul, nur, diff_nu
+
+  !~~~~~~~~~~~~~
+
+  B_nu = 0d0
+  ! Take mean using Boole's method
+  nu_large = max(nul,nur)
+  nu_small = min(nul,nur)
+  nu1 = nu_small
+  nu2 = nu_small+DBLE(1)*(nu_large-nu_small)/4d0
+  nu3 = nu_small+DBLE(2)*(nu_large-nu_small)/4d0
+  nu4 = nu_small+DBLE(3)*(nu_large-nu_small)/4d0
+  nu5 = nu_large
+  diff_nu = nu2-nu1
+  B_nu = B_nu + 1d0/90d0*( &
+       7d0* 2d0*hplanck*nu1**3d0/c_l**2d0/(exp(hplanck*nu1/kB/T)-1d0) + &
+       32d0*2d0*hplanck*nu2**3d0/c_l**2d0/(exp(hplanck*nu2/kB/T)-1d0) + &
+       12d0*2d0*hplanck*nu3**3d0/c_l**2d0/(exp(hplanck*nu3/kB/T)-1d0) + &
+       32d0*2d0*hplanck*nu4**3d0/c_l**2d0/(exp(hplanck*nu4/kB/T)-1d0) + &
+       7d0* 2d0*hplanck*nu5**3d0/c_l**2d0/(exp(hplanck*nu5/kB/T)-1d0))
+
+end subroutine planck_f_lr
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine calc_rosse_opa(HIT_kappa_tot_g_approx,HIT_border_freqs,temp,HIT_N_g,HIT_coarse_borders, &
+     kappa_rosse, w_gauss)
+
+  use constants_block
+  implicit none
+  INTEGER                         :: HIT_N_g,HIT_coarse_borders
+  DOUBLE PRECISION                :: HIT_border_freqs(HIT_coarse_borders)
+  DOUBLE PRECISION                :: HIT_kappa_tot_g_approx(HIT_N_g,HIT_coarse_borders-1)
+  DOUBLE PRECISION                :: temp, kappa_rosse, w_gauss(HIT_N_g), B_nu_dT(HIT_coarse_borders-1), &
+       numerator
+  INTEGER                         :: i
+
+  !~~~~~~~~~~~~~
+
+  call star_planck_div_T(HIT_coarse_borders,temp,HIT_border_freqs,B_nu_dT)
+
+  kappa_rosse = 0d0
+  numerator = 0d0
+  
+  do i = 1, HIT_coarse_borders-1
+     kappa_rosse = kappa_rosse + &
+          B_nu_dT(i) * sum(w_gauss/HIT_kappa_tot_g_approx(:,i)) * &
+          (HIT_border_freqs(i)-HIT_border_freqs(i+1))
+     numerator = numerator + &
+          B_nu_dT(i) * &
+          (HIT_border_freqs(i)-HIT_border_freqs(i+1))
+  end do
+
+  kappa_rosse = numerator / kappa_rosse
+
+end subroutine calc_rosse_opa
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine star_planck_div_T(freq_len,T,nu,B_nu_dT)
+
+  use constants_block
+  implicit none
+  INTEGER                         :: freq_len
+  DOUBLE PRECISION                :: T,B_nu_dT(freq_len-1),nu(freq_len)
+  DOUBLE PRECISION                :: buffer(freq_len-1),nu_use(freq_len-1)
+  INTEGER                         :: i
+
+  !~~~~~~~~~~~~~
+
+  do i = 1, freq_len-1
+     nu_use(i) = (nu(i)+nu(i+1))/2d0
+  end do
+
+  buffer = 2d0*hplanck**2d0*nu_use**4d0/c_l**2d0
+  B_nu_dT = buffer / ((exp(hplanck*nu_use/kB/T/2d0)-exp(-hplanck*nu_use/kB/T/2d0))**2d0)/kB/T**2d0
+
+end subroutine star_planck_div_T

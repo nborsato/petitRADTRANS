@@ -86,7 +86,7 @@ def hminus_opacity(lambda_angstroem, border_lambda_angstroem, \
 
     retVal = np.array(np.zeros(len(lambda_angstroem)*len(press)).reshape( \
                         len(lambda_angstroem), \
-                        len(press)),dtype='d',order='Fortran')
+                        len(press)),dtype='d',order='F')
     
     # Calc. electron number fraction
     # e- mass in amu:

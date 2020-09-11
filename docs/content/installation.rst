@@ -29,7 +29,7 @@ _____________________
    <mailto:molliere@mpia.de>`_. We are working on a better solution.
 
 Download the `opacity and input data
-<https://www.dropbox.com/s/a9yryemdg083sed/input_data_r.zip?dl=0>`_
+<https://www.dropbox.com/s/tz6j0rowpdbs509/input_data_r.zip?dl=0>`_
 (6.3 GB), unzip them, and put the "input_data" folder into the
 "petitRADTRANS" folder (i.e. the same folder where the source is, if
 you clone from gitlab, this should be the

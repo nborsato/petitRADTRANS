@@ -1273,7 +1273,8 @@ class Radtrans:
                       gray_opacity = None, Pcloud = None, \
                       kappa_zero = None, \
                       gamma_scat = None, \
-                      haze_factor = None):
+                      haze_factor = None, \
+                      add_cloud_scat_as_abs = None):
         ''' Method to calculate the atmosphere's Rosseland and Planck mean opacities.
 
             Args:

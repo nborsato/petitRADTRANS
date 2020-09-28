@@ -1266,6 +1266,92 @@ class Radtrans:
         self.calc_RT(contribution)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
 
+        
+    def calc_rosse_planck(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
+                      fsed = None, Kzz = None, radius = None, \
+                      contribution=False, \
+                      gray_opacity = None, Pcloud = None, \
+                      kappa_zero = None, \
+                      gamma_scat = None, \
+                      haze_factor = None):
+        ''' Method to calculate the atmosphere's Rosseland and Planck mean opacities.
+
+            Args:
+                temp:
+                    the atmospheric temperature in K, at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                abunds:
+                    dictionary of mass fractions for all atmospheric absorbers.
+                    Dictionary keys are the species names.
+                    Every mass fraction array
+                    has same length as pressure array.
+                gravity (float):
+                    Surface gravity in cgs. Vertically constant for emission
+                    spectra.
+                mmw:
+                    the atmospheric mean molecular weight in amu,
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                sigma_lnorm (Optional[float]):
+                    width of the log-normal cloud particle size distribution
+                fsed (Optional[float]):
+                    cloud settling parameter
+                Kzz (Optional):
+                    the atmospheric eddy diffusion coeffiecient in cgs untis
+                    (i.e. :math:`\\rm cm^2/s`),
+                    at each atmospheric layer
+                    (1-d numpy array, same length as pressure array).
+                radius (Optional):
+                    dictionary of mean particle radii for all cloud species.
+                    Dictionary keys are the cloud species names.
+                    Every radius array has same length as pressure array.    
+                contribution (Optional[bool]):
+                    If ``True`` the emission contribution function will be
+                    calculated. Default is ``False``.
+                gray_opacity (Optional[float]):
+                    Gray opacity value, to be added to the opacity at all
+                    pressures and wavelengths (units :math:`\\rm cm^2/g`)
+                Pcloud (Optional[float]):
+                    Pressure, in bar, where opaque cloud deck is added to the
+                    absorption opacity.
+                kappa_zero (Optional[float]):
+                    Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).
+                gamma_scat (Optional[float]):
+                    Has to be given if kappa_zero is definded, this is the
+                    wavelength powerlaw index of the parametrized scattering
+                    opacity.
+                haze_factor (Optional[float]):
+                    Scalar factor, increasing the gas Rayleigh scattering
+                    cross-section.
+        '''
+
+        if not self.do_scat_emis:
+            print('Error: pRT must run in do_scat_emis = True mode to calculate'+ \
+                  ' kappa_Rosseland and kappa_Planck')
+            sys.exit(1)
+            
+        self.Pcloud = Pcloud
+        self.haze_factor = haze_factor
+        self.kappa_zero = kappa_zero
+        self.gamma_scat = gamma_scat
+        self.gray_opacity = gray_opacity
+        self.interpolate_species_opa(temp)
+        self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
+                             add_cloud_scat_as_abs = add_cloud_scat_as_abs)
+        
+        self.kappa_rosseland = \
+                  fs.calc_kappa_rosseland(self.line_struc_kappas[:,:,:1,:], self.temp, \
+                                self.w_gauss, self.border_freqs, \
+                                self.do_scat_emis, self.continuum_opa_scat_emis)
+
+        self.kappa_planck = \
+                  fs.calc_kappa_planck(self.line_struc_kappas[:,:,:1,:], self.temp, \
+                                self.w_gauss, self.border_freqs, \
+                                self.do_scat_emis, self.continuum_opa_scat_emis)
+
+        return self.kappa_rosseland, self.kappa_planck
+
+
     def get_opa(self,temp):
         ''' Method to calculate and return the line opacities (assuming an abundance
         of 100 % for the inidividual species) of the Radtrans object. This method

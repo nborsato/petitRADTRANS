@@ -249,6 +249,45 @@ end subroutine calc_kappa_rosseland
 !!$ #########################################################################
 !!$ #########################################################################
 
+subroutine calc_kappa_planck(total_kappa, temp, w_gauss, border_freqs, &
+     do_scat_emis, continuum_opa_scat_emis, &
+     g_len, freq_len, struc_len, freq_len_p_1, kappa_planck)
+
+  implicit none
+
+  integer,          intent(in)  :: g_len, freq_len, struc_len, freq_len_p_1
+  double precision, intent(in)  :: total_kappa(g_len, freq_len, struc_len)
+  double precision, intent(in)  :: border_freqs(freq_len_p_1)
+  double precision, intent(in)  :: temp(struc_len), w_gauss(g_len)
+  LOGICAL, intent(in)           :: do_scat_emis
+  DOUBLE PRECISION, intent(in)  :: continuum_opa_scat_emis(freq_len,struc_len)
+  double precision, intent(out) :: kappa_planck(struc_len)
+
+  double precision              :: total_kappa_use(g_len, freq_len, struc_len)
+
+  integer                       :: i_struc, i_g
+
+  if (do_scat_emis) then
+     do i_g = 1, g_len
+        total_kappa_use(i_g,:,:) = total_kappa(i_g,:,:) + continuum_opa_scat_emis
+     end do
+  else
+     total_kappa_use = total_kappa
+  end if
+  
+  do i_struc = 1, struc_len
+     call calc_planck_opa(total_kappa_use(:,:,i_struc), border_freqs, temp(i_struc), &
+          g_len, freq_len+1, &
+          kappa_planck(i_struc), w_gauss)
+  end do
+
+end subroutine calc_kappa_planck
+
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+!!$ #########################################################################
+
 !!$ Subroutine to do the radiative transport, using the mean transmission method
 
 subroutine flux_ck(freq,tau,temp,mu,w_gauss_mu, &
@@ -2501,3 +2540,75 @@ subroutine star_planck_div_T(freq_len,T,nu,B_nu_dT)
   B_nu_dT = buffer / ((exp(hplanck*nu_use/kB/T/2d0)-exp(-hplanck*nu_use/kB/T/2d0))**2d0)/kB/T**2d0
 
 end subroutine star_planck_div_T
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine calc_planck_opa(HIT_kappa_tot_g_approx,HIT_border_freqs,temp,HIT_N_g,HIT_coarse_borders, &
+     kappa_planck, w_gauss)
+
+  use constants_block
+  implicit none
+  INTEGER                         :: HIT_N_g,HIT_coarse_borders
+  DOUBLE PRECISION                :: HIT_border_freqs(HIT_coarse_borders)
+  DOUBLE PRECISION                :: HIT_kappa_tot_g_approx(HIT_N_g,HIT_coarse_borders-1)
+  DOUBLE PRECISION                :: temp, kappa_planck, w_gauss(HIT_N_g), B_nu(HIT_coarse_borders-1)
+
+  INTEGER                         :: i
+
+  call star_planck(HIT_coarse_borders,temp,HIT_border_freqs,B_nu)
+
+  kappa_planck = 0d0
+  do i = 1, HIT_coarse_borders-1
+     kappa_planck = kappa_planck + &
+          B_nu(i) * sum(HIT_kappa_tot_g_approx(:,i)*w_gauss) * &
+          (HIT_border_freqs(i)-HIT_border_freqs(i+1))
+  end do
+
+  kappa_planck = kappa_planck / (sig/pi*temp**4d0)
+  
+end subroutine calc_planck_opa
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+subroutine star_planck(freq_len,T,nu,B_nu)
+
+  use constants_block
+  implicit none
+  INTEGER                         :: freq_len
+  DOUBLE PRECISION                :: T,B_nu(freq_len-1), B_nu_l(freq_len),nu(freq_len)
+  DOUBLE PRECISION                :: buffer(freq_len-1), buffer_l(freq_len),nu_use(freq_len-1)
+  INTEGER                         :: i, integ
+  DOUBLE PRECISION                :: diff_nu, nu1, nu2, nu3, nu4, nu5, nu_large, nu_small, diff_nu_sum
+  DOUBLE PRECISION                :: norm_B1, norm_B2, norm_B3, norm_corr
+
+  !~~~~~~~~~~~~~
+
+  B_nu = 0d0
+
+  ! Take mean using Boole's method
+  do i = 1, freq_len-1
+     nu_large = max(nu(i),nu(i+1))
+     nu_small = min(nu(i),nu(i+1))
+     nu1 = nu_small
+     nu2 = nu_small+DBLE(1)*(nu_large-nu_small)/4d0
+     nu3 = nu_small+DBLE(2)*(nu_large-nu_small)/4d0
+     nu4 = nu_small+DBLE(3)*(nu_large-nu_small)/4d0
+     nu5 = nu_large
+     diff_nu = nu2-nu1
+     B_nu(i) = B_nu(i) + 1d0/90d0*( &
+             7d0* 2d0*hplanck*nu1**3d0/c_l**2d0/(exp(hplanck*nu1/kB/T)-1d0) + &
+             32d0*2d0*hplanck*nu2**3d0/c_l**2d0/(exp(hplanck*nu2/kB/T)-1d0) + &
+             12d0*2d0*hplanck*nu3**3d0/c_l**2d0/(exp(hplanck*nu3/kB/T)-1d0) + &
+             32d0*2d0*hplanck*nu4**3d0/c_l**2d0/(exp(hplanck*nu4/kB/T)-1d0) + &
+             7d0* 2d0*hplanck*nu5**3d0/c_l**2d0/(exp(hplanck*nu5/kB/T)-1d0))
+  end do
+  
+end subroutine star_planck

@@ -2555,20 +2555,24 @@ subroutine calc_planck_opa(HIT_kappa_tot_g_approx,HIT_border_freqs,temp,HIT_N_g,
   INTEGER                         :: HIT_N_g,HIT_coarse_borders
   DOUBLE PRECISION                :: HIT_border_freqs(HIT_coarse_borders)
   DOUBLE PRECISION                :: HIT_kappa_tot_g_approx(HIT_N_g,HIT_coarse_borders-1)
-  DOUBLE PRECISION                :: temp, kappa_planck, w_gauss(HIT_N_g), B_nu(HIT_coarse_borders-1)
+  DOUBLE PRECISION                :: temp, kappa_planck, w_gauss(HIT_N_g), B_nu(HIT_coarse_borders-1), &
+       norm
 
   INTEGER                         :: i
 
   call star_planck(HIT_coarse_borders,temp,HIT_border_freqs,B_nu)
 
   kappa_planck = 0d0
+  norm = 0d0
   do i = 1, HIT_coarse_borders-1
      kappa_planck = kappa_planck + &
           B_nu(i) * sum(HIT_kappa_tot_g_approx(:,i)*w_gauss) * &
           (HIT_border_freqs(i)-HIT_border_freqs(i+1))
+     norm = norm + &
+          B_nu(i) * (HIT_border_freqs(i)-HIT_border_freqs(i+1))
   end do
 
-  kappa_planck = kappa_planck / (sig/pi*temp**4d0)
+  kappa_planck = kappa_planck / norm
   
 end subroutine calc_planck_opa
 

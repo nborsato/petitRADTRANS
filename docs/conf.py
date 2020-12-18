@@ -22,7 +22,7 @@ autodoc_mock_imports = ['petitRADTRANS.fort_input', 'petitRADTRANS.fort_spec', \
 # -- Project information -----------------------------------------------------
 
 project = 'petitRADTRANS'
-copyright = u'2019, Paul Molli\u00E8re'
+copyright = u'2019-2020, Paul Molli\u00E8re'
 author = u'Paul Molli\u00E8re'
 
 # The short X.Y version

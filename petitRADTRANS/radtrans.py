@@ -2,6 +2,7 @@ from __future__ import division, print_function
 
 from . import fort_input as fi
 from . import fort_spec as fs
+from . import fort_rebin as fr
 from . import nat_cst as nc
 from . import pyth_input as pyi
 
@@ -42,6 +43,21 @@ class Radtrans:
             If ``True``, will add N2-N2 Collision induced
             absoprtion as continuum absorber (alternatively, put ``'N2-N2'``
             into continuum_species list).
+        O2O2CIA (Optional[bool]):
+            Will be ``False`` by default.
+            If ``True``, will add O2-O2 Collision induced
+            absoprtion as continuum absorber (alternatively, put ``'O2-O2'``
+            into continuum_species list).
+        N2O2CIA (Optional[bool]):
+             Will be ``False`` by default.
+             If ``True``, will add N2-O2 Collision induced
+             absoprtion as continuum absorber (alternatively, put ``'N2-O2'``
+             into continuum_species list).
+        CO2CO2CIA (Optional[bool]):
+            Will be ``False`` by default.
+            If ``True``, will add CO2-CO2 Collision induced
+            absoprtion as continuum absorber (alternatively, put ``'CO2-CO2'``
+            into continuum_species list).
         wlen_bords_micron (Optional):
             list containing left and right border of wavelength region to be
             considered, in micron. If nothing else is specified, it will be
@@ -49,26 +65,65 @@ class Radtrans:
             wavelength range (0.11 to 250 microns for ``'c-k'`` mode, 0.3 to 30
             microns for the ``'lbl'`` mode). The larger the range the longer the
             computation time.
-        mode (Optinional[string]):
+        mode (Optional[string]):
             if equal to ``'c-k'``: use low-resolution mode, at
             :math:`\lambda/\Delta \lambda = 1000`, with the correlated-k
             assumption. if equal to ``'lbl'``: use high-resolution mode, at
             :math:`\lambda/\Delta \lambda = 10^6`, with a line-by-line
             treatment.
-
+        do_scat_emis (Optional[bool]):
+            Will be ``False`` by default.
+            If ``True`` scattering will be included in the emission spectral
+            calculations. Note that this increases the runtime of pRT!
+        lbl_opacity_sampling (Optional[int]):
+            Will be ``None`` by default. If integer positive value, and if
+            ``mode == 'lbl'`` is ``True``, then this will only consider every
+            lbl_opacity_sampling-nth point of the high-resolution opacities.
+            This may be desired in the case where medium-resolution spectra are
+            required with a :math:`\lambda/\Delta \lambda > 1000`, but much smaller than
+            :math:`10^6`, which is the resolution of the ``lbl`` mode. In this case it
+            may make sense to carry out the calculations with lbl_opacity_sampling = 10,
+            for example, and then rebinning to the final desired resolution:
+            this may save time! The user should verify whether this leads to
+            solutions which are identical to the rebinned results of the fiducial
+            :math:`10^6` resolution. If not, this parameter must not be used.
+ 
     """
 
     def __init__(self, line_species=[], rayleigh_species=[], cloud_species=[], \
                      continuum_opacities = [], H2H2CIA=False, H2HeCIA=False, \
-                     N2N2CIA=False, wlen_bords_micron=[0.05,300.], mode='c-k', \
-                     test_ck_shuffle_comp = False, do_scat_emis = False):
+                     N2N2CIA=False, CO2CO2CIA=False, O2O2CIA=False, N2O2CIA=False,\
+                     wlen_bords_micron=[0.05,300.], mode='c-k', \
+                     test_ck_shuffle_comp = False, do_scat_emis = False, \
+                     lbl_opacity_sampling = None):
+
+
+        # Any opacities there at all?
+        self.absorbers_present = False
+        if (len(line_species) + \
+            len(rayleigh_species) + \
+            len(cloud_species) + \
+            len(continuum_opacities)) > 0:
+            self.absorbers_present = True
+
 
         ##### ADD TO SOURCE AND COMMENT PROPERLY LATER!
         self.test_ck_shuffle_comp = test_ck_shuffle_comp
         self.do_scat_emis = do_scat_emis
 
+        #Stellar intensity (scaled by distance)
+        self.stellar_intensity = None
+
+        #for feautrier scattering of direct stellar light
+        self.geometry = 'dayside_ave'
+        self.mu_star = 1.
+
+        # Distance from the star (AU)
+        self.semimajoraxis = None
+
         # Line-by-line or corr-k
         self.mode = mode
+        self.lbl_opacity_sampling = lbl_opacity_sampling
 
         # Line opacity species to be considered
         self.line_species = line_species
@@ -84,22 +139,23 @@ class Radtrans:
         self.H2H2CIA = H2H2CIA
         self.H2HeCIA = H2HeCIA
         self.N2N2CIA = N2N2CIA
-        self.O2O2CIA = False
-        self.N2O2CIA = False
-        self.CO2CO2CIA = False
-        
+        self.O2O2CIA = O2O2CIA
+        self.CO2CO2CIA = CO2CO2CIA
+        self.N2O2CIA = N2O2CIA
+
         self.H2H2temp = 0
         self.H2Hetemp = 0
         self.N2N2temp = 0
         self.O2O2temp = 0
+        self.CO2O2temp = 0
         self.N2O2temp = 0
-        self.C2CO2temp = 0
         self.H2H2wlen = 0
         self.H2Hewlen = 0
         self.N2N2wlen = 0
         self.O2O2wlen = 0
-        self.N2O2wlen = 0
         self.CO2CO2wlen = 0
+        self.N2O2wlen = 0
+
         # New species
         self.Hminus = False
         # Check what is supposed to be included.
@@ -113,10 +169,10 @@ class Radtrans:
                     self.N2N2CIA = True
                 elif c == 'O2-O2':
                     self.O2O2CIA = True
-                elif c == 'N2-O2':
-                    self.N2O2CIA = True
                 elif c == 'CO2-CO2':
                     self.CO2CO2CIA = True
+                elif c == 'N2-O2':
+                    self.N2O2CIA = True
                 elif c == 'H-':
                     self.Hminus = True
 
@@ -132,7 +188,7 @@ class Radtrans:
 
             if self.do_scat_emis:
                 self.test_ck_shuffle_comp = True
-                
+
             # For correlated-k
 
             # Get dimensions of molecular opacity arrays for a given P-T point,
@@ -158,8 +214,13 @@ class Radtrans:
             self.g_len = 1
             self.freq_len_full = self.freq_len
             # Read in the frequency range of the opcity data
-            wlen = fi.read_wlen(arr_min, arr_max, self.freq_len, path_length)
+            wlen = fi.read_wlen(arr_min, self.freq_len, path_length)
             self.freq = nc.c/wlen
+
+            # Down-sample frequency grid in lbl mode if requested
+            if self.lbl_opacity_sampling != None:
+                self.freq = self.freq[::self.lbl_opacity_sampling]
+                self.freq_len = len(self.freq)
 
         if self.mode == 'c-k':
             # To cut opacity data to required range
@@ -181,7 +242,7 @@ class Radtrans:
             # with one additional position True to the right of the rightmost old one.
             # Should give the correct border frequency indices.
             # Tested this below
-            
+
             self.border_freqs = np.array(self.border_freqs[border_ind], \
                                              dtype='d',order='F')
             self.freq_full = self.freq
@@ -189,6 +250,11 @@ class Radtrans:
             self.freq_len = len(self.freq)
         else:
             index = None
+
+        #  Default surface albedo and emissivity -- will be used only if
+        #  the surface scattering is turned on.
+        self.reflectance = 0 * np.ones_like(self.freq)
+        self.emissivity = 1 * np.ones_like(self.freq)
 
         # Read in the angle (mu) grid for the emission spectral calculations.
         buffer = np.genfromtxt(self.path+'/opa_input_files/mu_points.dat')
@@ -291,18 +357,6 @@ class Radtrans:
             self.cia_o2o2_alpha_grid = \
               self.cia_o2o2_alpha_grid[:self.O2O2wlen,:self.O2O2temp]
 
-        if self.N2O2CIA:
-            print('  Read CIA opacities for N2-O2...')
-            self.cia_n2o2_lambda, self.cia_n2o2_temp, \
-              self.cia_n2o2_alpha_grid,self.N2O2temp,self.N2O2wlen = \
-                  fi.cia_read('N2O2',self.path)
-            self.cia_n2o2_alpha_grid = np.array(self.cia_n2o2_alpha_grid, \
-                                                   dtype='d',order='F')
-            self.cia_n2o2_temp = self.cia_n2o2_temp[:self.N2O2temp]
-            self.cia_n2o2_lambda = self.cia_n2o2_lambda[:self.N2O2wlen]
-            self.cia_n2o2_alpha_grid = \
-              self.cia_n2o2_alpha_grid[:self.N2O2wlen,:self.N2O2temp]
-
         if self.CO2CO2CIA:
             print('  Read CIA opacities for CO2-CO2...')
             self.cia_co2co2_lambda, self.cia_co2co2_temp, \
@@ -315,10 +369,20 @@ class Radtrans:
             self.cia_co2co2_alpha_grid = \
               self.cia_co2co2_alpha_grid[:self.CO2CO2wlen,:self.CO2CO2temp]
 
-
+        if self.N2O2CIA:
+            print('  Read CIA opacities for N2-O2...')
+            self.cia_n2o2_lambda, self.cia_n2o2_temp, \
+              self.cia_n2o2_alpha_grid,self.N2O2temp,self.N2O2wlen = \
+                  fi.cia_read('N2O2',self.path)
+            self.cia_n2o2_alpha_grid = np.array(self.cia_n2o2_alpha_grid, \
+                                                   dtype='d',order='F')
+            self.cia_n2o2_temp = self.cia_n2o2_temp[:self.N2O2temp]
+            self.cia_n2o2_lambda = self.cia_n2o2_lambda[:self.N2O2wlen]
+            self.cia_n2o2_alpha_grid = \
+              self.cia_n2o2_alpha_grid[:self.N2O2wlen,:self.N2O2temp]
 
         if self.H2H2CIA or self.H2HeCIA or self.N2N2CIA or self.O2O2CIA \
-           or self.N2O2CIA or self.CO2CO2CIA:
+            or self.N2O2CIA or self.CO2CO2CIA:
             print(' Done.')
             print()
 
@@ -492,6 +556,11 @@ class Radtrans:
                         self.custom_grid[self.line_species[i_spec]], \
                         custom_file_names)
 
+                    # Down-sample opacities in lbl mode if requested
+                    if (self.mode == 'lbl') and (self.lbl_opacity_sampling != None):
+                        self.line_grid_kappas_custom_PT[self.line_species[i_spec]] = \
+                            self.line_grid_kappas_custom_PT[self.line_species[i_spec]][:,::self.lbl_opacity_sampling,:]
+
                 # Read in the Exomol k-table by Katy Chubb if requested by the user
                 else:
                     print('  Read line opacities of '+self.line_species[i_spec]+'...')
@@ -639,7 +708,7 @@ class Radtrans:
                 np.array(np.zeros(self.g_len*self.freq_len*len(P) \
                 ).reshape(self.g_len,self.freq_len, \
                 len(P)),dtype='d',order='F')
-            
+
             self.total_tau = \
               np.array(np.zeros_like(self.line_struc_kappas), \
                            dtype='d',order='F')
@@ -839,7 +908,7 @@ class Radtrans:
             #print("Times", np.diff(stamps), \
             #          np.diff(stamps)/np.sum(np.diff(stamps))*100)
             #sys.exit(1)
-            
+
         # In the line-by-line case we can simply
         # add the opacities of different species
         # in frequency space. All opacities are
@@ -877,7 +946,7 @@ class Radtrans:
                     fseds[i_spec] = fsed[self.cloud_species[i_spec]]
                 except:
                     fseds[i_spec] = fsed
-                    
+
             self.r_g = fs.get_rg_n(gravity,rho,self.rho_cloud_particles, \
                                        self.temp,mmw,fseds, \
                                        self.cloud_mass_fracs, \
@@ -934,20 +1003,34 @@ class Radtrans:
             if self.do_scat_emis:
                 self.continuum_opa_scat_emis = self.continuum_opa_scat_emis + \
               add_term
-                                                
+
     def calc_opt_depth(self,gravity):
         # Calculate optical depth for the total opacity.
-        if ((self.mode == 'lbl') or self.test_ck_shuffle_comp) and \
-          (int(len(self.line_species)) > 1):
+        if ((self.mode == 'lbl') or self.test_ck_shuffle_comp):
+            
             self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
               fs.calc_tau_g_tot_ck_scat(gravity, \
                 self.press,self.line_struc_kappas[:,:,:1,:], \
                 self.do_scat_emis, self.continuum_opa_scat_emis)
+
+            # To handle cases without any absorbers, where kappas are zero
+            if not self.absorbers_present:
+                print('No absorbers present, setting the photon' + \
+                      ' destruction probability in the atmosphere to 1.')
+                self.photon_destruction_prob[np.isnan(self.photon_destruction_prob)] \
+                    = 1.
+
+            if len(self.photon_destruction_prob[np.isnan(self.photon_destruction_prob)]) > 0.:
+                print('Region of zero opacity detected, setting the photon' + \
+                      ' destruction probability in this spectral range to 1.')
+                self.photon_destruction_prob[np.isnan(self.photon_destruction_prob)] \
+                    = 1.
+
         else:
             self.total_tau = \
               fs.calc_tau_g_tot_ck(gravity,self.press, \
                                        self.line_struc_kappas)
-        
+
     def calc_RT(self,contribution):
         # Calculate the flux
 
@@ -961,8 +1044,13 @@ class Radtrans:
                                                               self.w_gauss_mu, \
                                                               self.w_gauss, \
                                                               self.photon_destruction_prob, \
-                                                              contribution)
-                    
+                                                              contribution,\
+                                                              self.reflectance, \
+                                                              self.emissivity,\
+                                                              self.stellar_intensity,\
+                                                              self.geometry,\
+                                                              self.mu_star)
+
             self.kappa_rosseland = \
                 fs.calc_kappa_rosseland(self.line_struc_kappas[:,:,0,:], self.temp, \
                                         self.w_gauss, self.border_freqs, \
@@ -993,26 +1081,22 @@ class Radtrans:
         # Calculate the transmission spectrum
         if ((self.mode == 'lbl') or self.test_ck_shuffle_comp) \
           and (int(len(self.line_species)) > 1):
-            self.transm_rad = fs.calc_transm_spec(self.freq, \
-                                self.line_struc_kappas[:,:,:1,:],self.temp, \
+            self.transm_rad = fs.calc_transm_spec(self.line_struc_kappas[:,:,:1,:],self.temp, \
                                 self.press,gravity,mmw,P0_bar,R_pl, \
                                 self.w_gauss,self.scat, \
                                 self.continuum_opa_scat,variable_gravity)
             if contribution:
-                self.contr_tr = fs.calc_transm_spec_contr(self.freq, \
-                                self.line_struc_kappas[:,:,:1,:], self.temp, \
+                self.contr_tr = fs.calc_transm_spec_contr(self.line_struc_kappas[:,:,:1,:], self.temp, \
                                 self.press,gravity,mmw,P0_bar,R_pl, \
                                 self.w_gauss,self.transm_rad**2.,self.scat, \
                                 self.continuum_opa_scat,variable_gravity)
         else:
-            self.transm_rad = fs.calc_transm_spec(self.freq, \
-                                    self.line_struc_kappas,self.temp, \
+            self.transm_rad = fs.calc_transm_spec(self.line_struc_kappas,self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl, \
                                     self.w_gauss,self.scat, \
                                     self.continuum_opa_scat,variable_gravity)
             if contribution:
-                self.contr_tr = fs.calc_transm_spec_contr(self.freq, \
-                                    self.line_struc_kappas,self.temp, \
+                self.contr_tr = fs.calc_transm_spec_contr(self.line_struc_kappas,self.temp, \
                                     self.press,gravity,mmw,P0_bar,R_pl, \
                                     self.w_gauss,self.transm_rad**2., \
                                     self.scat, \
@@ -1024,7 +1108,9 @@ class Radtrans:
                       gray_opacity = None, Pcloud = None, \
                       kappa_zero = None, \
                       gamma_scat = None, \
-                      add_cloud_scat_as_abs = None):
+                      add_cloud_scat_as_abs = None,\
+                      Tstar = None, Rstar=None, semimajoraxis = None,\
+                      geometry = 'dayside_ave',theta_star=0):
         ''' Method to calculate the atmosphere's emitted flux
         (emission spectrum).
 
@@ -1067,7 +1153,7 @@ class Radtrans:
                     Pressure, in bar, where opaque cloud deck is added to the
                     absorption opacity.
                 kappa_zero (Optional[float]):
-                    Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).
+                    Scattering opacity at 0.35 micron, in cgs units (cm^2/g).
                 gamma_scat (Optional[float]):
                     Has to be given if kappa_zero is definded, this is the
                     wavelength powerlaw index of the parametrized scattering
@@ -1076,12 +1162,40 @@ class Radtrans:
                     If ``True``, 20 % of the cloud scattering opacity will be
                     added to the absorption opacity, introduced to test for the
                     effect of neglecting scattering.
+                Tstar (Optional[float]):
+                    The temperature of the host star in K, used only if the
+                    scattering is considered. If not specified, the direct
+                    light contribution is not calculated.
+                Rstar (Optional[float]):
+                    The radius of the star in Solar radii. If specified,
+                    used to scale the to scale the stellar flux,
+                    otherwise it uses PHOENIX radius.
+                semimajoraxis (Optional[float]):
+                    The distance of the planet from the star. Used to scale
+                    the stellar flux when the scattering of the direct light
+                    is considered.
+                geometry (Optional[string]):
+                    if equal to ``'dayside_ave'``: use the dayside average
+                    geometry. if equal to ``'planetary_ave'``: use the
+                    planetary average geometry. if equal to
+                    ``'non-isotropic'``: use the non-isotropic
+                    geometry.
+                theta_star (Optional[float]):
+                    Inclination angle of the direct light with respect to
+                    the normal to the atmosphere. Used only in the
+                    non-isotropic geometry scenario.
         '''
 
         self.Pcloud = Pcloud
         self.kappa_zero = kappa_zero
         self.gamma_scat = gamma_scat
         self.gray_opacity = gray_opacity
+        self.geometry = geometry
+        self.mu_star = np.cos(theta_star*np.pi/180.)
+
+        if self.mu_star<=0.:
+            self.mu_star=1e-8
+        self.get_star_spectrum(Tstar,semimajoraxis,Rstar)
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
                              add_cloud_scat_as_abs = add_cloud_scat_as_abs)
@@ -1091,12 +1205,50 @@ class Radtrans:
 
         if ((self.mode == 'lbl') or self.test_ck_shuffle_comp) \
           and (int(len(self.line_species)) > 1):
-            
+
             if self.do_scat_emis:
                 self.tau_rosse = fs.calc_tau_g_tot_ck(gravity, \
                     self.press, \
                     self.kappa_rosseland.reshape(1,1,1,len(self.press))).reshape(len(self.press))
 
+    def get_star_spectrum(self, Tstar, distance, Rstar):
+        '''Method to get the PHOENIX spectrum of the star and rebin it
+        to the wavelength points. If Tstar is not explicitly written, the
+        spectrum will be 0. If the distance is not explicitly written,
+        the code will raise an error and break to urge the user to
+        specify the value.
+
+            Args:
+                Tstar (float):
+                    the stellar temperature in K.
+                distance (float):
+                    the semi-major axis of the planet in AU.
+                Radius (float):
+                    if specified, uses this radius in Solar radii
+                    to scale the flux, otherwise it uses PHOENIX radius.
+        '''
+
+        if Tstar != None:
+
+            spec,rad = nc.get_PHOENIX_spec_rad(Tstar)
+            if not Rstar == None:
+                 print('Using Rstar value input by user.')
+                 rad = Rstar
+            self.stellar_intensity = fr.rebin_spectrum(spec[:,0], \
+            spec[:,1], nc.c/self.freq)
+
+            try:
+                ###### SCALED INTENSITY (Flux/pi)
+                self.stellar_intensity = self.stellar_intensity/ np.pi * \
+                (rad/distance)**2
+            except TypeError  as e:
+                str='********************************'+\
+                ' Error! Please set the semi-major axis or turn off the calculation '+\
+                'of the stellar spectrum by removing Tstar. ********************************'
+                raise Exception(str) from e
+        else:
+
+            self.stellar_intensity = np.zeros_like(self.freq)
 
     def calc_transm(self,temp,abunds,gravity,mmw,P0_bar,R_pl, \
                         sigma_lnorm = None, \
@@ -1266,7 +1418,7 @@ class Radtrans:
         self.calc_RT(contribution)
         self.calc_tr_rad(P0_bar,R_pl,gravity,mmw,contribution,variable_gravity)
 
-        
+
     def calc_rosse_planck(self,temp,abunds,gravity,mmw,sigma_lnorm = None, \
                       fsed = None, Kzz = None, radius = None, \
                       contribution=False, \
@@ -1305,7 +1457,7 @@ class Radtrans:
                 radius (Optional):
                     dictionary of mean particle radii for all cloud species.
                     Dictionary keys are the cloud species names.
-                    Every radius array has same length as pressure array.    
+                    Every radius array has same length as pressure array.
                 contribution (Optional[bool]):
                     If ``True`` the emission contribution function will be
                     calculated. Default is ``False``.
@@ -1330,7 +1482,7 @@ class Radtrans:
             print('Error: pRT must run in do_scat_emis = True mode to calculate'+ \
                   ' kappa_Rosseland and kappa_Planck')
             sys.exit(1)
-            
+
         self.Pcloud = Pcloud
         self.haze_factor = haze_factor
         self.kappa_zero = kappa_zero
@@ -1339,7 +1491,7 @@ class Radtrans:
         self.interpolate_species_opa(temp)
         self.mix_opa_tot(abunds,mmw,gravity,sigma_lnorm,fsed,Kzz,radius, \
                              add_cloud_scat_as_abs = add_cloud_scat_as_abs)
-        
+
         self.kappa_rosseland = \
                   fs.calc_kappa_rosseland(self.line_struc_kappas[:,:,:1,:], self.temp, \
                                 self.w_gauss, self.border_freqs, \

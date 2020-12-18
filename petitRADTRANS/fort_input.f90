@@ -99,7 +99,7 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
   !character*150 :: species_names(species_len)
   integer :: species_name_inds(2,species_len)
   integer :: opa_file_names_inds(2,opa_TP_grid_len)
-  double precision :: molparam, read_val, buffer
+  double precision :: molparam
   integer :: i_spec, i_file, i_str, curr_spec_ind, &
        i_kg, curr_N_g_int, curr_cb_int, curr_file_ind
 
@@ -139,7 +139,7 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
 !!$     do i_file = 1, opa_TP_grid_len
 !!$        write(*,*) custom_file_names(opa_file_names_inds(1,i_file): &
 !!$             opa_file_names_inds(2,i_file))
-!!$     end do     
+!!$     end do
   end if
 
   ! Get paths of opacity files
@@ -192,7 +192,7 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
                    species_name_inds(2,i_spec))))//'/sigma_'//species_id// &
                    adjustl(trim(path_names(i_file))), form='unformatted')
            end if
-           
+
         else if (mode .EQ. 'lbl') then
 
            if (custom_grid) then
@@ -208,10 +208,10 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
 !!$              write(*,*) 'sigma_'//species_id// &
 !!$                   adjustl(trim(path_names(i_file)))
            end if
-           
-           call read_kappa(arr_min, arr_max, freq_len, &
+
+           call read_kappa(arr_min, freq_len, &
                 path_read_stream, opa_grid_kappas(1,:,i_spec,i_file))
-           
+
         end if
         ! ...for every frequency point.
         if (mode .EQ. 'c-k') then
@@ -222,14 +222,14 @@ subroutine read_in_molecular_opacities(path,species_names_tot,freq_len,g_len,spe
            end do
            close(20)
         end if
-        
+
      end do
      opa_grid_kappas(:,:,i_spec,:) = opa_grid_kappas(:,:,i_spec,:)/molparam
   end do
 
   write(*,*) 'Done.'
   !write(*,*)
-  
+
 end subroutine read_in_molecular_opacities
 
 !!$ #########################################################################
@@ -246,7 +246,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
   implicit none
   ! Params
   integer, parameter :: N_cloud_rad_bins = 130
-  
+
   ! I/O
   character*1500, intent(in) :: path
   character*50000, intent(in) :: species_names_tot,species_modes_tot
@@ -300,10 +300,10 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
   ! Read in cloud densities
   rho_cloud_particles = -1d0
   DO i_cloud = 1, N_cloud_spec
-     
+
      cloud_opa_names(i_cloud) = species_names_tot(species_name_inds(1,i_cloud): &
           species_name_inds(2,i_cloud))
-     
+
      open(unit=10,file=trim(adjustl(path))//'/opa_input_files/cloud_names.dat')
      open(unit=11,file=trim(adjustl(path))//'/opa_input_files/cloud_densities.dat')
      do i_cloud_read = 1, 1000000
@@ -323,7 +323,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
         STOP
      END IF
   END DO
-  
+
   ! Read in cloud opacities
   cloud_specs_abs_opa = 0d0
   cloud_specs_scat_opa = 0d0
@@ -337,7 +337,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
   end do
   read(10,*) cloud_rad_bins(N_cloud_rad_bins+1)
   close(10)
-  
+
   open(unit=11,file=trim(adjustl(path))// &
        '/opacities/continuum//clouds/MgSiO3_c/amorphous/mie/particle_sizes.dat')
   read(11,*)
@@ -362,7 +362,7 @@ subroutine read_in_cloud_opacities(path,species_names_tot,species_modes_tot,N_cl
 
      cloud_opa_mode(i_cloud) = species_modes_tot(species_mode_inds(1,i_cloud): &
           species_mode_inds(2,i_cloud))
-     
+
      path_add = trim(adjustl( &
           cloud_opa_names(i_cloud)(1:len(trim(adjustl( &
           cloud_opa_names(i_cloud))))-3)))
@@ -446,7 +446,7 @@ subroutine interpol_opa_ck(press,temp,opa_TP_grid,custom_grid, &
   LOGICAL, intent(in)                   :: custom_grid
   INTEGER, intent(in)                   :: diffTs, diffPs
   DOUBLE PRECISION, intent(out)         :: opa_struc_kappas(g_len,freq_len,struc_len)
-  
+
   ! internal
   INTEGER                               :: i_str, ind_take
   INTEGER                               :: s_temp_ind_own, press_ind_own
@@ -491,7 +491,7 @@ subroutine interpol_opa_ck(press,temp,opa_TP_grid,custom_grid, &
         PT_ind_Tl_Pl = s_temp_ind_own*diffPs+press_ind_own+1
 
 !!$        write(*,*) opa_TP_grid(PT_ind_Ts_Pl,1), temp(i_str), opa_TP_grid(PT_ind_Tl_Pl,1)
-        
+
      else
         s_temp_ind_own = MAX(MIN(INT(log10(temp(i_str)/81.14113604736988d0)/ &
              log10(2995d0/81.14113604736988d0)*12d0)+1,12),1)
@@ -507,9 +507,9 @@ subroutine interpol_opa_ck(press,temp,opa_TP_grid,custom_grid, &
         PT_ind_Tl_Pl = s_temp_ind_own*10+press_ind_own+1
 
 !!$        write(*,*) opa_TP_grid(PT_ind_Ts_Pl,1), temp(i_str), opa_TP_grid(PT_ind_Tl_Pl,1)
-        
+
      end if
-     
+
      ! Interpolate...
 
      !**********************************************************
@@ -598,7 +598,7 @@ subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
   INTEGER            :: pivot, k0, km
 
   ! carry out a binary search for the interpolation bin borders
-  do i_arr = 1, arrlen 
+  do i_arr = 1, arrlen
 
      if (arr(i_arr) >= binbord(binbordlen)) then
         intpint(i_arr) = binbordlen - 1
@@ -627,7 +627,7 @@ subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
      end if
 
   end do
-  
+
 end subroutine search_intp_ind
 
 !!$ #########################################################################
@@ -635,7 +635,7 @@ end subroutine search_intp_ind
 !!$ #########################################################################
 !!$ #########################################################################
 
-!!$ Subroutine to get the abundance weightes opas for ck, and for adding the continuum opas. 
+!!$ Subroutine to get the abundance weightes opas for ck, and for adding the continuum opas.
 
 subroutine mix_opas_ck(abundances,opa_struc_kappas,continuum_opa, &
      N_species,freq_len,struc_len,g_len,opa_struc_kappas_out)
@@ -824,11 +824,11 @@ end subroutine get_arr_len_array_bords
 
 !!$ Subroutine to read the wavelength array in the high-res case
 
-subroutine read_wlen(arr_min, arr_max, arr_len, file_path, wlen)
+subroutine read_wlen(arr_min, arr_len, file_path, wlen)
 
   implicit none
   ! I/O
-  integer, intent(in)           :: arr_min, arr_max
+  integer, intent(in)           :: arr_min
   integer, intent(in)           :: arr_len
   character*4000, intent(in)     :: file_path
   double precision, intent(out) :: wlen(arr_len)
@@ -854,11 +854,11 @@ end subroutine read_wlen
 
 !!$ Subroutine to read the kappa array in the high-res case
 
-subroutine read_kappa(arr_min, arr_max, arr_len, file_path, kappa)
+subroutine read_kappa(arr_min, arr_len, file_path, kappa)
 
   implicit none
   ! I/O
-  integer, intent(in)           :: arr_min, arr_max
+  integer, intent(in)           :: arr_min
   integer, intent(in)           :: arr_len
   character*4000, intent(in)     :: file_path
   double precision, intent(out) :: kappa(arr_len)

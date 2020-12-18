@@ -4,7 +4,7 @@ Installation
 Prerequisites
 _____________
 
-- A working Python installation, including the numpy package.
+- A working Python installation, including the numpy, glob, and h5py package.
 - A Fortran compiler (e.g. “gfortran”)
 
 

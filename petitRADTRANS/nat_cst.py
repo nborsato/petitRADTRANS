@@ -29,6 +29,8 @@ L0  = 2.68676e19
 # Molecular weights in amu
 molecular_weight = {}
 molecular_weight['H2O'] = 18.
+molecular_weight['O2'] = 32.
+molecular_weight['N2'] = 28.
 molecular_weight['CH4'] = 16.
 molecular_weight['CO2'] = 44.
 molecular_weight['CO'] = 28.
@@ -87,6 +89,7 @@ f.close()
 
 description = np.genfromtxt(spec_path+'/stellar_params.dat')
 logTempGrid = description[:,0]
+StarRadGrid = description[:,1]
 
 specDats = []
 for i in range(len(logTempGrid)):
@@ -146,7 +149,64 @@ def get_PHOENIX_spec(temperature):
 
     return specDat
 
+def get_PHOENIX_spec_rad(temperature):
+    ''' Returns a matrix where the first column is the wavelength in cm
+    and the second is the stellar flux :math:`F_\\nu` in units of
+    :math:`\\rm erg/cm^2/s/Hz`, at the surface of the star.
+    The spectra are PHOENIX models from (Husser et al. 2013), the spectral
+    grid used here was described in van Boekel et al. (2012).
 
+    UPDATE: It also returns a float that is the corresponding estimate
+    of the stellar radius.
+    Args:
+        temperature (float):
+            stellar effective temperature in K.
+    '''
+    logTemp = np.log10(temperature)
+    interpolationIndex = np.searchsorted(logTempGrid, logTemp)
+
+    if interpolationIndex == 0:
+
+        specDat = specDats[0]
+        radius = StarRadGrid[0]
+        print('Warning, input temperature is lower than minimum grid temperature.')
+        print('Taking F = F_grid(minimum grid temperature), normalized to desired')
+        print('input temperature.')
+
+    elif interpolationIndex == len(logTempGrid):
+
+        specDat = specDats[int(len(logTempGrid)-1)]
+        radius = StarRadGrid[int(len(logTempGrid)-1)]
+        print('Warning, input temperature is higher than maximum grid temperature.')
+        print('Taking F = F_grid(maximum grid temperature), normalized to desired')
+        print('input temperature.')
+
+    else:
+
+        weightHigh = (logTemp-logTempGrid[interpolationIndex-1]) / \
+          (logTempGrid[interpolationIndex]-logTempGrid[interpolationIndex-1])
+
+        weightLow = 1. - weightHigh
+
+        specDatLow = specDats[int(interpolationIndex-1)]
+
+        specDatHigh = specDats[int(interpolationIndex)]
+
+        specDat = np.zeros_like(specDatLow)
+
+        specDat[:,0] = specDatLow[:,0]
+        specDat[:,1] = weightLow * specDatLow[:,1] + \
+          weightHigh * specDatHigh[:,1]
+        radius = weightLow * StarRadGrid[int(interpolationIndex-1)] + \
+          weightHigh * StarRadGrid[int(interpolationIndex)]
+
+    freq = c/specDat[:,0]
+    flux = specDat[:,1]
+    norm = -np.sum((flux[1:]+flux[:-1])*np.diff(freq))/2.
+
+    specDat[:,1] = flux/norm*sigma*temperature**4.
+
+    return specDat,radius
 ##################################################################
 ### Radtrans utility for retrieval temperature model computation
 ##################################################################

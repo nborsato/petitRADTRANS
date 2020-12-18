@@ -18,10 +18,11 @@ module constants_block
   implicit none
   DOUBLE PRECISION,parameter      :: AU = 1.49597871d13, R_sun = 6.955d10, R_jup=6.9911d9
   DOUBLE PRECISION,parameter      :: pi = 3.14159265359d0, sig=5.670372622593201d-5, c_l=2.99792458d10
-  DOUBLE PRECISION,parameter      :: G = 6.674d-8, M_jup = 1.89813e30, deg = Pi/1.8d2
+  DOUBLE PRECISION,parameter      :: G = 6.674d-8, M_jup = 1.89813d30, deg = Pi/1.8d2
   DOUBLE PRECISION,parameter      :: kB=1.3806488d-16, hplanck=6.62606957d-27, amu = 1.66053892d-24
   DOUBLE PRECISION,parameter      :: sneep_ubachs_n = 25.47d18, L0 = 2.68676d19
 end module constants_block
+
 
 !!$ #########################################################################
 !!$ #########################################################################
@@ -235,7 +236,7 @@ subroutine calc_kappa_rosseland(total_kappa, temp, w_gauss, border_freqs, &
   else
      total_kappa_use = total_kappa
   end if
-  
+
   do i_struc = 1, struc_len
      call calc_rosse_opa(total_kappa_use(:,:,i_struc), border_freqs, temp(i_struc), &
           g_len, freq_len+1, &
@@ -274,7 +275,7 @@ subroutine calc_kappa_planck(total_kappa, temp, w_gauss, border_freqs, &
   else
      total_kappa_use = total_kappa
   end if
-  
+
   do i_struc = 1, struc_len
      call calc_planck_opa(total_kappa_use(:,:,i_struc), border_freqs, temp(i_struc), &
           g_len, freq_len+1, &
@@ -353,14 +354,15 @@ subroutine flux_ck(freq,tau,temp,mu,w_gauss_mu, &
         call planck_f(struc_len,temp,freq(i_freq),r)
         ! Spatial transmissions at given wavelength
         transm_all_loc = transm_all(i_freq,:)
-        ! Calc Eq. 9 of manuscript (em_deriv.pdf) 
+        ! Calc Eq. 9 of manuscript (em_deriv.pdf)
         do i_str = 1, struc_len-1
            flux_mu(i_freq) = flux_mu(i_freq)+ &
                 (r(i_str)+r(i_str+1))*(transm_all_loc(i_str)-transm_all_loc(i_str+1))/2d0
            if (contribution) then
-              contr_em(i_str,i_freq) = contr_em(i_str,i_freq)+ (r(i_str)+r(i_str+1)) * &
+              contr_em(i_str,i_freq) = contr_em(i_str,i_freq) &
+                  + (r(i_str)+r(i_str+1)) * &
                    (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
-                   *mu(i_mu)*w_gauss_mu(i_mu)              
+                   *mu(i_mu)*w_gauss_mu(i_mu)
            end if
         end do
         flux_mu(i_freq) = flux_mu(i_freq) + r(struc_len)*transm_all_loc(struc_len)
@@ -404,7 +406,7 @@ subroutine planck_f(struc_len,T,nu,B_nu)
   B_nu = 0d0
   buffer = 2d0*hplanck*nu**3d0/c_l**2d0
   B_nu = buffer / (exp(hplanck*nu/kB/T)-1d0)
-  
+
 end subroutine planck_f
 
 !!$ #########################################################################
@@ -414,7 +416,7 @@ end subroutine planck_f
 
 !!$ Subroutine to calculate the transmission spectrum
 
-subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_pl, &
+subroutine calc_transm_spec(total_kappa_in,temp,press,gravity,mmw,P0_bar,R_pl, &
      w_gauss,scat,continuum_opa_scat,var_grav,transm,freq_len,struc_len,g_len,N_species)
 
   use constants_block
@@ -422,7 +424,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
 
   ! I/O
   INTEGER, intent(in)                         :: freq_len, struc_len, g_len, N_species
-  DOUBLE PRECISION, intent(in)                :: freq(freq_len), P0_bar, R_pl
+  DOUBLE PRECISION, intent(in)                :: P0_bar, R_pl
   DOUBLE PRECISION, intent(in)                :: temp(struc_len), press(struc_len), mmw(struc_len)
   DOUBLE PRECISION, intent(in)                :: total_kappa_in(g_len,freq_len,N_species,struc_len)
 
@@ -430,12 +432,12 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   DOUBLE PRECISION, intent(in)                :: w_gauss(g_len), continuum_opa_scat(freq_len,struc_len)
   LOGICAL, intent(in)                         :: scat !, contribution
   LOGICAL, intent(in)                         :: var_grav
-  
+
   DOUBLE PRECISION, intent(out)               :: transm(freq_len) !, contr_tr(struc_len,freq_len)
 
   ! Internal
   DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len), &
-       radius_var(struc_len), total_kappa(g_len,freq_len,N_species,struc_len)
+        total_kappa(g_len,freq_len,N_species,struc_len)
   INTEGER                                     :: i_str, i_freq, i_g, i_spec, j_str
   LOGICAL                                     :: rad_neg
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
@@ -456,7 +458,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
         end do
      end do
   end do
-        
+
   transm = 0d0
   t_graze = 0d0
   t_graze_scat = 0d0
@@ -466,7 +468,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   ! Calculate density
   rho = mmw*amu*press/kB/temp
   ! Calculate planetary radius (in cm), assuming hydrostatic equilibrium
-  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav,radius)
+  call calc_radius(struc_len,press,gravity,rho,P0_cgs,R_pl,var_grav,radius)
 
   rad_neg = .FALSE.
   do i_str = struc_len, 1, -1
@@ -490,7 +492,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
              continuum_opa_scat(:,i_str+1)*rho(i_str+1))
      end do
   end if
-  
+
   ! Cacuclate grazing rays optical depths
   do i_str = 2, struc_len
      s_1 = sqrt(radius(1)**2d0-radius(i_str)**2d0)
@@ -520,7 +522,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
   if (scat) then
      t_graze_scat = exp(-t_graze_scat)
   end if
-  
+
   t_graze_wlen_int = 1d0
   ! Wlen (in g-space) integrate transmissions
   do i_str = 2, struc_len ! i_str=1 t_grazes are 1 anyways
@@ -560,7 +562,7 @@ subroutine calc_transm_spec(freq,total_kappa_in,temp,press,gravity,mmw,P0_bar,R_
 !!$     write(10,*) press(i_str)*1d-6, radius(i_str)/R_jup, radius_var(i_str)/R_jup
 !!$  end do
 !!$  close(10)
-  
+
 end subroutine calc_transm_spec
 
 !!$ #########################################################################
@@ -570,14 +572,14 @@ end subroutine calc_transm_spec
 
 !!$ Subroutine to calculate the radius from the pressure grid
 
-subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs, &
+subroutine calc_radius(struc_len,press,gravity,rho,P0_cgs, &
      R_pl,var_grav,radius)
 
   implicit none
   ! I/O
   INTEGER, intent(in)                         :: struc_len
   DOUBLE PRECISION, intent(in)                :: P0_cgs
-  DOUBLE PRECISION, intent(in)                :: temp(struc_len), press(struc_len), mmw(struc_len), &
+  DOUBLE PRECISION, intent(in)                :: press(struc_len), &
        rho(struc_len)
   DOUBLE PRECISION, intent(in)                :: gravity, R_pl
   LOGICAL, intent(in)                         :: var_grav
@@ -588,9 +590,9 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs, &
   DOUBLE PRECISION                            :: R0, inv_rho(struc_len), integ_parab
 
   inv_rho = 1d0/rho
-  
-  radius = 0d0
 
+  radius = 0d0
+  R0=0d0
   if (var_grav) then
 
      !write(*,*) '####################### VARIABLE GRAVITY'
@@ -623,7 +625,7 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs, &
      R0 = 1d0/R_pl-R0
      radius = radius + R0
      radius = 1d0/radius
-     
+
   else
 
      !write(*,*) '####################### CONSTANT GRAVITY'
@@ -631,7 +633,7 @@ subroutine calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs, &
      !write(*,*) '####################### CONSTANT GRAVITY'
      !write(*,*) '####################### CONSTANT GRAVITY'
 
-     
+
      ! Calculate radius with vertically constant gravity
      do i_str = struc_len-1, 1, -1
         if ((press(i_str+1) > P0_cgs) .AND. (press(i_str) <= P0_cgs)) then
@@ -689,9 +691,9 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
        nm1, fk, scale, mass_co2, &
        mass_o2, mass_n2, A, B, C, mass_co, nfr_co, &
        mass_ch4, nfr_ch4
-  
+
   rayleigh_kappa = 0d0
-  
+
   if (trim(adjustl(spec)) .EQ. 'H2') then
 
      ! H2 Rayleigh according to dalgarno & williams (1962)
@@ -702,11 +704,11 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
                 (8.14d-13/lambda_angstroem**4+1.28d-6/lambda_angstroem**6+1.61d0/lambda_angstroem**8)/2d0 &
                 /1.66053892d-24*abund(i_str)
         end if
-        
+
      end do
-     
+
   else if (trim(adjustl(spec)) .EQ. 'He') then
-     
+
      ! He Rayleigh scattering according to Chan & Dalgarno alphas (1965)
      lambda_cm = lambda_angstroem*1d-8
 
@@ -873,7 +875,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
 
            do i_freq = 1, freq_len
 
-              if (lamb_inv(i_freq) > 4860d0) then 
+              if (lamb_inv(i_freq) > 4860d0) then
 
                  if (lamb_inv(i_freq) > 21360d0) then
                     A = 5677.465d0
@@ -925,7 +927,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
               nm1 = (22851d0 + 0.456d12/(71427d0**2d0-lamb_inv_use**2d0))*1d-8
               nm1 = nm1 * scale
               fk = 1.016d0
-              
+
               rayleigh_kappa(i_freq,i_str) = rayleigh_kappa(i_freq,i_str) &
                    + 24d0*pi**3d0*lamb_inv(i_freq)**4d0/(nfr_co)**2d0* &
                    (((nm1+1d0)**2d0-1d0)/((nm1+1d0)**2d0+2d0))**2d0*fk / mass_co * &
@@ -954,7 +956,7 @@ subroutine add_rayleigh(spec,abund,lambda_angstroem,MMW,temp,press,rayleigh_kapp
            mass_ch4 = 16d0*amu
 
            do i_freq = 1, freq_len
-              
+
               nm1 = (46662d0 + 4.02d-6*lamb_inv(i_freq)**2d0)*1d-8
               nm1 = nm1 * scale
               fk = 1.0
@@ -980,7 +982,7 @@ end subroutine add_rayleigh
 
 !!$ Subroutine to calculate the contribution function of the transmission spectrum
 
-subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar,R_pl, &
+subroutine calc_transm_spec_contr(total_kappa,temp,press,gravity,mmw,P0_bar,R_pl, &
      w_gauss,transm_in,scat,continuum_opa_scat,var_grav,contr_tr,freq_len,struc_len,g_len,N_species)
 
   use constants_block
@@ -988,7 +990,7 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
 
   ! I/O
   INTEGER, intent(in)                         :: freq_len, struc_len, g_len, N_species
-  DOUBLE PRECISION, intent(in)                :: freq(freq_len), P0_bar, R_pl
+  DOUBLE PRECISION, intent(in)                :: P0_bar, R_pl
   DOUBLE PRECISION, intent(in)                :: temp(struc_len), press(struc_len), mmw(struc_len)
   DOUBLE PRECISION, intent(in)                :: total_kappa(g_len,freq_len,N_species,struc_len)
 
@@ -1000,8 +1002,8 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
   DOUBLE PRECISION, intent(out)               :: contr_tr(struc_len,freq_len)
 
   ! Internal
-  DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len),radius_var(struc_len)
-  INTEGER                                     :: i_str, i_freq, i_g, i_spec, j_str, i_leave_str
+  DOUBLE PRECISION                            :: P0_cgs, rho(struc_len), radius(struc_len)
+  INTEGER                                     :: i_str, i_freq,  i_spec, j_str, i_leave_str
   DOUBLE PRECISION                            :: alpha_t2(g_len,freq_len,N_species,struc_len-1)
   DOUBLE PRECISION                            :: t_graze(g_len,freq_len,N_species,struc_len), s_1, s_2, &
        t_graze_wlen_int(struc_len,freq_len), alpha_t2_scat(freq_len,struc_len-1), t_graze_scat(freq_len,struc_len), &
@@ -1013,7 +1015,7 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
   ! Calculate density
   rho = mmw*amu*press/kB/temp
   ! Calculate planetary radius (in cm), assuming hydrostatic equilibrium
-  call calc_radius(struc_len,temp,press,gravity,mmw,rho,P0_cgs,R_pl,var_grav,radius)
+  call calc_radius(struc_len,press,gravity,rho,P0_cgs,R_pl,var_grav,radius)
 
   do i_leave_str = 1, struc_len
 
@@ -1025,7 +1027,7 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
      total_kappa_use = total_kappa
      total_kappa_use(:,:,:,i_leave_str) = 0d0
      continuum_opa_scat_use(:,i_leave_str) = 0d0
-     
+
      ! Calc. mean free paths across grazing distances
      do i_str = 1, struc_len-1
         alpha_t2(:,:,:,i_str) = (total_kappa_use(:,:,:,i_str)*rho(i_str)+total_kappa_use(:,:,:,i_str+1)*rho(i_str+1))
@@ -1097,13 +1099,13 @@ subroutine calc_transm_spec_contr(freq,total_kappa,temp,press,gravity,mmw,P0_bar
      contr_tr(i_leave_str,:) = transm_in - transm
 
      write(*,*) i_leave_str
-     
+
   end do
 
   do i_freq = 1, freq_len
      contr_tr(:,i_freq) = contr_tr(:,i_freq)/SUM(contr_tr(:,i_freq))
   end do
-  
+
 end subroutine calc_transm_spec_contr
 
 !!$ #########################################################################
@@ -1129,7 +1131,7 @@ function integ_parab(x,y,z,fx,fy,fz,a,b)
   integ_parab = c1*(b-a)+c2*(b**2d0-a**2d0)/2d0+c3*(b**3d0-a**3d0)/3d0
 
 end function integ_parab
-  
+
 !!$ #########################################################################
 !!$ #########################################################################
 !!$ #########################################################################
@@ -1141,14 +1143,14 @@ end function integ_parab
 subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins,cloud_radii,cloud_lambdas, &
      cloud_specs_abs_opa,cloud_specs_scat_opa,cloud_aniso,cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
      cloud_red_fac_aniso_TOT,struc_len,N_cloud_spec,N_cloud_rad_bins, N_cloud_lambda_bins)
-  
+
   use constants_block
   implicit none
 
   ! I/O
   INTEGER, intent(in) :: struc_len, N_cloud_spec, N_cloud_rad_bins, N_cloud_lambda_bins
   DOUBLE PRECISION, intent(in) :: rho(struc_len), rho_p(N_cloud_spec)
-  DOUBLE PRECISION, intent(in) :: cloud_mass_fracs(struc_len,N_cloud_spec),r_g(struc_len,N_cloud_spec) 
+  DOUBLE PRECISION, intent(in) :: cloud_mass_fracs(struc_len,N_cloud_spec),r_g(struc_len,N_cloud_spec)
   DOUBLE PRECISION, intent(in) :: sigma_n
   DOUBLE PRECISION, intent(in) :: cloud_rad_bins(N_cloud_rad_bins+1), cloud_radii(N_cloud_rad_bins), &
        cloud_lambdas(N_cloud_lambda_bins)
@@ -1160,7 +1162,7 @@ subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins
        cloud_red_fac_aniso_TOT(N_cloud_lambda_bins,struc_len)
 
   ! internal
-  INTEGER :: i_struc, i_spec, i_rad, i_lamb
+  INTEGER :: i_struc, i_spec, i_lamb
   DOUBLE PRECISION :: N, dndr(N_cloud_rad_bins), integrand_abs(N_cloud_rad_bins), &
        integrand_scat(N_cloud_rad_bins), add_abs, add_scat, integrand_aniso(N_cloud_rad_bins), add_aniso
   !~~~~~~~~~~~~~~~~
@@ -1190,7 +1192,7 @@ subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins
                    cloud_rad_bins(1:N_cloud_rad_bins)))
               cloud_abs_opa_TOT(i_lamb,i_struc) = cloud_abs_opa_TOT(i_lamb,i_struc) + &
                    add_abs
-                   
+
               add_scat = sum(integrand_scat*(cloud_rad_bins(2:N_cloud_rad_bins+1)- &
                    cloud_rad_bins(1:N_cloud_rad_bins)))
               cloud_scat_opa_TOT(i_lamb,i_struc) = cloud_scat_opa_TOT(i_lamb,i_struc) + &
@@ -1200,9 +1202,9 @@ subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins
                    cloud_rad_bins(1:N_cloud_rad_bins)))
               cloud_red_fac_aniso_TOT(i_lamb,i_struc) = cloud_red_fac_aniso_TOT(i_lamb,i_struc) + &
                    add_aniso
-              
+
            end do
-                   
+
      end do
 
      do i_lamb = 1, N_cloud_lambda_bins
@@ -1213,10 +1215,10 @@ subroutine calc_cloud_opas(rho,rho_p,cloud_mass_fracs,r_g,sigma_n,cloud_rad_bins
            cloud_red_fac_aniso_TOT(i_lamb,i_struc) = 0d0
         end if
      end do
-     
+
      cloud_abs_opa_TOT(:,i_struc) = cloud_abs_opa_TOT(:,i_struc)/rho(i_struc)
      cloud_scat_opa_TOT(:,i_struc) = cloud_scat_opa_TOT(:,i_struc)/rho(i_struc)
-     
+
   end do
 
 end subroutine calc_cloud_opas
@@ -1245,20 +1247,20 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
        HIT_kappa_tot_g_approx_scat(HIT_coarse_borders-1,struc_len), &
        red_fac_aniso_final(HIT_coarse_borders-1,struc_len), &
        HIT_kappa_tot_g_approx_scat_unred(HIT_coarse_borders-1,struc_len)
-  
+
   ! internal
   DOUBLE PRECISION :: kappa_integ(struc_len), kappa_scat_integ(struc_len), red_fac_aniso_integ(struc_len), &
        kappa_tot_integ(HIT_coarse_borders-1,struc_len), kappa_tot_scat_integ(HIT_coarse_borders-1,struc_len)
   INTEGER          :: HIT_i_lamb
   DOUBLE PRECISION :: HIT_border_lamb(HIT_coarse_borders)
-  INTEGER          :: intp_index_small_min, intp_index_small_max, i_lamb, i_struc, &
-       new_small_ind, i_ng
+  INTEGER          :: intp_index_small_min, intp_index_small_max, &
+       new_small_ind
 
   HIT_kappa_tot_g_approx = 0d0
   HIT_kappa_tot_g_approx_scat = 0d0
   HIT_kappa_tot_g_approx_scat_unred = 0d0
-  
-  
+
+
   HIT_border_lamb = c_l/HIT_border_freqs
   red_fac_aniso_final = 0d0
 
@@ -1270,7 +1272,7 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
      intp_index_small_min = MIN(MAX(INT((log10(HIT_border_lamb(HIT_i_lamb))-log10(cloud_lambdas(1))) / &
           log10(cloud_lambdas(N_cloud_lambda_bins)/cloud_lambdas(1))*DBLE(N_cloud_lambda_bins-1) &
           +1d0),1),N_cloud_lambda_bins-1)
-     
+
      intp_index_small_max = MIN(MAX(INT((log10(HIT_border_lamb(HIT_i_lamb+1))-log10(cloud_lambdas(1))) / &
           log10(cloud_lambdas(N_cloud_lambda_bins)/cloud_lambdas(1))*DBLE(N_cloud_lambda_bins-1) &
           +1d0),1),N_cloud_lambda_bins-1)
@@ -1278,7 +1280,7 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
      kappa_integ = 0d0
      kappa_scat_integ = 0d0
      red_fac_aniso_integ = 0d0
-     
+
      if ((intp_index_small_max-intp_index_small_min) .EQ. 0) then
 
         call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
@@ -1289,12 +1291,12 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
 
         call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
              cloud_lambdas,HIT_border_lamb(HIT_i_lamb),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
-                
+
      else if ((intp_index_small_max-intp_index_small_min) .EQ. 1) then
 
         call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
              cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_integ)
-        
+
         call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
              cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_scat_integ)
 
@@ -1303,18 +1305,18 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
 
         call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
              cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
-        
+
         call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
              cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
 
         call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
              cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
-                
+
      else
 
         call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
              cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_integ)
-        
+
         call integ_kaps(intp_index_small_min,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
              cloud_lambdas,HIT_border_lamb(HIT_i_lamb),cloud_lambdas(intp_index_small_min+1),kappa_scat_integ)
 
@@ -1323,10 +1325,10 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
 
         new_small_ind = intp_index_small_min+1
         do while (intp_index_small_max-new_small_ind .NE. 0)
-           
+
            call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
                 cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),kappa_integ)
-        
+
            call integ_kaps(new_small_ind,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
                 cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),kappa_scat_integ)
 
@@ -1334,24 +1336,24 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
                 cloud_lambdas,cloud_lambdas(new_small_ind),cloud_lambdas(new_small_ind+1),red_fac_aniso_integ)
 
            new_small_ind = new_small_ind+1
-           
+
         end do
 
         call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_abs_opa_TOT, &
              cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_integ)
-        
+
         call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_scat_opa_TOT, &
              cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),kappa_scat_integ)
 
         call integ_kaps(intp_index_small_max,N_cloud_lambda_bins,struc_len,cloud_red_fac_aniso_TOT, &
              cloud_lambdas,cloud_lambdas(intp_index_small_max),HIT_border_lamb(HIT_i_lamb+1),red_fac_aniso_integ)
-                
+
      end if
 
      kappa_integ = kappa_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
      kappa_scat_integ = kappa_scat_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
      red_fac_aniso_integ = red_fac_aniso_integ/(HIT_border_lamb(HIT_i_lamb+1)-HIT_border_lamb(HIT_i_lamb))
-     
+
      kappa_tot_integ(HIT_i_lamb,:) = kappa_integ
      kappa_tot_scat_integ(HIT_i_lamb,:) = kappa_scat_integ
 
@@ -1363,7 +1365,7 @@ subroutine interp_integ_cloud_opas(cloud_abs_opa_TOT,cloud_scat_opa_TOT, &
           kappa_integ + kappa_scat_integ
 
      red_fac_aniso_final(HIT_i_lamb,:) = red_fac_aniso_final(HIT_i_lamb,:) + red_fac_aniso_integ
-     
+
   end do
 
 end subroutine interp_integ_cloud_opas
@@ -1381,7 +1383,7 @@ subroutine integ_kaps(intp_ind,N_cloud_lambda_bins,struc_len,kappa,lambda,l_bord
   DOUBLE PRECISION, intent(out) :: kappa_integ(struc_len)
 
   ! This subroutine calculates the integral of a linearly interpolated function kappa.
-  
+
   kappa_integ = kappa_integ + kappa(intp_ind,:)*(l_bord2-l_bord1) + (kappa(intp_ind+1,:)-kappa(intp_ind,:))/ &
        (lambda(intp_ind+1)-lambda(intp_ind))* &
        0.5d0*((l_bord2-lambda(intp_ind))**2d0-(l_bord1-lambda(intp_ind))**2d0)
@@ -1407,9 +1409,8 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
   DOUBLE PRECISION, intent(out) :: r_g(struc_len,N_cloud_spec)
   ! Internal
   INTEGER, parameter :: N_fit = 100
-  INTEGER          :: i_str, i_size, i_spec, i_rad
-  DOUBLE PRECISION :: turbulent_settling_speed_ret1, turbulent_settling_speed_ret2, &
-       bisect_particle_rad
+  INTEGER          :: i_str, i_spec, i_rad
+  DOUBLE PRECISION :: bisect_particle_rad
   DOUBLE PRECISION :: w_star(struc_len), H(struc_len)
   DOUBLE PRECISION :: r_w(struc_len,N_cloud_spec), alpha(struc_len,N_cloud_spec)
   DOUBLE PRECISION :: rad(N_fit), vel(N_fit), f_fill(N_cloud_spec)
@@ -1417,9 +1418,9 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
 
   H = kB*temp/(MMW*amu*gravity)
   w_star = Kzz/H
-  
+
   f_fill = 1d0
-  
+
   do i_str = 1, struc_len
      do i_spec = 1, N_cloud_spec
         r_w(i_str,i_spec) = bisect_particle_rad(1d-16,1d2,gravity,rho(i_str), &
@@ -1444,7 +1445,7 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
            end if
 
            call fit_linear(log(rad), log(vel/w_star(i_str)), N_fit, a, b)
-           
+
            alpha(i_str,i_spec) = b
            r_w(i_str,i_spec) = exp(-a/b)
            r_g(i_str,i_spec) = r_w(i_str,i_spec) * frain(i_spec)**(1d0/alpha(i_str,i_spec))* &
@@ -1456,7 +1457,7 @@ subroutine get_rg_N(gravity,rho,rho_p,temp,MMW,frain,cloud_mass_fracs, &
      end do
 
   end do
-  
+
 end subroutine get_rg_N
 
 subroutine turbulent_settling_speed(x,gravity,rho,rho_p,temp,MMW,turbulent_settling_speed_ret)
@@ -1468,7 +1469,7 @@ subroutine turbulent_settling_speed(x,gravity,rho,rho_p,temp,MMW,turbulent_settl
   DOUBLE PRECISION, parameter :: d = 2.827d-8, epsilon = 59.7*kB
   DOUBLE PRECISION    :: N_Knudsen, psi, eta, CdNreSq, Nre, Cd, v_settling_visc
 
-  
+
   N_Knudsen = MMW*amu/(pi*rho*d**2d0*x)
   psi = 1d0 + N_Knudsen*(1.249d0+0.42d0*exp(-0.87d0*N_Knudsen))
   eta = 15d0/16d0*sqrt(pi*2d0*amu*kB*temp)/(pi*d**2d0)*(kB*temp/epsilon)**0.16d0/1.22d0
@@ -1486,7 +1487,7 @@ subroutine turbulent_settling_speed(x,gravity,rho,rho_p,temp,MMW,turbulent_settl
   if ((Nre < 1d0) .AND. (v_settling_visc < turbulent_settling_speed_ret)) THEN
      turbulent_settling_speed_ret = v_settling_visc
   end if
-  
+
 end subroutine turbulent_settling_speed
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1501,7 +1502,7 @@ function bisect_particle_rad(x1,x2,gravity,rho,rho_p,temp,MMW,w_star)
 
   implicit none
   INTEGER, parameter :: ITMAX = 1000
-  DOUBLE PRECISION :: gravity,rho,rho_p,temp,MMW,w_star  
+  DOUBLE PRECISION :: gravity,rho,rho_p,temp,MMW,w_star
   DOUBLE PRECISION :: bisect_particle_rad,x1,x2
   INTEGER :: iter
   DOUBLE PRECISION :: a,b,c,fa,fb,fc,del
@@ -1512,11 +1513,11 @@ function bisect_particle_rad(x1,x2,gravity,rho,rho_p,temp,MMW,w_star)
   fa = fa - w_star
   call turbulent_settling_speed(b,gravity,rho,rho_p,temp,MMW,fb)
   fb = fb - w_star
-  
+
   if((fa.gt.0..and.fb.gt.0.).or.(fa.lt.0..and.fb.lt.0.)) then
      write(*,*) 'warning: root must be bracketed for zbrent'
      bisect_particle_rad = 1d-17
-     return 
+     return
   end if
 
   do iter=1,ITMAX
@@ -1526,10 +1527,10 @@ function bisect_particle_rad(x1,x2,gravity,rho,rho_p,temp,MMW,w_star)
      else
         c = (a+b)/2d0
      end if
-     
+
      call turbulent_settling_speed(c,gravity,rho,rho_p,temp,MMW,fc)
      fc = fc - w_star
-     
+
      if (((fc > 0d0) .and. (fa > 0d0)) .OR. ((fc < 0d0) .and. (fa < 0d0))) then
         del = 2d0*abs(a-c)/(a+b)
         a = c
@@ -1607,7 +1608,7 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
        cum_sum, k_min(freq_len, struc_len), k_max(freq_len, struc_len), &
        g_final(nsample+2), k_final(nsample+2)
 
-  DOUBLE PRECISION :: time_test, t1, t2, t0
+!  DOUBLE PRECISION :: time_test, t1, t2, t0
   DOUBLE PRECISION :: threshold(freq_len, struc_len)
   INTEGER          :: take_spec(freq_len, struc_len), take_spec_ind(freq_len, struc_len)
 
@@ -1635,9 +1636,9 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
   weights_use(1:8) = weights_use(1:8)/3d0
   take_spec = 0
   take_spec_ind = 1
-  
+
 !!$  weights_use(1:8) = weights_use(1:8)/5d0
-  
+
   call init_random_seed()
   !call random_number(r_index)
 
@@ -1656,7 +1657,7 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
         threshold(i_freq, i_struc) = MAXVAL(line_struc_kappas(1, i_freq, :, i_struc))
      end do
   end do
-  
+
   do i_struc = 1, struc_len
      do i_spec = 1, N_species
         do i_freq = 1, freq_len
@@ -1676,7 +1677,7 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
 
   !time_test = TIME()
   !t0 = time_test - t0
-          
+
   do i_struc = 1, struc_len
      do i_spec = 1, N_species
         do i_freq = 1, freq_len
@@ -1703,7 +1704,7 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
 
 !!$           ind_use = inds_avail( &
 !!$                int(r_index(:, i_freq, i_spec, i_struc)*(8*2))+1)
-           
+
            sampled_opa_weights(:, 1, i_freq, i_struc) = &
                 sampled_opa_weights(:, 1, i_freq, i_struc) + &
                 line_struc_kappas(ind_use, i_freq, i_spec, i_struc)
@@ -1717,7 +1718,7 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
 
            k_max(i_freq, i_struc) = k_max(i_freq, i_struc) + &
                 MAXVAL(line_struc_kappas(:, i_freq, i_spec, i_struc))
-           
+
         end do
      end do
      !write(*,*) take_spec(:, i_struc)
@@ -1728,7 +1729,7 @@ subroutine combine_opas_sample_ck(line_struc_kappas, g_gauss, weights, &
 
   !time_test = TIME()
   !t2 = time_test
-  
+
   do i_struc = 1, struc_len
      do i_freq = 1, freq_len
 
@@ -1800,6 +1801,7 @@ end subroutine combine_opas_sample_ck
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+! Self-written? Too long ago... Check if not rather from numrep...
 subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
 
   implicit none
@@ -1810,12 +1812,13 @@ subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
   INTEGER            :: pivot, k0, km
 
   ! carry out a binary search for the interpolation bin borders
-  do i_arr = 1, arrlen 
+  do i_arr = 1, arrlen
 
      if (arr(i_arr) >= binbord(binbordlen)) then
         intpint(i_arr) = binbordlen - 1
      else if (arr(i_arr) <= binbord(1)) then
         intpint(i_arr) = 1
+!!$        write(*,*) 'yes', arr(i_arr),binbord(1)
      else
 
         k0 = 1
@@ -1839,7 +1842,7 @@ subroutine search_intp_ind(binbord,binbordlen,arr,arrlen,intpint)
      end if
 
   end do
-  
+
 end subroutine search_intp_ind
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1856,6 +1859,11 @@ subroutine feautrier_rad_trans(border_freqs, &
      w_gauss_ck, &
      photon_destruct_in, &
      contribution, &
+     surf_refl, &
+     surf_emi, &
+     I_star_0, &
+     geom, &
+     mu_star, &
      flux, &
      contr_em, &
      freq_len_p_1, &
@@ -1868,6 +1876,9 @@ subroutine feautrier_rad_trans(border_freqs, &
 
   ! I/O
   INTEGER, INTENT(IN)             :: freq_len_p_1, struc_len, N_mu, N_g
+  DOUBLE PRECISION, INTENT(IN)    :: mu_star
+  DOUBLE PRECISION, INTENT(IN)    :: surf_refl(freq_len_p_1-1),surf_emi(freq_len_p_1-1) !ELALEI
+  DOUBLE PRECISION, INTENT(IN)    :: I_star_0(freq_len_p_1-1) !ELALEI
   DOUBLE PRECISION, INTENT(IN)    :: border_freqs(freq_len_p_1)
   DOUBLE PRECISION, INTENT(IN)    :: tau_approx_scat(N_g,freq_len_p_1-1,struc_len)
   DOUBLE PRECISION, INTENT(IN)    :: temp(struc_len)
@@ -1877,6 +1888,7 @@ subroutine feautrier_rad_trans(border_freqs, &
   LOGICAL, INTENT(IN)             :: contribution
   DOUBLE PRECISION, INTENT(OUT)   :: flux(freq_len_p_1-1)
   DOUBLE PRECISION, INTENT(OUT)   :: contr_em(struc_len,freq_len_p_1-1)
+  CHARACTER*20, intent(in)        :: geom
 
   ! Internal
   INTEGER                         :: j,i,k,l
@@ -1888,11 +1900,13 @@ subroutine feautrier_rad_trans(border_freqs, &
        source_planet_scat_n1(N_g,freq_len_p_1-1,struc_len), &
        source_planet_scat_n2(N_g,freq_len_p_1-1,struc_len), &
        source_planet_scat_n3(N_g,freq_len_p_1-1,struc_len)
-  
+   DOUBLE PRECISION                :: J_star_ini(N_g,freq_len_p_1-1,struc_len)
+   DOUBLE PRECISION                :: I_star_calc(N_g,N_mu,struc_len,freq_len_p_1-1)
 
   ! tridag variables
-  DOUBLE PRECISION                :: a(struc_len),b(struc_len),c(struc_len),r(struc_len)
-  DOUBLE PRECISION                :: f1,f2,f3, deriv1, deriv2
+  DOUBLE PRECISION                :: a(struc_len),b(struc_len),c(struc_len),r(struc_len), &
+       planck(struc_len)
+  DOUBLE PRECISION                :: f1,f2,f3, deriv1, deriv2, I_plus, I_minus
 
   ! quantities for P-T structure iteration
   DOUBLE PRECISION                :: J_bol(struc_len)
@@ -1915,6 +1929,15 @@ subroutine feautrier_rad_trans(border_freqs, &
   DOUBLE PRECISION :: transm_mu(N_g,freq_len_p_1-1,struc_len), &
                      transm_all(freq_len_p_1-1,struc_len), transm_all_loc(struc_len)
 
+  ! PAUL NEW
+  ! Variables for surface scattering
+  DOUBLE PRECISION                :: I_plus_surface(N_mu, N_g, freq_len_p_1-1)
+
+
+  I_plus_surface = 0d0
+  I_minus = 0d0
+  ! END PAUL NEW
+
   GCM_read = .FALSE.
   iter_scat = 10
   source = 0d0
@@ -1926,234 +1949,312 @@ subroutine feautrier_rad_trans(border_freqs, &
 
   photon_destruct = photon_destruct_in
 
+  ! DO THE STELLAR ATTENUATION CALCULATION
+
+  J_star_ini = 0d0
+
+
+  do i = 1, freq_len_p_1-1
+    ! Irradiation treatment
+    ! Dayside ave: multiply flux by 1/2.
+    ! Planet ave: multiply flux by 1/4
+
+    do i_mu = 1, N_mu
+      if (trim(adjustl(geom)) .EQ. 'dayside_ave') then
+           I_star_calc(:,i_mu,:,i) = 0.5* abs(I_star_0(i))*exp(-tau_approx_scat(:,i,:)/mu(i_mu))
+           J_star_ini(:,i,:) = J_star_ini(:,i,:)+0.5d0*I_star_calc(:,i_mu,:,i)*w_gauss_mu(i_mu)
+      else if (trim(adjustl(geom)) .EQ. 'planetary_ave') then
+           I_star_calc(:,i_mu,:,i) = 0.25* abs(I_star_0(i))*exp(-tau_approx_scat(:,i,:)/mu(i_mu))
+           J_star_ini(:,i,:) = J_star_ini(:,i,:)+0.5d0*I_star_calc(:,i_mu,:,i)*w_gauss_mu(i_mu)
+      else if (trim(adjustl(geom)) .EQ. 'non-isotropic') then
+           J_star_ini(:,i,:) = abs(I_star_0(i)/4.*exp(-tau_approx_scat(:,i,:)/mu_star))
+      else
+          write(*,*) 'Invalid geometry'
+     end if
+   end do
+  end do
+
+
   do i_iter_scat = 1, iter_scat
 
-     !write(*,*) 'i_iter_scat', i_iter_scat
+    !write(*,*) 'i_iter_scat', i_iter_scat
 
-     lambda_loc = 0d0
+    lambda_loc = 0d0
 
-     J_planet_scat = 0d0
+    J_planet_scat = 0d0
 
-     inv_del_tau_min = 1d10
-     J_bol(1) = 0d0
-     I_GCM = 0d0
+    inv_del_tau_min = 1d10
+    J_bol(1) = 0d0
+    I_GCM = 0d0
 
-     do i = 1, freq_len_p_1-1
+    do i = 1, freq_len_p_1-1
 
-        flux(i) = 0d0
-        J_bol_a = 0d0
+       flux(i) = 0d0
+       J_bol_a = 0d0
 
-        r = 0
+       r = 0
 
-        call planck_f_lr(struc_len,temp(1:struc_len),border_freqs(i),border_freqs(i+1),r)
+       call planck_f_lr(struc_len,temp(1:struc_len),border_freqs(i),border_freqs(i+1),r)
+       planck = r
 
-        do l = 1, N_g
+       do l = 1, N_g
 
-           if (i_iter_scat .EQ. 1) then
-              source(l,i,:) = r
-           else
-              r = source(l,i,:)
-           end if
+          if (i_iter_scat .EQ. 1) then
+             source(l,i,:) = photon_destruct(l,i,:)*r +  (1d0-photon_destruct(l,i,:))*J_star_ini(l,i,:)
+          else
+             r = source(l,i,:)
 
-           do j = 1, N_mu
+          end if
 
-              ! Own boundary treatment
-              f1 = mu(j)/(tau_approx_scat(l,i,1+1)-tau_approx_scat(l,i,1))
 
-              ! own test against instability
-              if (f1 > inv_del_tau_min) then
-                 f1 = inv_del_tau_min
-              end if
-              if (f1 .NE. f1) then
-                 f1 = inv_del_tau_min
-              end if
+          do j = 1, N_mu
 
-              b(1) = 1d0 + 2d0 * f1 * (1d0 + f1)
-              c(1) = -2d0*f1**2d0
-              a(1) = 0d0
 
-              ! Calculate the local approximate lambda iterator
-              lambda_loc(l,i,1) = lambda_loc(l,i,1) + &
-                   w_gauss_mu(j)/(1d0 + 2d0 * f1 * (1d0 + f1))
 
-              do k = 1+1, struc_len-1
+             ! Own boundary treatment
+             f1 = mu(j)/(tau_approx_scat(l,i,1+1)-tau_approx_scat(l,i,1))
 
-                 f1 = 2d0*mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k-1))
-                 f2 = mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k))
-                 f3 = mu(j)/(tau_approx_scat(l,i,k)-tau_approx_scat(l,i,k-1))
+             ! own test against instability
+             if (f1 > inv_del_tau_min) then
+                f1 = inv_del_tau_min
+             end if
+             if (f1 .NE. f1) then
+                f1 = inv_del_tau_min
+             end if
 
-                 ! own test against instability
-                 if (f1 > 0.5d0*inv_del_tau_min) then
-                    f1 = 0.5d0*inv_del_tau_min
-                 end if
-                 if (f1 .NE. f1) then
-                    f1 = 0.5d0*inv_del_tau_min
-                 end if
-                 if (f2 > inv_del_tau_min) then
-                    f2 = inv_del_tau_min
-                 end if
-                 if (f2 .NE. f2) then
-                    f2 = inv_del_tau_min
-                 end if
-                 if (f3 > inv_del_tau_min) then
-                    f3 = inv_del_tau_min
-                 end if
-                 if (f3 .NE. f3) then
-                    f3 = inv_del_tau_min
-                 end if
+             b(1) = 1d0 + 2d0 * f1 * (1d0 + f1)
+             c(1) = -2d0*f1**2d0
+             a(1) = 0d0
 
-                 b(k) = 1d0 + f1*(f2+f3)
-                 c(k) = -f1*f2
-                 a(k) = -f1*f3
+             ! Calculate the local approximate lambda iterator
+             lambda_loc(l,i,1) = lambda_loc(l,i,1) + &
+                  w_gauss_mu(j)/(1d0 + 2d0 * f1 * (1d0 + f1))
 
-                 ! Calculate the local approximate lambda iterator
-                 lambda_loc(l,i,k) = lambda_loc(l,i,k) + &
-                      w_gauss_mu(j)/(1d0+f1*(f2+f3))
+             do k = 1+1, struc_len-1
 
-              end do
+                f1 = 2d0*mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k-1))
+                f2 = mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k))
+                f3 = mu(j)/(tau_approx_scat(l,i,k)-tau_approx_scat(l,i,k-1))
 
-              ! Own boundary treatment
-              f1 = mu(j)/(tau_approx_scat(l,i,struc_len)-tau_approx_scat(l,i,struc_len-1))
+                ! own test against instability
+                if (f1 > 0.5d0*inv_del_tau_min) then
+                   f1 = 0.5d0*inv_del_tau_min
+                end if
+                if (f1 .NE. f1) then
+                   f1 = 0.5d0*inv_del_tau_min
+                end if
+                if (f2 > inv_del_tau_min) then
+                   f2 = inv_del_tau_min
+                end if
+                if (f2 .NE. f2) then
+                   f2 = inv_del_tau_min
+                end if
+                if (f3 > inv_del_tau_min) then
+                   f3 = inv_del_tau_min
+                end if
+                if (f3 .NE. f3) then
+                   f3 = inv_del_tau_min
+                end if
 
-              ! own test against instability
-              if (f1 > inv_del_tau_min) then
-                 f1 = inv_del_tau_min
-              end if
-              if (f1 .NE. f1) then
-                 f1 = inv_del_tau_min
-              end if
+                b(k) = 1d0 + f1*(f2+f3)
+                c(k) = -f1*f2
+                a(k) = -f1*f3
 
-              b(struc_len) = 1d0 + 2d0*f1**2d0
-              c(struc_len) = 0d0
-              a(struc_len) = -2d0*f1**2d0
+                ! Calculate the local approximate lambda iterator
+                lambda_loc(l,i,k) = lambda_loc(l,i,k) + &
+                     w_gauss_mu(j)/(1d0+f1*(f2+f3))
 
-              ! Calculate the local approximate lambda iterator
-              lambda_loc(l,i,struc_len) = lambda_loc(l,i,struc_len) + &
-                   w_gauss_mu(j)/(1d0 + 2d0*f1**2d0)
+             end do
+
+             ! Own boundary treatment
+             f1 = mu(j)/(tau_approx_scat(l,i,struc_len)-tau_approx_scat(l,i,struc_len-1))
+
+             ! own test against instability
+             if (f1 > inv_del_tau_min) then
+                f1 = inv_del_tau_min
+             end if
+             if (f1 .NE. f1) then
+                f1 = inv_del_tau_min
+             end if
+
+  !!$              b(struc_len) = 1d0 + 2d0*f1**2d0
+  !!$              c(struc_len) = 0d0
+  !!$              a(struc_len) = -2d0*f1**2d0
+  !!$
+  !!$              ! Calculate the local approximate lambda iterator
+  !!$              lambda_loc(l,i,struc_len) = lambda_loc(l,i,struc_len) + &
+  !!$                   w_gauss_mu(j)/(1d0 + 2d0*f1**2d0)
+
+             ! TEST PAUL SCAT
+             b(struc_len) = 1d0
+             c(struc_len) = 0d0
+             a(struc_len) = 0d0
+
+             ! r(struc_len) = I_J(struc_len) = 0.5[I_plus + I_minus]
+             ! where I_plus is the light that goes downwards and
+             ! I_minus is the light that goes upwards.
+             !!!!!!!!!!!!!!!!!! ALWAYS NEEDED !!!!!!!!!!!!!!!!!!
+             I_plus = I_plus_surface(j, l, i)
+
+                            !!!!!!!!!!!!!!! EMISSION ONLY TERM !!!!!!!!!!!!!!!!
+             I_minus = surf_emi(i)*planck(struc_len) &
+                           !!!!!!!!!!!!!!! SURFACE SCATTERING !!!!!!!!!!!!!!!!
+                           ! ----> of the emitted/scattered atmospheric light
+                           ! + surf_refl(i) * SUM(I_plus_surface(:, l, i) * w_gauss_mu) ! OLD PRE 091220
+                           + surf_refl(i) * 2d0 * SUM(I_plus_surface(:, l, i) * mu * w_gauss_mu)
+                           ! ----> of the direct stellar beam (depends on geometry)
+             if  (trim(adjustl(geom)) .NE. 'non-isotropic') then
+               I_minus = I_minus + surf_refl(i) &
+                    ! * SUM(I_star_calc(l,:, struc_len, i) * w_gauss_mu) ! OLD PRE 091220
+                    * 2d0 * SUM(I_star_calc(l,:, struc_len, i) * mu * w_gauss_mu)
+             else
+               !I_minus = I_minus + surf_refl(i) *J_star_ini(l,i,struc_len)  !to be checked! ! OLD PRE 091220
+               I_minus = I_minus + surf_refl(i) *J_star_ini(l,i,struc_len) * 4d0 * mu_star
+             end if
+
+             !sum to get I_J
+             r(struc_len)=0.5*(I_plus + I_minus)
+
+             ! Calculate the local approximate lambda iterator
+             lambda_loc(l,i,struc_len) = lambda_loc(l,i,struc_len) + &
+                  w_gauss_mu(j)/(1d0 + 2d0*f1**2d0)
 
               call tridag_own(a,b,c,r,I_J(:,j),struc_len)
 
-              I_H(1,j) = -I_J(1,j)
+             I_H(1,j) = -I_J(1,j)
 
-              do k = 1+1, struc_len-1
-                 f1 = mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k))
-                 f2 = mu(j)/(tau_approx_scat(l,i,k)-tau_approx_scat(l,i,k-1))
-                 if (f1 > inv_del_tau_min) then
-                    f1 = inv_del_tau_min
-                 end if
-                 if (f2 > inv_del_tau_min) then
-                    f2 = inv_del_tau_min
-                 end if
-                 deriv1 = f1*(I_J(k+1,j)-I_J(k,j))
-                 deriv2 = f2*(I_J(k,j)-I_J(k-1,j))
-                 I_H(k,j) = -(deriv1+deriv2)/2d0
-              end do
+             do k = 1+1, struc_len-1
+                f1 = mu(j)/(tau_approx_scat(l,i,k+1)-tau_approx_scat(l,i,k))
+                f2 = mu(j)/(tau_approx_scat(l,i,k)-tau_approx_scat(l,i,k-1))
+                if (f1 > inv_del_tau_min) then
+                   f1 = inv_del_tau_min
+                end if
+                if (f2 > inv_del_tau_min) then
+                   f2 = inv_del_tau_min
+                end if
+                deriv1 = f1*(I_J(k+1,j)-I_J(k,j))
+                deriv2 = f2*(I_J(k,j)-I_J(k-1,j))
+                I_H(k,j) = -(deriv1+deriv2)/2d0
 
-              I_H(struc_len,j) = 0d0
+                ! TEST PAUL SCAT
+                if (k .EQ. struc_len - 1) then
+                   I_plus_surface(j, l, i) = &
+                        I_J(struc_len,j)  - deriv1
+                end if
+                ! END TEST PAUL SCAT
+             end do
 
-           end do
+             I_H(struc_len,j) = 0d0
 
-           J_bol_g = 0d0
+             ! TEST PAUL SCAT
+             !I_plus_surface(j, l, i) = I_J(struc_len-1,j)+I_H(struc_len-1,j)
+             ! END TEST PAUL SCAT
 
-           do j = 1, N_mu
+          end do
 
-              J_bol_g = J_bol_g + I_J(:,j) * w_gauss_mu(j)
-              flux(i) = flux(i) - I_H(1,j)*mu(j) &
-                   * 4d0*pi * w_gauss_ck(l) * w_gauss_mu(j)
-           end do
+          J_bol_g = 0d0
 
-           ! Save angle-dependent surface flux
-           if (GCM_read) then
-              do j = 1, N_mu
-                 I_GCM(j,i) = I_GCM(j,i) - 2d0*I_H(1,j)*w_gauss_ck(l)
-              end do
-           end if
+          do j = 1, N_mu
 
-           J_planet_scat(l,i,:) = J_bol_g
+             J_bol_g = J_bol_g + I_J(:,j) * w_gauss_mu(j)
+             flux(i) = flux(i) - I_H(1,j)*mu(j) &
+                  * 4d0*pi * w_gauss_ck(l) * w_gauss_mu(j)
+          end do
 
-        end do
+          ! Save angle-dependent surface flux
+          if (GCM_read) then
+             do j = 1, N_mu
+                I_GCM(j,i) = I_GCM(j,i) - 2d0*I_H(1,j)*w_gauss_ck(l)
+             end do
+          end if
 
-     end do
+          J_planet_scat(l,i,:) = J_bol_g
 
-     do k = 1, struc_len
-        do i = 1, freq_len_p_1-1
-           do l = 1, N_g
-              if (photon_destruct(l,i,k) < 1d-10) THEN
-                 photon_destruct(l,i,k) = 1d-10
-              end if
-           end do
-        end do
-     end do
+       end do
 
-     do i = 1, freq_len_p_1-1
-        call planck_f_lr(struc_len,temp(1:struc_len),border_freqs(i),border_freqs(i+1),r)
-        do l = 1, N_g
-           source(l,i,:) = (photon_destruct(l,i,:)*r+(1d0-photon_destruct(l,i,:))* &
-                (J_planet_scat(l,i,:)-lambda_loc(l,i,:)*source(l,i,:))) / &
-                (1d0-(1d0-photon_destruct(l,i,:))*lambda_loc(l,i,:))
-        end do
-     end do
+    end do
 
-     source_planet_scat_n3 = source_planet_scat_n2
-     source_planet_scat_n2 = source_planet_scat_n1
-     source_planet_scat_n1 = source_planet_scat_n
-     source_planet_scat_n  = source
+    do k = 1, struc_len
+       do i = 1, freq_len_p_1-1
+          do l = 1, N_g
+             if (photon_destruct(l,i,k) < 1d-10) THEN
+                photon_destruct(l,i,k) = 1d-10
+             end if
+          end do
+       end do
+    end do
 
-     if (mod(i_iter_scat,4) .EQ. 0) then
-        !write(*,*) 'Ng acceleration!'
-        call NG_source_approx(source_planet_scat_n,source_planet_scat_n1, &
-             source_planet_scat_n2,source_planet_scat_n3,source, &
-             N_g,freq_len_p_1,struc_len)
-     end if
+    do i = 1, freq_len_p_1-1
+       call planck_f_lr(struc_len,temp(1:struc_len),border_freqs(i),border_freqs(i+1),r)
+       do l = 1, N_g
+         source(l,i,:) = (photon_destruct(l,i,:)*r+(1d0-photon_destruct(l,i,:))* &
+               (J_star_ini(l,i,:)+J_planet_scat(l,i,:)-lambda_loc(l,i,:)*source(l,i,:))) / &
+               (1d0-(1d0-photon_destruct(l,i,:))*lambda_loc(l,i,:))
+       end do
+    end do
+
+    source_planet_scat_n3 = source_planet_scat_n2
+    source_planet_scat_n2 = source_planet_scat_n1
+    source_planet_scat_n1 = source_planet_scat_n
+    source_planet_scat_n  = source
+
+    if (mod(i_iter_scat,4) .EQ. 0) then
+       !write(*,*) 'Ng acceleration!'
+       call NG_source_approx(source_planet_scat_n,source_planet_scat_n1, &
+            source_planet_scat_n2,source_planet_scat_n3,source, &
+            N_g,freq_len_p_1,struc_len)
+    end if
 
   end do
 
   ! Calculate the contribution function.
   ! Copied from flux_ck, here using "source" as the source function
   ! (before it was the Planck function).
-  
+
   contr_em = 0d0
   if (contribution) then
 
-     do i_mu = 1, N_mu
+    do i_mu = 1, N_mu
 
-        ! Transmissions for a given incidence angle
-        transm_mu = exp(-tau_approx_scat/mu(i_mu))
+       ! Transmissions for a given incidence angle
+       transm_mu = exp(-tau_approx_scat/mu(i_mu))
 
-        do i_str = 1, struc_len
-           do i_freq = 1, freq_len_p_1-1
-              ! Integrate transmission over g-space
-              transm_all(i_freq,i_str) = sum(transm_mu(:,i_freq,i_str)*w_gauss_ck)
-           end do
-        end do
+       do i_str = 1, struc_len
+          do i_freq = 1, freq_len_p_1-1
+             ! Integrate transmission over g-space
+             transm_all(i_freq,i_str) = sum(transm_mu(:,i_freq,i_str)*w_gauss_ck)
+          end do
+       end do
 
-        ! Do the actual radiative transport
-        do i_freq = 1, freq_len_p_1-1
-           ! Spatial transmissions at given wavelength
-           transm_all_loc = transm_all(i_freq,:)
-           ! Calc Eq. 9 of manuscript (em_deriv.pdf)
-           do i_str = 1, struc_len
-              r(i_str) = sum(source(:,i_freq,i_str)*w_gauss_ck)
-           end do
-           do i_str = 1, struc_len-1
-              contr_em(i_str,i_freq) = contr_em(i_str,i_freq) + &
-                   (r(i_str)+r(i_str+1)) * &
-                   (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
-                   *mu(i_mu)*w_gauss_mu(i_mu)              
-           end do
-           contr_em(struc_len,i_freq) = contr_em(struc_len,i_freq) + &
-                2d0*r(struc_len)*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
-        end do
+       ! Do the actual radiative transport
+       do i_freq = 1, freq_len_p_1-1
+          ! Spatial transmissions at given wavelength
+          transm_all_loc = transm_all(i_freq,:)
+          ! Calc Eq. 9 of manuscript (em_deriv.pdf)
+          do i_str = 1, struc_len
+             r(i_str) = sum(source(:,i_freq,i_str)*w_gauss_ck)
+          end do
+          do i_str = 1, struc_len-1
+             contr_em(i_str,i_freq) = contr_em(i_str,i_freq)+ &
+                  (r(i_str)+r(i_str+1)) * &
+                  (transm_all_loc(i_str)-transm_all_loc(i_str+1)) &
+                  *mu(i_mu)*w_gauss_mu(i_mu)
+          end do
+          contr_em(struc_len,i_freq) = contr_em(struc_len,i_freq)+ &
+              !2d0*r(struc_len)*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu) MODIFIED TO INCLUDE SURFACE
+              2d0*I_minus*transm_all_loc(struc_len)*mu(i_mu)*w_gauss_mu(i_mu)
+       end do
 
-     end do
+    end do
 
-     do i_freq = 1, freq_len_p_1-1
-        contr_em(:,i_freq) = contr_em(:,i_freq)/SUM(contr_em(:,i_freq))
-     end do
+    do i_freq = 1, freq_len_p_1-1
+       contr_em(:,i_freq) = contr_em(:,i_freq)/SUM(contr_em(:,i_freq))
+    end do
 
   end if
 
 end subroutine feautrier_rad_trans
+
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2222,7 +2323,7 @@ subroutine NG_source_approx(source_n,source_n1,source_n2,source_n3,source, &
                  return
               end if
            end do
-        
+
            source_buff(i_ng,i_freq,1:struc_len) = temp_buff
 
         else
@@ -2359,9 +2460,9 @@ recursive subroutine quicksort_own_2d_swapped(length, array)
               end if
               if ((ind_down-1) > 1) then
                  call quicksort_own_2d_swapped(ind_down-1, array(:,1:ind_down-1))
-              end if              
+              end if
               return
-              
+
            else if (array(1,ind_down) < compare(1)) then
 
               buffer = array(:,ind_up)
@@ -2371,9 +2472,9 @@ recursive subroutine quicksort_own_2d_swapped(length, array)
               exit
 
            end if
-           
+
         end do
-     
+
      end if
 
   end do
@@ -2382,7 +2483,7 @@ recursive subroutine quicksort_own_2d_swapped(length, array)
 
      if ((length-1) > 1 ) then
         call quicksort_own_2d_swapped(length-1, array(:,1:length-1))
-     end if     
+     end if
   end if
 
 end subroutine quicksort_own_2d_swapped
@@ -2398,7 +2499,7 @@ end subroutine quicksort_own_2d_swapped
 subroutine tridag_own(a,b,c,res,solution,length)
 
   implicit none
-  
+
   ! I/O
   integer, intent(in) :: length
   double precision, intent(in) :: a(length), &
@@ -2415,7 +2516,7 @@ subroutine tridag_own(a,b,c,res,solution,length)
   ! Test if b(1) == 0:
   if (b(1) .EQ. 0) then
      stop "Error in tridag routine, b(1) must not be zero!"
-  end if
+     end if
 
   ! Begin inversion
   buffer_scalar = b(1)
@@ -2427,7 +2528,7 @@ subroutine tridag_own(a,b,c,res,solution,length)
      if (buffer_scalar .EQ. 0) then
         write(*,*) "Tridag routine failed!"
         solution = 0d0
-        return
+  return
      end if
      solution(ind) = (res(ind) - &
           a(ind)*solution(ind-1))/buffer_scalar
@@ -2451,9 +2552,9 @@ subroutine planck_f_lr(PT_length,T,nul,nur,B_nu)
 
   use constants_block
   implicit none
-  INTEGER                         :: PT_length,i, integ
+  INTEGER                         :: PT_length
   DOUBLE PRECISION                :: T(PT_length),B_nu(PT_length)
-  DOUBLE PRECISION                :: buffer, nu1, nu2, nu3, nu4, nu5, nu_large, nu_small, &
+  DOUBLE PRECISION                ::  nu1, nu2, nu3, nu4, nu5, nu_large, nu_small, &
        nul, nur, diff_nu
 
   !~~~~~~~~~~~~~
@@ -2501,7 +2602,7 @@ subroutine calc_rosse_opa(HIT_kappa_tot_g_approx,HIT_border_freqs,temp,HIT_N_g,H
 
   kappa_rosse = 0d0
   numerator = 0d0
-  
+
   do i = 1, HIT_coarse_borders-1
      kappa_rosse = kappa_rosse + &
           B_nu_dT(i) * sum(w_gauss/HIT_kappa_tot_g_approx(:,i)) * &
@@ -2573,7 +2674,7 @@ subroutine calc_planck_opa(HIT_kappa_tot_g_approx,HIT_border_freqs,temp,HIT_N_g,
   end do
 
   kappa_planck = kappa_planck / norm
-  
+
 end subroutine calc_planck_opa
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2614,5 +2715,5 @@ subroutine star_planck(freq_len,T,nu,B_nu)
              32d0*2d0*hplanck*nu4**3d0/c_l**2d0/(exp(hplanck*nu4/kB/T)-1d0) + &
              7d0* 2d0*hplanck*nu5**3d0/c_l**2d0/(exp(hplanck*nu5/kB/T)-1d0))
   end do
-  
+
 end subroutine star_planck

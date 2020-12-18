@@ -14,13 +14,10 @@ atmospheres.
 
 .. important::
 
-   In addition to transmission spectra, **pRT now includes scattering also for emission spectra**, if specifically turned on (note that scattering increases the runtime), see `Scattering for Emission Spectra <content/notebooks/emis_scat.html>`_. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. The scattering of stellar light, following the implementation of
-   `petitCODE <http://www.mpia.de/homes/molliere/#petitcode>`_,
-   is currently being tested in pRT and will be published soon.
+   In addition to transmission spectra, **pRT now includes scattering also for emission spectra**, if specifically turned on (note that scattering increases the runtime), see `Scattering for Emission Spectra <content/notebooks/emis_scat.html>`_.
 
 petitRADTRANS is available under the MIT License, and documented in
-`Mollière et al. (2019) <https://arxiv.org/abs/1904.11504>`_, for the general code, and `Mollière et al. (2020) <https://arxiv.org/abs/2006.09394>`_, for the scattering implementation.
-Please cite these papers if you make use of petitRADTRANS in your work.
+`Mollière et al. (2019) <https://arxiv.org/abs/1904.11504>`_, for the general code, and `Mollière et al. (2020) <https://arxiv.org/abs/2006.09394>`_, Alei et al. (in prep.), for the scattering implementation. Please cite these papers if you make use of petitRADTRANS in your work.
 
 .. _contact: molliere@mpia.de
 
@@ -32,6 +29,9 @@ missing from our database.
 
 News
 ____
+
+**December 2020: stellar and planetary surface scattering added**
+    pRT now includes the scattering of the incoming stellar flux for irradiated planets. Also a scattering surface for terrestrial planets has been added, see `Scattering for Emission Spectra <content/notebooks/emis_scat.html>`_. The surface albedo and emissivity are both freely tunable parameters (as a function of wavelength). Surface scattering is treated to be isotropic (that is, assuming that the surface is Lambertian).
 
 **September 2020: self-scattering for emission spectra and chemical equilibrium interpolation now available**
     pRT now includes scattering also for emission spectra, if specifically turned on (note that scattering increases the runtime), see `Scattering for Emission Spectra <content/notebooks/emis_scat.html>`_. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. In addition, you can now download our chemical equilibrium interpolation package, which is documented in `Interpolating chemical equilibrium abundances <content/notebooks/poor_man.html>`_

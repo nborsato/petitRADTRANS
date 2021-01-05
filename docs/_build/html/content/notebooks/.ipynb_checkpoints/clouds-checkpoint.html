@@ -413,6 +413,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+
   Read CIA opacities for H2-H2...
   Read CIA opacities for H2-He...
  Done.
@@ -439,22 +440,22 @@ div.rendered_html tbody tr:hover {
 <span class="n">T_equ</span> <span class="o">=</span> <span class="mf">1500.</span>
 <span class="n">temperature</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">guillot_global</span><span class="p">(</span><span class="n">pressures</span><span class="p">,</span> <span class="n">kappa_IR</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">T_int</span><span class="p">,</span> <span class="n">T_equ</span><span class="p">)</span>
 
-<span class="n">abundances</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
 <span class="n">MMW</span> <span class="o">=</span> <span class="mf">2.33</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="admonition warning">
-<p><strong>Abundances in petitRADTRANS:</strong> remember that abundances in petitCODE are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
+<p><strong>Abundances in petitRADTRANS:</strong> remember that abundances in pRT are in units of <strong>mass fractions</strong>, not number fractions (aka volume mixing ratio, VMR). You can convert between mass fractions and VMRs by using <span class="math">\begin{equation}
 X_i = \frac{\mu_i}{\mu}n_i,
 \end{equation}</span> where <span class="math notranslate nohighlight">\(X_i\)</span> is the mass fraction of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu_i\)</span> the mass of a single molecule/atom/ion/… of species <span class="math notranslate nohighlight">\(i\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span> is the atmospheric mean molecular weight, and <span class="math notranslate nohighlight">\(n_i\)</span> is the VMR of species <span class="math notranslate nohighlight">\(i\)</span>.</p>
 </div>
@@ -463,7 +464,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 \end{equation}</span> Where <span class="math notranslate nohighlight">\(\kappa_0\)</span> is the opacity in units of cm<span class="math notranslate nohighlight">\(^2\)</span>/g, at <span class="math notranslate nohighlight">\(\lambda_0=0.35 \ {\rm \mu m}\)</span>. The power law index <span class="math notranslate nohighlight">\(\gamma\)</span> fixes the wavelength dependence, Rayleigh-like scattering would be obtained for <span class="math notranslate nohighlight">\(\gamma=-4\)</span>. Hence <span class="math notranslate nohighlight">\(\kappa_0\)</span> and <span class="math notranslate nohighlight">\(\gamma\)</span> are free parameters.</p>
 <p>We now calculate a clear atmosphere, and then four power law cloudy models, with <span class="math notranslate nohighlight">\(\kappa_0 = 0.01\)</span> cm<span class="math notranslate nohighlight">\(^2\)</span>/g, and four different <span class="math notranslate nohighlight">\(\gamma\)</span> values.</p>
 <p>Clear model:</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
@@ -472,24 +473,14 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 
 <span class="c1"># Clear</span>
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> \
                        <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
-         <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Clear&#39;</span><span class="p">)</span>
+<span class="n">clear</span> <span class="o">=</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x114dbf358&gt;]
-</pre></div></div>
 </div>
 <p>First, <span class="math notranslate nohighlight">\(\gamma = -4\)</span> (Rayleigh-like):</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
@@ -497,27 +488,16 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span></span><span class="n">kappa_zero</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">gamma_scat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> \
                     <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                     <span class="n">kappa_zero</span> <span class="o">=</span> <span class="n">kappa_zero</span><span class="p">,</span> <span class="n">gamma_scat</span> <span class="o">=</span> <span class="n">gamma_scat</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
-         <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> \
-         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = -4$&#39;</span><span class="p">)</span>
+<span class="n">m4</span> <span class="o">=</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x114dbfef0&gt;]
-</pre></div></div>
 </div>
 <p>Second, <span class="math notranslate nohighlight">\(\gamma = -2\)</span> (weaker scattering power law):</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
@@ -525,29 +505,16 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span></span><span class="n">kappa_zero</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">gamma_scat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> \
                     <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                     <span class="n">kappa_zero</span> <span class="o">=</span> <span class="n">kappa_zero</span><span class="p">,</span> <span class="n">gamma_scat</span> <span class="o">=</span> <span class="n">gamma_scat</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
-         <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> \
-         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = -2$&#39;</span><span class="p">)</span>
-
-
+<span class="n">m2</span> <span class="o">=</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x1147896d8&gt;]
-</pre></div></div>
 </div>
 <p>Third, <span class="math notranslate nohighlight">\(\gamma = 0\)</span> (flat opacity):</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
@@ -555,25 +522,13 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span></span><span class="n">kappa_zero</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">gamma_scat</span> <span class="o">=</span> <span class="mf">0.</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> \
                     <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                     <span class="n">kappa_zero</span> <span class="o">=</span> <span class="n">kappa_zero</span><span class="p">,</span> <span class="n">gamma_scat</span> <span class="o">=</span> <span class="n">gamma_scat</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
-         <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> \
-         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = 0$&#39;</span><span class="p">)</span>
-
+<span class="n">m0</span> <span class="o">=</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&lt;matplotlib.lines.Line2D at 0x114789f60&gt;]
-</pre></div></div>
 </div>
 <p>Fourth, the exoctic case of, <span class="math notranslate nohighlight">\(\gamma = 1\)</span> (positive opacity slope):</p>
 <div class="nbinput docutils container">
@@ -584,16 +539,27 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span></span><span class="n">kappa_zero</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">gamma_scat</span> <span class="o">=</span> <span class="mf">1.</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> \
                     <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                     <span class="n">kappa_zero</span> <span class="o">=</span> <span class="n">kappa_zero</span><span class="p">,</span> <span class="n">gamma_scat</span> <span class="o">=</span> <span class="n">gamma_scat</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
-         <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span>\
-         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = 1$&#39;</span><span class="p">)</span>
+<span class="n">p1</span> <span class="o">=</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span>
 
 <span class="c1"># Make plot</span>
 
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">clear</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Clear&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
+         <span class="n">m4</span><span class="p">,</span> \
+         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = -4$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
+         <span class="n">m2</span><span class="p">,</span> \
+         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = -2$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
+         <span class="n">m0</span><span class="p">,</span> \
+         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = 0$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
+         <span class="n">p1</span><span class="p">,</span>\
+         <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;Powerlaw cloud, $\gamma = 1$&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (microns)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Transit radius ($\rm R_</span><span class="si">{Jup}</span><span class="s1">$)&#39;</span><span class="p">)</span>
@@ -603,12 +569,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_19_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_19_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="Gray-cloud-deck-and/or-scaled-Rayhleigh-scattering">
@@ -624,24 +598,24 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 
 <span class="c1"># Clear</span>
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
          <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Clear&#39;</span><span class="p">)</span>
 
 <span class="c1"># Gray cloud deck at 0.01 bar</span>
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                       <span class="n">Pcloud</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
          <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Gray cloud deck at 0.01 bar&#39;</span><span class="p">)</span>
 
 <span class="c1"># Haze (10 x gas Rayleigh scattering)</span>
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                       <span class="n">haze_factor</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
          <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Rayleigh haze&#39;</span><span class="p">)</span>
 
 <span class="c1"># Haze + cloud deck</span>
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                       <span class="n">haze_factor</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">Pcloud</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> \
          <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Rayleigh haze + cloud deck&#39;</span><span class="p">)</span>
@@ -655,12 +629,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_23_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_23_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="Condensate-clouds-from-real-optical-constants">
@@ -720,6 +702,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+
   Read CIA opacities for H2-H2...
   Read CIA opacities for H2-He...
  Done.
@@ -746,16 +729,16 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <span class="n">T_equ</span> <span class="o">=</span> <span class="mf">1500.</span>
 <span class="n">temperature</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">guillot_global</span><span class="p">(</span><span class="n">pressures</span><span class="p">,</span> <span class="n">kappa_IR</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">T_int</span><span class="p">,</span> <span class="n">T_equ</span><span class="p">)</span>
 
-<span class="n">abundances</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.74</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;He&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.24</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO_all_iso&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CO2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;CH4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Na&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.00001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
 <span class="n">MMW</span> <span class="o">=</span> <span class="mf">2.33</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 </pre></div>
@@ -787,15 +770,15 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span></span><span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cloudy&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
 
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;clear&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
@@ -809,12 +792,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_39_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_39_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 <p>Here one sees that there is a lot of additional absorption in the optical and near-IR. Also note the silicate (Si-O stretching mode) becoming visible at 10 micron.</p>
 </div>
@@ -838,17 +829,17 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span></span><span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                        <span class="n">Kzz</span> <span class="o">=</span> <span class="n">Kzz</span><span class="p">,</span> <span class="n">fsed</span><span class="o">=</span><span class="n">fsed</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">transm_rad</span><span class="o">/</span><span class="n">nc</span><span class="o">.</span><span class="n">r_jup_mean</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cloudy&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
 
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_transm</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">R_pl</span><span class="o">=</span><span class="n">R_pl</span><span class="p">,</span> <span class="n">P0_bar</span><span class="o">=</span><span class="n">P0</span><span class="p">,</span> \
                        <span class="n">Kzz</span> <span class="o">=</span> <span class="n">Kzz</span><span class="p">,</span> <span class="n">fsed</span><span class="o">=</span><span class="n">fsed</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">)</span>
 
@@ -863,12 +854,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_45_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_45_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 <p>The resulting mean particle sizes can be accessed like this:</p>
 <div class="nbinput docutils container">
@@ -890,12 +889,20 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_47_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_47_0.png" />
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
 <div class="admonition warning">
 <p><strong>Minimum particle size:</strong> the opacity of particles smaller than 1 nm is set to zero.</p>
@@ -904,29 +911,39 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <div class="section" id="Emission-spectra">
 <h2>Emission spectra<a class="headerlink" href="#Emission-spectra" title="Permalink to this headline">¶</a></h2>
-<p>We can use the Radtrans object created above to calculate emission spectra as well.</p>
+<p>We can use the Radtrans object created above to calculate emission spectra as well. Here we will also generate an instance of pRT with scattering turned on, (see <a class="reference external" href="emis_scat.html">“Scattering for Emission Spectra”</a> for an example on how to do this in detail).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span></span><span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0000005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">Kzz</span> <span class="o">=</span> <span class="n">Kzz</span><span class="p">,</span> <span class="n">fsed</span><span class="o">=</span><span class="n">fsed</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">flux</span><span class="o">/</span><span class="mf">1e-6</span><span class="p">,</span> \
-         <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cloudy&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+         <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cloudy, no scattering&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span class="c1"># Load scattering version of pRT</span>
+<span class="n">atmosphere</span> <span class="o">=</span> <span class="n">Radtrans</span><span class="p">(</span><span class="n">line_species</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H2O&#39;</span><span class="p">,</span> <span class="s1">&#39;CO_all_iso&#39;</span><span class="p">,</span> <span class="s1">&#39;CH4&#39;</span><span class="p">,</span> <span class="s1">&#39;CO2&#39;</span><span class="p">,</span> <span class="s1">&#39;Na&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">],</span> \
+      <span class="n">cloud_species</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)_cd&#39;</span><span class="p">],</span> \
+      <span class="n">rayleigh_species</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H2&#39;</span><span class="p">,</span> <span class="s1">&#39;He&#39;</span><span class="p">],</span> \
+      <span class="n">continuum_opacities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H2-H2&#39;</span><span class="p">,</span> <span class="s1">&#39;H2-He&#39;</span><span class="p">],</span> \
+      <span class="n">wlen_bords_micron</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> \
+      <span class="n">do_scat_emis</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">setup_opa_structure</span><span class="p">(</span><span class="n">pressures</span><span class="p">)</span>
+
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">Kzz</span> <span class="o">=</span> <span class="n">Kzz</span><span class="p">,</span> <span class="n">fsed</span><span class="o">=</span><span class="n">fsed</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">,</span> \
                        <span class="n">add_cloud_scat_as_abs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">flux</span><span class="o">/</span><span class="mf">1e-6</span><span class="p">,</span> \
-         <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cloudy, add scattering to absorption&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+         <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cloudy, including scattering&#39;</span><span class="p">,</span> <span class="n">zorder</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
 
-<span class="n">abundances</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">mass_fractions</span><span class="p">[</span><span class="s1">&#39;Mg2SiO4(c)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
 
-<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">abundances</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
+<span class="n">atmosphere</span><span class="o">.</span><span class="n">calc_flux</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">mass_fractions</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">MMW</span><span class="p">,</span> \
                        <span class="n">Kzz</span> <span class="o">=</span> <span class="n">Kzz</span><span class="p">,</span> <span class="n">fsed</span><span class="o">=</span><span class="n">fsed</span><span class="p">,</span> <span class="n">sigma_lnorm</span> <span class="o">=</span> <span class="n">sigma_lnorm</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">atmosphere</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">atmosphere</span><span class="o">.</span><span class="n">flux</span><span class="o">/</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> \
@@ -941,17 +958,36 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+  Read CIA opacities for H2-H2...
+  Read CIA opacities for H2-He...
+ Done.
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_51_1.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_51_1.png" />
+</div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_51_0.png" src="../../../_images/content_notebooks_.ipynb_checkpoints_clouds-checkpoint_51_0.png" />
+<div class="highlight"><pre>
+&lt;Figure size 720x432 with 0 Axes&gt;
+</pre></div></div>
 </div>
-</div>
-<p>Here we plotted the clear spectrum, neglecting the cloud opacity, the cloudy spectrum only considering the absorption of the cloud particles (petitRADTRANS does not include scattering in its emission spectra), and the cloudy spectrum resulting from adding 20 % of the cloud scattering opacity to the absorption opacity (toggled by setting the keyword argument <code class="docutils literal notranslate"><span class="pre">add_cloud_scat_as_abs</span> <span class="pre">=</span> <span class="pre">True</span></code>). Because the two latter cases differ quite strongly, we can see that in the case studied here,
-petitRADTRANS should not be used to calculate emission spectra.</p>
+<p>Here we plotted the clear spectrum, neglecting the cloud opacity, the cloudy spectrum only considering the absorption of the cloud particles, and the cloudy spectrum with scattering, using the scattering version of pRT.</p>
 <div class="admonition warning">
-<p><strong>Scattering and petitRADTRANS:</strong> remember that scattering is not included for emission spectra in petitRADTRANS (but it is for the transmission spectra). We plan to migrate the scattering implementation of <a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a> to petitRADTRANS soon.</p>
+<p><strong>Scattering and petitRADTRANS:</strong> remember that scattering is included for emission spectra in petitRADTRANS only if requested specifically when generating the Radtrans object, as it increases the runtime (see <a class="reference external" href="emis_scat.html">“Scattering for Emission Spectra”</a> for an example how to do this).</p>
 </div>
 </div>
 </div>
@@ -967,7 +1003,7 @@ petitRADTRANS should not be used to calculate emission spectra.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Paul Mollière
+        &copy; Copyright 2019-2020, Paul Mollière
 
     </p>
   </div>

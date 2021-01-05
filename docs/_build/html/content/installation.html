@@ -202,7 +202,7 @@
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>A working Python installation, including the numpy package.</p></li>
+<li><p>A working Python installation, including the numpy, glob, and h5py package.</p></li>
 <li><p>A Fortran compiler (e.g. “gfortran”)</p></li>
 </ul>
 </div>
@@ -219,7 +219,12 @@
 </div>
 <div class="section" id="download-opacity-data">
 <h2>Download opacity data<a class="headerlink" href="#download-opacity-data" title="Permalink to this headline">¶</a></h2>
-<p>Download the <a class="reference external" href="https://www.dropbox.com/s/a9yryemdg083sed/input_data_r.zip?dl=0">opacity and input data</a>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Dropbox temporarily bans pRT links sometimes due to bandwidth
+overuse.</strong> If you cannot access our files, please contact us <a class="reference external" href="mailto:molliere&#37;&#52;&#48;mpia&#46;de">here</a>. We are working on a better solution.</p>
+</div>
+<p>Download the <a class="reference external" href="https://keeper.mpdl.mpg.de/f/48d25319b7a34569b647/?dl=1">opacity and input data</a>
 (6.3 GB), unzip them, and put the “input_data” folder into the
 “petitRADTRANS” folder (i.e. the same folder where the source is, if
 you clone from gitlab, this should be the
@@ -302,7 +307,7 @@ Done.
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Paul Mollière
+        &copy; Copyright 2019-2020, Paul Mollière
 
     </p>
   </div>

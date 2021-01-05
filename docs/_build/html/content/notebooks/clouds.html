@@ -488,7 +488,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <p>We now calculate a clear atmosphere, and then four power law cloudy models, with <span class="math notranslate nohighlight">\(\kappa_0 = 0.01\)</span> cm<span class="math notranslate nohighlight">\(^2\)</span>/g, and four different <span class="math notranslate nohighlight">\(\gamma\)</span> values.</p>
 <p>Clear model:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -504,7 +504,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>First, <span class="math notranslate nohighlight">\(\gamma = -4\)</span> (Rayleigh-like):</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -521,7 +521,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>Second, <span class="math notranslate nohighlight">\(\gamma = -2\)</span> (weaker scattering power law):</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -538,7 +538,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>Third, <span class="math notranslate nohighlight">\(\gamma = 0\)</span> (flat opacity):</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -555,7 +555,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>Fourth, the exoctic case of, <span class="math notranslate nohighlight">\(\gamma = 1\)</span> (positive opacity slope):</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -613,7 +613,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <p>In addition to power law clouds, petitRADTRANS can also simply add a gray cloud deck, or scale the Rayleigh scattering opacities of the gas by a factor specified by the user. For these examples we will reuse the Radtrans object from the demonstration of the power law cloud above, there’s no need to intialize it again.</p>
 <p>Let’s calculate three spectra: - A clear model - A cloudy model with a gray cloud deck at 0.01 bar - A haze-like model, mimicked by scaling the Rayleigh scattering of the gas by a factor 10 - A combination of the two above cloud models: gray cloud deck plus haze</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -702,7 +702,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </table>
 <p>But now, let’s start! We simply give one additional <code class="docutils literal notranslate"><span class="pre">cloud_species</span></code> list to the Radtrans object, containing the name of the opacity species we want to use.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -737,7 +737,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>Next we set up the atmospheric parameters, with a parameter selection <em>almost</em> identical to the <a class="reference external" href="getting_started.html">“Getting Started”</a> case. We now also add the mass fraction of the cloud species we are interested in. Note that the mass fractions only contains the name <code class="docutils literal notranslate"><span class="pre">Mg2SiO4(c)</span></code> now, the <code class="docutils literal notranslate"><span class="pre">_cd</span></code> suffix has to be omitted.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -776,7 +776,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <h3>Setting the cloud particle size<a class="headerlink" href="#Setting-the-cloud-particle-size" title="Permalink to this headline">¶</a></h3>
 <p>We have to define a few additional parameters for the clouds, to start the calculation. We can give the mean particle size and width of the log-normal particle distribution:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -789,7 +789,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>Now, let’s calculate a clear and cloudy spectrum to compare:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -836,7 +836,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <h3>Calculating the particle size<a class="headerlink" href="#Calculating-the-particle-size" title="Permalink to this headline">¶</a></h3>
 <p>Alternatively, one can specify an eddy diffusion parameter (<span class="math notranslate nohighlight">\(K_{zz}\)</span>, with units of cm<span class="math notranslate nohighlight">\(^2\)</span>/s), which expresses how strongly atmospheric mixing is. The cloud particle size is then controlled by specifying <span class="math notranslate nohighlight">\(K_{zz}\)</span>, and the unitless settling parameter <span class="math notranslate nohighlight">\(f_{\rm sed}\)</span>, which expresses the particles’ mass averaged settling velocity, when compared to the local atmospheric mixing speed. Also, a width for the log-normal particle size distribution must be specified:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -848,7 +848,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>Again, let’s calculate a clear and cloudy spectrum to compare:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -894,7 +894,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 </div>
 <p>The resulting mean particle sizes can be accessed like this:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -936,7 +936,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 <h2>Emission spectra<a class="headerlink" href="#Emission-spectra" title="Permalink to this headline">¶</a></h2>
 <p>We can use the Radtrans object created above to calculate emission spectra as well. Here we will also generate an instance of pRT with scattering turned on, (see <a class="reference external" href="emis_scat.html">“Scattering for Emission Spectra”</a> for an example on how to do this in detail).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1035,7 +1035,7 @@ X_i = \frac{\mu_i}{\mu}n_i,
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Paul Mollière
+        &copy; Copyright 2019-2020, Paul Mollière
 
     </p>
   </div>

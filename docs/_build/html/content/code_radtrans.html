@@ -197,6 +197,462 @@
 </style>
 <div class="section" id="radtrans-class">
 <h1>Radtrans class<a class="headerlink" href="#radtrans-class" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="petitRADTRANS.Radtrans">
+<em class="property">class </em><code class="sig-prename descclassname">petitRADTRANS.</code><code class="sig-name descname">Radtrans</code><span class="sig-paren">(</span><em class="sig-param">line_species=[], rayleigh_species=[], cloud_species=[], continuum_opacities=[], H2H2CIA=False, H2HeCIA=False, N2N2CIA=False, CO2CO2CIA=False, O2O2CIA=False, N2O2CIA=False, wlen_bords_micron=[0.05, 300.0], mode='c-k', test_ck_shuffle_comp=False, do_scat_emis=False, lbl_opacity_sampling=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class defining objects for carrying out spectral calculations for a
+given set of opacities</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>line_species (Optional):</dt><dd><p>list of strings, denoting which line absorber species to include.</p>
+</dd>
+<dt>rayleigh_species (Optional):</dt><dd><p>list of strings, denoting which Rayleigh scattering species to
+include.</p>
+</dd>
+<dt>cloud_species (Optional):</dt><dd><p>list of strings, denoting which cloud opacity species to include.</p>
+</dd>
+<dt>continuum_species (Optional):</dt><dd><p>list of strings, denoting which continuum absorber species to
+include.</p>
+</dd>
+<dt>H2H2CIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add H2-H2 Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'H2-H2'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>H2HeCIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add H2-He Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'H2-He'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>N2N2CIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add N2-N2 Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'N2-N2'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>O2O2CIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add O2-O2 Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'O2-O2'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>N2O2CIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add N2-O2 Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'N2-O2'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>CO2CO2CIA (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, will add CO2-CO2 Collision induced
+absoprtion as continuum absorber (alternatively, put <code class="docutils literal notranslate"><span class="pre">'CO2-CO2'</span></code>
+into continuum_species list).</p>
+</dd>
+<dt>wlen_bords_micron (Optional):</dt><dd><p>list containing left and right border of wavelength region to be
+considered, in micron. If nothing else is specified, it will be
+equal to <code class="docutils literal notranslate"><span class="pre">[0.05,</span> <span class="pre">300]</span></code>, hence using the full petitRADTRANS
+wavelength range (0.11 to 250 microns for <code class="docutils literal notranslate"><span class="pre">'c-k'</span></code> mode, 0.3 to 30
+microns for the <code class="docutils literal notranslate"><span class="pre">'lbl'</span></code> mode). The larger the range the longer the
+computation time.</p>
+</dd>
+<dt>mode (Optional[string]):</dt><dd><p>if equal to <code class="docutils literal notranslate"><span class="pre">'c-k'</span></code>: use low-resolution mode, at
+<span class="math notranslate nohighlight">\(\lambda/\Delta \lambda = 1000\)</span>, with the correlated-k
+assumption. if equal to <code class="docutils literal notranslate"><span class="pre">'lbl'</span></code>: use high-resolution mode, at
+<span class="math notranslate nohighlight">\(\lambda/\Delta \lambda = 10^6\)</span>, with a line-by-line
+treatment.</p>
+</dd>
+<dt>do_scat_emis (Optional[bool]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code> scattering will be included in the emission spectral
+calculations. Note that this increases the runtime of pRT!</p>
+</dd>
+<dt>lbl_opacity_sampling (Optional[int]):</dt><dd><p>Will be <code class="docutils literal notranslate"><span class="pre">None</span></code> by default. If integer positive value, and if
+<code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">==</span> <span class="pre">'lbl'</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then this will only consider every
+lbl_opacity_sampling-nth point of the high-resolution opacities.
+This may be desired in the case where medium-resolution spectra are
+required with a <span class="math notranslate nohighlight">\(\lambda/\Delta \lambda &gt; 1000\)</span>, but much smaller than
+<span class="math notranslate nohighlight">\(10^6\)</span>, which is the resolution of the <code class="docutils literal notranslate"><span class="pre">lbl</span></code> mode. In this case it
+may make sense to carry out the calculations with lbl_opacity_sampling = 10,
+for example, and then rebinning to the final desired resolution:
+this may save time! The user should verify whether this leads to
+solutions which are identical to the rebinned results of the fiducial
+<span class="math notranslate nohighlight">\(10^6\)</span> resolution. If not, this parameter must not be used.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.calc_flux">
+<code class="sig-name descname">calc_flux</code><span class="sig-paren">(</span><em class="sig-param">temp</em>, <em class="sig-param">abunds</em>, <em class="sig-param">gravity</em>, <em class="sig-param">mmw</em>, <em class="sig-param">sigma_lnorm=None</em>, <em class="sig-param">fsed=None</em>, <em class="sig-param">Kzz=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">contribution=False</em>, <em class="sig-param">gray_opacity=None</em>, <em class="sig-param">Pcloud=None</em>, <em class="sig-param">kappa_zero=None</em>, <em class="sig-param">gamma_scat=None</em>, <em class="sig-param">add_cloud_scat_as_abs=None</em>, <em class="sig-param">Tstar=None</em>, <em class="sig-param">Rstar=None</em>, <em class="sig-param">semimajoraxis=None</em>, <em class="sig-param">geometry='dayside_ave'</em>, <em class="sig-param">theta_star=0</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate the atmosphere’s emitted flux
+(emission spectrum).</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>temp:</dt><dd><p>the atmospheric temperature in K, at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>abunds:</dt><dd><p>dictionary of mass fractions for all atmospheric absorbers.
+Dictionary keys are the species names.
+Every mass fraction array
+has same length as pressure array.</p>
+</dd>
+<dt>gravity (float):</dt><dd><p>Surface gravity in cgs. Vertically constant for emission
+spectra.</p>
+</dd>
+<dt>mmw:</dt><dd><p>the atmospheric mean molecular weight in amu,
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>sigma_lnorm (Optional[float]):</dt><dd><p>width of the log-normal cloud particle size distribution</p>
+</dd>
+<dt>fsed (Optional[float]):</dt><dd><p>cloud settling parameter</p>
+</dd>
+<dt>Kzz (Optional):</dt><dd><p>the atmospheric eddy diffusion coeffiecient in cgs untis
+(i.e. <span class="math notranslate nohighlight">\(\rm cm^2/s\)</span>),
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>radius (Optional):</dt><dd><p>dictionary of mean particle radii for all cloud species.
+Dictionary keys are the cloud species names.
+Every radius array has same length as pressure array.</p>
+</dd>
+<dt>contribution (Optional[bool]):</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> the emission contribution function will be
+calculated. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt>gray_opacity (Optional[float]):</dt><dd><p>Gray opacity value, to be added to the opacity at all
+pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</p>
+</dd>
+<dt>Pcloud (Optional[float]):</dt><dd><p>Pressure, in bar, where opaque cloud deck is added to the
+absorption opacity.</p>
+</dd>
+<dt>kappa_zero (Optional[float]):</dt><dd><p>Scattering opacity at 0.35 micron, in cgs units (cm^2/g).</p>
+</dd>
+<dt>gamma_scat (Optional[float]):</dt><dd><p>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</p>
+</dd>
+<dt>add_cloud_scat_as_abs (Optional[bool]):</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, 20 % of the cloud scattering opacity will be
+added to the absorption opacity, introduced to test for the
+effect of neglecting scattering.</p>
+</dd>
+<dt>Tstar (Optional[float]):</dt><dd><p>The temperature of the host star in K, used only if the
+scattering is considered. If not specified, the direct
+light contribution is not calculated.</p>
+</dd>
+<dt>Rstar (Optional[float]):</dt><dd><p>The radius of the star in Solar radii. If specified,
+used to scale the to scale the stellar flux,
+otherwise it uses PHOENIX radius.</p>
+</dd>
+<dt>semimajoraxis (Optional[float]):</dt><dd><p>The distance of the planet from the star. Used to scale
+the stellar flux when the scattering of the direct light
+is considered.</p>
+</dd>
+<dt>geometry (Optional[string]):</dt><dd><p>if equal to <code class="docutils literal notranslate"><span class="pre">'dayside_ave'</span></code>: use the dayside average
+geometry. if equal to <code class="docutils literal notranslate"><span class="pre">'planetary_ave'</span></code>: use the
+planetary average geometry. if equal to
+<code class="docutils literal notranslate"><span class="pre">'non-isotropic'</span></code>: use the non-isotropic
+geometry.</p>
+</dd>
+<dt>theta_star (Optional[float]):</dt><dd><p>Inclination angle of the direct light with respect to
+the normal to the atmosphere. Used only in the
+non-isotropic geometry scenario.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.calc_flux_transm">
+<code class="sig-name descname">calc_flux_transm</code><span class="sig-paren">(</span><em class="sig-param">temp</em>, <em class="sig-param">abunds</em>, <em class="sig-param">gravity</em>, <em class="sig-param">mmw</em>, <em class="sig-param">P0_bar</em>, <em class="sig-param">R_pl</em>, <em class="sig-param">sigma_lnorm=None</em>, <em class="sig-param">fsed=None</em>, <em class="sig-param">Kzz=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">Pcloud=None</em>, <em class="sig-param">kappa_zero=None</em>, <em class="sig-param">gamma_scat=None</em>, <em class="sig-param">contribution=False</em>, <em class="sig-param">gray_opacity=None</em>, <em class="sig-param">add_cloud_scat_as_abs=None</em>, <em class="sig-param">variable_gravity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux_transm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate the atmosphere’s emission flux <em>and</em>
+transmission radius (for the transmission spectrum).</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>temp:</dt><dd><p>the atmospheric temperature in K, at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>abunds:</dt><dd><p>dictionary of mass fractions for all atmospheric absorbers.
+Dictionary keys are the species names.
+Every mass fraction array
+has same length as pressure array.</p>
+</dd>
+<dt>gravity (float):</dt><dd><p>Surface gravity in cgs at reference radius and pressure,
+constant durng the emission spectrum calculation.</p>
+</dd>
+<dt>mmw:</dt><dd><p>the atmospheric mean molecular weight in amu,
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>P0_bar (float):</dt><dd><p>Reference pressure P0 in bar where R(P=P0) = R_pl,
+where R_pl is the reference radius (parameter of this
+method), and g(P=P0) = gravity, where gravity is the
+reference gravity (parameter of this method)</p>
+</dd>
+<dt>R_pl (float):</dt><dd><p>Reference radius R_pl, in cm.</p>
+</dd>
+<dt>sigma_lnorm (Optional[float]):</dt><dd><p>width of the log-normal cloud particle size distribution</p>
+</dd>
+<dt>fsed (Optional[float]):</dt><dd><p>cloud settling parameter</p>
+</dd>
+<dt>Kzz (Optional):</dt><dd><p>the atmospheric eddy diffusion coeffiecient in cgs untis
+(i.e. <span class="math notranslate nohighlight">\(\rm cm^2/s\)</span>),
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>radius (Optional):</dt><dd><p>dictionary of mean particle radii for all cloud species.
+Dictionary keys are the cloud species names.
+Every radius array has same length as pressure array.</p>
+</dd>
+<dt>contribution (Optional[bool]):</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> the transmission contribution function will be
+calculated. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt>gray_opacity (Optional[float]):</dt><dd><p>Gray opacity value, to be added to the opacity at all
+pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</p>
+</dd>
+<dt>Pcloud (Optional[float]):</dt><dd><p>Pressure, in bar, where opaque cloud deck is added to the
+absorption opacity.</p>
+</dd>
+<dt>kappa_zero (Optional[float]):</dt><dd><p>Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).</p>
+</dd>
+<dt>gamma_scat (Optional[float]):</dt><dd><p>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</p>
+</dd>
+<dt>haze_factor (Optional[float]):</dt><dd><p>Scalar factor, increasing the gas Rayleigh scattering
+cross-section.</p>
+</dd>
+<dt>variable_gravity (Optional[bool]):</dt><dd><p>Standard is <code class="docutils literal notranslate"><span class="pre">True</span></code>. If <code class="docutils literal notranslate"><span class="pre">False</span></code> the gravity will be
+constant as a function of pressure, during the transmission
+radius calculation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.calc_rosse_planck">
+<code class="sig-name descname">calc_rosse_planck</code><span class="sig-paren">(</span><em class="sig-param">temp</em>, <em class="sig-param">abunds</em>, <em class="sig-param">gravity</em>, <em class="sig-param">mmw</em>, <em class="sig-param">sigma_lnorm=None</em>, <em class="sig-param">fsed=None</em>, <em class="sig-param">Kzz=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">contribution=False</em>, <em class="sig-param">gray_opacity=None</em>, <em class="sig-param">Pcloud=None</em>, <em class="sig-param">kappa_zero=None</em>, <em class="sig-param">gamma_scat=None</em>, <em class="sig-param">haze_factor=None</em>, <em class="sig-param">add_cloud_scat_as_abs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_rosse_planck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate the atmosphere’s Rosseland and Planck mean opacities.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>temp:</dt><dd><p>the atmospheric temperature in K, at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>abunds:</dt><dd><p>dictionary of mass fractions for all atmospheric absorbers.
+Dictionary keys are the species names.
+Every mass fraction array
+has same length as pressure array.</p>
+</dd>
+<dt>gravity (float):</dt><dd><p>Surface gravity in cgs. Vertically constant for emission
+spectra.</p>
+</dd>
+<dt>mmw:</dt><dd><p>the atmospheric mean molecular weight in amu,
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>sigma_lnorm (Optional[float]):</dt><dd><p>width of the log-normal cloud particle size distribution</p>
+</dd>
+<dt>fsed (Optional[float]):</dt><dd><p>cloud settling parameter</p>
+</dd>
+<dt>Kzz (Optional):</dt><dd><p>the atmospheric eddy diffusion coeffiecient in cgs untis
+(i.e. <span class="math notranslate nohighlight">\(\rm cm^2/s\)</span>),
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>radius (Optional):</dt><dd><p>dictionary of mean particle radii for all cloud species.
+Dictionary keys are the cloud species names.
+Every radius array has same length as pressure array.</p>
+</dd>
+<dt>contribution (Optional[bool]):</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> the emission contribution function will be
+calculated. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt>gray_opacity (Optional[float]):</dt><dd><p>Gray opacity value, to be added to the opacity at all
+pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</p>
+</dd>
+<dt>Pcloud (Optional[float]):</dt><dd><p>Pressure, in bar, where opaque cloud deck is added to the
+absorption opacity.</p>
+</dd>
+<dt>kappa_zero (Optional[float]):</dt><dd><p>Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).</p>
+</dd>
+<dt>gamma_scat (Optional[float]):</dt><dd><p>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</p>
+</dd>
+<dt>haze_factor (Optional[float]):</dt><dd><p>Scalar factor, increasing the gas Rayleigh scattering
+cross-section.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.calc_tau_cloud">
+<code class="sig-name descname">calc_tau_cloud</code><span class="sig-paren">(</span><em class="sig-param">gravity</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_tau_cloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate the optical depth of the clouds as function of
+frequency and pressure. The array with the optical depths is set to the
+<code class="docutils literal notranslate"><span class="pre">tau_cloud</span></code> attribute. The optical depth is calculate from the top of
+the atmosphere (i.e. the smallest pressure). Therefore, below the cloud
+base, the optical depth is constant and equal to the value at the cloud
+base.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>gravity (float):</dt><dd><p>Surface gravity in cgs. Vertically constant for emission
+spectra.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.calc_transm">
+<code class="sig-name descname">calc_transm</code><span class="sig-paren">(</span><em class="sig-param">temp</em>, <em class="sig-param">abunds</em>, <em class="sig-param">gravity</em>, <em class="sig-param">mmw</em>, <em class="sig-param">P0_bar</em>, <em class="sig-param">R_pl</em>, <em class="sig-param">sigma_lnorm=None</em>, <em class="sig-param">fsed=None</em>, <em class="sig-param">Kzz=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">Pcloud=None</em>, <em class="sig-param">kappa_zero=None</em>, <em class="sig-param">gamma_scat=None</em>, <em class="sig-param">contribution=False</em>, <em class="sig-param">haze_factor=None</em>, <em class="sig-param">gray_opacity=None</em>, <em class="sig-param">variable_gravity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_transm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate the atmosphere’s transmission radius
+(for the transmission spectrum).</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>temp:</dt><dd><p>the atmospheric temperature in K, at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>abunds:</dt><dd><p>dictionary of mass fractions for all atmospheric absorbers.
+Dictionary keys are the species names.
+Every mass fraction array
+has same length as pressure array.</p>
+</dd>
+<dt>gravity (float):</dt><dd><p>Surface gravity in cgs at reference radius and pressure.</p>
+</dd>
+<dt>mmw:</dt><dd><p>the atmospheric mean molecular weight in amu,
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>P0_bar (float):</dt><dd><p>Reference pressure P0 in bar where R(P=P0) = R_pl,
+where R_pl is the reference radius (parameter of this
+method), and g(P=P0) = gravity, where gravity is the
+reference gravity (parameter of this method)</p>
+</dd>
+<dt>R_pl (float):</dt><dd><p>Reference radius R_pl, in cm.</p>
+</dd>
+<dt>sigma_lnorm (Optional[float]):</dt><dd><p>width of the log-normal cloud particle size distribution</p>
+</dd>
+<dt>fsed (Optional[float]):</dt><dd><p>cloud settling parameter</p>
+</dd>
+<dt>Kzz (Optional):</dt><dd><p>the atmospheric eddy diffusion coeffiecient in cgs untis
+(i.e. <span class="math notranslate nohighlight">\(\rm cm^2/s\)</span>),
+at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+<dt>radius (Optional):</dt><dd><p>dictionary of mean particle radii for all cloud species.
+Dictionary keys are the cloud species names.
+Every radius array has same length as pressure array.</p>
+</dd>
+<dt>contribution (Optional[bool]):</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> the transmission and emission
+contribution function will be
+calculated. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt>gray_opacity (Optional[float]):</dt><dd><p>Gray opacity value, to be added to the opacity at all
+pressures and wavelengths (units <span class="math notranslate nohighlight">\(\rm cm^2/g\)</span>)</p>
+</dd>
+<dt>Pcloud (Optional[float]):</dt><dd><p>Pressure, in bar, where opaque cloud deck is added to the
+absorption opacity.</p>
+</dd>
+<dt>kappa_zero (Optional[float]):</dt><dd><p>Scarttering opacity at 0.35 micron, in cgs units (cm^2/g).</p>
+</dd>
+<dt>gamma_scat (Optional[float]):</dt><dd><p>Has to be given if kappa_zero is definded, this is the
+wavelength powerlaw index of the parametrized scattering
+opacity.</p>
+</dd>
+<dt>haze_factor (Optional[float]):</dt><dd><p>Scalar factor, increasing the gas Rayleigh scattering
+cross-section.</p>
+</dd>
+<dt>variable_gravity (Optional[bool]):</dt><dd><p>Standard is <code class="docutils literal notranslate"><span class="pre">True</span></code>. If <code class="docutils literal notranslate"><span class="pre">False</span></code> the gravity will be
+constant as a function of pressure, during the transmission
+radius calculation.</p>
+</dd>
+<dt>add_cloud_scat_as_abs (Optional[bool]):</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, 20 % of the cloud scattering opacity will be
+added to the absorption opacity, introduced to test for the
+effect of neglecting scattering.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.get_opa">
+<code class="sig-name descname">get_opa</code><span class="sig-paren">(</span><em class="sig-param">temp</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.get_opa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to calculate and return the line opacities (assuming an abundance
+of 100 % for the inidividual species) of the Radtrans object. This method
+updates the line_struc_kappas attribute within the Radtrans class. For the
+low resolution (<cite>c-k</cite>) mode, the wavelength-mean within every frequency bin
+is returned.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>temp:</dt><dd><p>the atmospheric temperature in K, at each atmospheric layer
+(1-d numpy array, same length as pressure array).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>wavelength in cm (1-d numpy array)</p></li>
+<li><p>dictionary of opacities, keys are the names of the line_species
+dictionary, entries are 2-d numpy arrays, with the shape
+being (number of frequencies, number of atmospheric layers).
+Units are cm^2/g, assuming an absorber abundance of 100 % for all
+respective species.</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.get_star_spectrum">
+<code class="sig-name descname">get_star_spectrum</code><span class="sig-paren">(</span><em class="sig-param">Tstar</em>, <em class="sig-param">distance</em>, <em class="sig-param">Rstar</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.get_star_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get the PHOENIX spectrum of the star and rebin it
+to the wavelength points. If Tstar is not explicitly written, the
+spectrum will be 0. If the distance is not explicitly written,
+the code will raise an error and break to urge the user to
+specify the value.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>Tstar (float):</dt><dd><p>the stellar temperature in K.</p>
+</dd>
+<dt>distance (float):</dt><dd><p>the semi-major axis of the planet in AU.</p>
+</dd>
+<dt>Radius (float):</dt><dd><p>if specified, uses this radius in Solar radii
+to scale the flux, otherwise it uses PHOENIX radius.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="petitRADTRANS.Radtrans.setup_opa_structure">
+<code class="sig-name descname">setup_opa_structure</code><span class="sig-paren">(</span><em class="sig-param">P</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.setup_opa_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup opacity arrays at atmospheric structure dimensions,
+and set the atmospheric pressure array.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>P:</dt><dd><p>the atmospheric pressure (1-d numpy array, sorted in increasing
+order), in units of bar. Will be converted to cgs internally.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -219,7 +675,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Paul Mollière
+        &copy; Copyright 2019-2020, Paul Mollière
 
     </p>
   </div>

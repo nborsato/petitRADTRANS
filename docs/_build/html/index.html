@@ -197,13 +197,10 @@ of exoplanets, at low (<span class="math notranslate nohighlight">\(\lambda/\Del
 atmospheres.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>In addition to transmission spectra, <strong>pRT now includes scattering also for emission spectra</strong>, if specifically turned on (note that scattering increases the runtime), see <a class="reference external" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a>. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. The scattering of stellar light, following the implementation of
-<a class="reference external" href="http://www.mpia.de/homes/molliere/#petitcode">petitCODE</a>,
-is currently being tested in pRT and will be published soon.</p>
+<p>In addition to transmission spectra, <strong>pRT now includes scattering also for emission spectra</strong>, if specifically turned on (note that scattering increases the runtime), see <a class="reference external" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a>.</p>
 </div>
 <p>petitRADTRANS is available under the MIT License, and documented in
-<a class="reference external" href="https://arxiv.org/abs/1904.11504">Mollière et al. (2019)</a>, for the general code, and <a class="reference external" href="https://arxiv.org/abs/2006.09394">Mollière et al. (2020)</a>, for the scattering implementation.
-Please cite these papers if you make use of petitRADTRANS in your work.</p>
+<a class="reference external" href="https://arxiv.org/abs/1904.11504">Mollière et al. (2019)</a>, for the general code, and <a class="reference external" href="https://arxiv.org/abs/2006.09394">Mollière et al. (2020)</a>, Alei et al. (in prep.), for the scattering implementation. Please cite these papers if you make use of petitRADTRANS in your work.</p>
 <p>This documentation webpage currently contains an installation guide, a
 tutorial, a first code documentation, and an implemented retrieval
 example for mock JWST emission and transmission spectra.
@@ -212,6 +209,8 @@ missing from our database.</p>
 <div class="section" id="news">
 <h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
+<dt><strong>December 2020: stellar and planetary surface scattering added</strong></dt><dd><p>pRT now includes the scattering of the incoming stellar flux for irradiated planets. Also a scattering surface for terrestrial planets has been added, see <a class="reference external" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a>. The surface albedo and emissivity are both freely tunable parameters (as a function of wavelength). Surface scattering is treated to be isotropic (that is, assuming that the surface is Lambertian).</p>
+</dd>
 <dt><strong>September 2020: self-scattering for emission spectra and chemical equilibrium interpolation now available</strong></dt><dd><p>pRT now includes scattering also for emission spectra, if specifically turned on (note that scattering increases the runtime), see <a class="reference external" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a>. Currently the self-scattering by the planetary atmosphere is included, which is appropriate for, for example, brown dwarf and directly imaged atmospheres. In addition, you can now download our chemical equilibrium interpolation package, which is documented in <a class="reference external" href="content/notebooks/poor_man.html">Interpolating chemical equilibrium abundances</a></p>
 </dd>
 <dt><strong>September 2020: petitRADTRANS opacities available on the Exomol website</strong></dt><dd><p>Opacity tables created specifically in the petitRADTRANS format
@@ -323,7 +322,7 @@ points of the new opacity tables!</strong></p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Paul Mollière
+        &copy; Copyright 2019-2020, Paul Mollière
 
     </p>
   </div>

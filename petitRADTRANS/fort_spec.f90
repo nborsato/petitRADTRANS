@@ -1902,7 +1902,7 @@ subroutine feautrier_rad_trans(border_freqs, &
        source_planet_scat_n3(N_g,freq_len_p_1-1,struc_len)
    DOUBLE PRECISION                :: J_star_ini(N_g,freq_len_p_1-1,struc_len)
    DOUBLE PRECISION                :: I_star_calc(N_g,N_mu,struc_len,freq_len_p_1-1)
-
+   DOUBLE PRECISION                :: flux_old(freq_len_p_1-1), conv_val
   ! tridag variables
   DOUBLE PRECISION                :: a(struc_len),b(struc_len),c(struc_len),r(struc_len), &
        planck(struc_len)
@@ -1939,8 +1939,10 @@ subroutine feautrier_rad_trans(border_freqs, &
   ! END PAUL NEW
 
   GCM_read = .FALSE.
-  iter_scat = 10
+  iter_scat = 100
   source = 0d0
+  flux_old = 0d0
+  flux = 0d0
 
   source_planet_scat_n = 0d0
   source_planet_scat_n1 = 0d0
@@ -1977,7 +1979,7 @@ subroutine feautrier_rad_trans(border_freqs, &
 
   do i_iter_scat = 1, iter_scat
 
-    !write(*,*) 'i_iter_scat', i_iter_scat
+    flux_old = flux
 
     lambda_loc = 0d0
 
@@ -2205,7 +2207,12 @@ subroutine feautrier_rad_trans(border_freqs, &
             N_g,freq_len_p_1,struc_len)
     end if
 
-  end do
+    conv_val = MAXVAL(ABS((flux-flux_old)/flux))
+    if ((conv_val < 1d-2) .AND. (i_iter_scat > 9)) then
+        exit
+    end if
+    
+ end do
 
   ! Calculate the contribution function.
   ! Copied from flux_ck, here using "source" as the source function

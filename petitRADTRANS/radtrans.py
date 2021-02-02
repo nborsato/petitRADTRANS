@@ -97,7 +97,6 @@ class Radtrans:
                      test_ck_shuffle_comp = False, do_scat_emis = False, \
                      lbl_opacity_sampling = None):
 
-
         # Any opacities there at all?
         self.absorbers_present = False
         if (len(line_species) + \
@@ -969,6 +968,11 @@ class Radtrans:
         if self.do_scat_emis:
             self.continuum_opa_scat_emis += \
               (cloud_abs_plus_scat_aniso - cloud_abs)
+
+            if self.hack_cloud_photospheric_tau != None:
+                self.hack_cloud_total_scat_aniso = cloud_abs_plus_scat_aniso - cloud_abs
+                self.hack_cloud_total_abs = cloud_abs
+                
         self.continuum_opa_scat += cloud_abs_plus_scat_no_aniso - cloud_abs
 
         if add_cloud_scat_as_abs != None:
@@ -1007,11 +1011,169 @@ class Radtrans:
     def calc_opt_depth(self,gravity):
         # Calculate optical depth for the total opacity.
         if ((self.mode == 'lbl') or self.test_ck_shuffle_comp):
-            
-            self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
-              fs.calc_tau_g_tot_ck_scat(gravity, \
-                self.press,self.line_struc_kappas[:,:,:1,:], \
-                self.do_scat_emis, self.continuum_opa_scat_emis)
+
+            if self.hack_cloud_photospheric_tau != None:
+
+                block1 = True
+                block2 = True
+                block3 = True
+                block4 = True
+                
+                ############################################################################
+                #### BLOCK 1, subtract cloud, calc. tau for gas only
+                ############################################################################
+
+                
+                if block1:
+
+                    # Get continuum scattering opacity, without clouds:
+                    self.continuum_opa_scat_emis = self.continuum_opa_scat_emis - \
+                      self.hack_cloud_total_scat_aniso
+
+                    ab = np.ones_like(self.line_abundances)
+                    self.line_struc_kappas = fi.mix_opas_ck(ab, \
+                                    self.line_struc_kappas,-self.hack_cloud_total_abs)
+                      
+                    # Calc. cloud-free optical depth
+                    self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
+                      fs.calc_tau_g_tot_ck_scat(gravity, \
+                        self.press,self.line_struc_kappas[:,:,:1,:], \
+                        self.do_scat_emis, self.continuum_opa_scat_emis)
+                    
+                ############################################################################
+                #### BLOCK 2, calc optical depth of cloud only!
+                ############################################################################
+
+                if block2:
+                    # Reduce total (absorption) line opacity by continuum absorption opacity
+                    # (those two were added in  before)
+                    mock_line_cloud_continuum_only = \
+                      np.zeros_like(self.line_struc_kappas)
+
+                    if ((not block1) and (not block3)) and (not block4):
+                        ab = np.ones_like(self.line_abundances)
+
+                    mock_line_cloud_continuum_only = \
+                      fi.mix_opas_ck(ab, mock_line_cloud_continuum_only,self.hack_cloud_total_abs)
+
+                    # Calc. optical depth of cloud only
+                    total_tau_cloud = np.zeros_like(self.total_tau)
+                    total_tau_cloud[:,:,:1,:], photon_destruction_prob_cloud = \
+                      fs.calc_tau_g_tot_ck_scat(gravity, \
+                        self.press,mock_line_cloud_continuum_only[:,:,:1,:], \
+                        self.do_scat_emis, self.hack_cloud_total_scat_aniso)
+
+                    if ((not block1) and (not block3)) and (not block4):
+                        print("Cloud only (for testing purposes...)!")
+                        self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
+                          total_tau_cloud[:,:,:1,:], photon_destruction_prob_cloud
+
+
+                ############################################################################
+                #### BLOCK 3, calc. photospheric position of atmo without cloud,
+                #### determine cloud optical depth there, compare to
+                #### hack_cloud_photospheric_tau, calculate scaling ratio
+                ############################################################################
+
+                if block3:
+
+                    median = True
+
+                    # Calculate the cloud-free optical depth per wavelength
+                    w_gauss_photosphere = self.w_gauss[..., np.newaxis, np.newaxis]
+                    optical_depth = np.sum(w_gauss_photosphere*self.total_tau[:, :, 0, :], axis=0)
+                    if median:
+                        optical_depth_integ = np.median(optical_depth,axis=0)
+                    else:
+                        optical_depth_integ = np.sum((optical_depth[1:,:]+optical_depth[:-1,:])*np.diff(self.freq)[..., np.newaxis],axis=0) / \
+                          (self.freq[-1]-self.freq[0])/2.
+                    optical_depth_cloud = np.sum(w_gauss_photosphere*total_tau_cloud[:, :, 0, :], axis=0)
+                    if median:
+                        optical_depth_cloud_integ = np.median(optical_depth_cloud,axis=0)
+                    else:
+                        optical_depth_cloud_integ = np.sum((optical_depth_cloud[1:,:]+optical_depth_cloud[:-1,:])*np.diff(self.freq)[..., np.newaxis],axis=0) / \
+                          (self.freq[-1]-self.freq[0])/2.
+
+                    from scipy.interpolate import interp1d
+
+                    #import pylab as plt
+
+                    press_bol_clear = interp1d(optical_depth_integ, self.press)
+                    Pphot_clear = press_bol_clear(1.)
+
+                    press_bol_cloud = interp1d(optical_depth_cloud_integ, self.press)
+                    tau_bol_cloud = interp1d(self.press, optical_depth_cloud_integ)
+                    Pphot_cloud = press_bol_cloud(1.)
+                    tau_cloud_at_Phot_clear = tau_bol_cloud(Pphot_clear)
+
+                    #print('tau_cloud_at_Phot_clear', tau_cloud_at_Phot_clear)
+
+                    Pphot_atmo_clear = optical_depth_integ
+                      
+                    photo_press = np.zeros(self.freq_len)
+                    photo_press_cloud = np.zeros(self.freq_len)
+                    for i in range(len(photo_press)):
+                        press_interp = interp1d(optical_depth[i, :], self.press)
+                        photo_press[i] = press_interp(1.)
+                        press_interp = interp1d(optical_depth_cloud[i, :], self.press)
+                        try:
+                            photo_press_cloud[i] = press_interp(1.)
+                        except:
+                            photo_press_cloud[i] = 1e3*1e6
+
+                    '''
+                    plt.plot(nc.c/self.freq/1e-4, photo_press*1e-6,color = 'C0')
+                    plt.plot(nc.c/self.freq/1e-4, photo_press_cloud*1e-6,color = 'C1')
+                    plt.axhline(Pphot_clear*1e-6, color = 'C0')
+                    plt.axhline(Pphot_cloud*1e-6, color = 'C1')
+                    plt.yscale('log')
+                    plt.xscale('log')
+                    plt.ylim([1e2,1e-6])
+                    plt.show()
+
+                    plt.clf()
+                    plt.plot(optical_depth_integ, self.press*1e-6, color = 'C0')
+                    plt.plot(optical_depth_cloud_integ, self.press*1e-6, color = 'C1')
+                    plt.axhline(Pphot_clear*1e-6, color = 'C0')
+                    plt.axhline(Pphot_cloud*1e-6, color = 'C1')
+                    plt.axvline(1.,color='black')
+                    plt.yscale('log')
+                    plt.xscale('log')
+                    plt.xlim([1e-10,max(np.max(optical_depth_integ),np.max(optical_depth_cloud_integ))])
+                    plt.ylim([1e2,1e-6])
+                    plt.show()
+                    '''
+                    
+                    #cloud_scaling_factor = 1.
+                    # Apply cloud scaling
+                    cloud_scaling_factor = self.hack_cloud_photospheric_tau / tau_cloud_at_Phot_clear
+                    
+                    #print('Block 3 done')
+
+                ############################################################################
+                #### BLOCK 4, add scaled cloud back to opacities
+                ############################################################################
+
+                if block4:
+                    # Get continuum scattering opacity, without clouds:
+                    self.continuum_opa_scat_emis = self.continuum_opa_scat_emis + \
+                      cloud_scaling_factor * self.hack_cloud_total_scat_aniso
+
+                    self.line_struc_kappas = \
+                      fi.mix_opas_ck(ab, self.line_struc_kappas, \
+                                         cloud_scaling_factor * self.hack_cloud_total_abs)
+
+                    # Calc. cloud-free optical depth
+                    self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
+                      fs.calc_tau_g_tot_ck_scat(gravity, \
+                        self.press,self.line_struc_kappas[:,:,:1,:], \
+                        self.do_scat_emis, self.continuum_opa_scat_emis)
+                    
+            else:
+                self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
+                  fs.calc_tau_g_tot_ck_scat(gravity, \
+                    self.press,self.line_struc_kappas[:,:,:1,:], \
+                    self.do_scat_emis, self.continuum_opa_scat_emis)
 
             # To handle cases without any absorbers, where kappas are zero
             if not self.absorbers_present:
@@ -1110,7 +1272,8 @@ class Radtrans:
                       gamma_scat = None, \
                       add_cloud_scat_as_abs = None,\
                       Tstar = None, Rstar=None, semimajoraxis = None,\
-                      geometry = 'dayside_ave',theta_star=0):
+                      geometry = 'dayside_ave',theta_star=0, \
+                      hack_cloud_photospheric_tau = None):
         ''' Method to calculate the atmosphere's emitted flux
         (emission spectrum).
 
@@ -1186,6 +1349,7 @@ class Radtrans:
                     non-isotropic geometry scenario.
         '''
 
+        self.hack_cloud_photospheric_tau = hack_cloud_photospheric_tau
         self.Pcloud = Pcloud
         self.kappa_zero = kappa_zero
         self.gamma_scat = gamma_scat

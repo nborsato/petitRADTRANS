@@ -1103,7 +1103,7 @@ class Radtrans:
 
                     press_bol_cloud = interp1d(optical_depth_cloud_integ, self.press)
                     tau_bol_cloud = interp1d(self.press, optical_depth_cloud_integ)
-                    Pphot_cloud = press_bol_cloud(1.)
+                    #Pphot_cloud = press_bol_cloud(1.)
                     tau_cloud_at_Phot_clear = tau_bol_cloud(Pphot_clear)
 
                     #print('tau_cloud_at_Phot_clear', tau_cloud_at_Phot_clear)
@@ -1144,9 +1144,19 @@ class Radtrans:
                     plt.show()
                     '''
                     
-                    #cloud_scaling_factor = 1.
+                    #self.cloud_scaling_factor = 1.
                     # Apply cloud scaling
-                    cloud_scaling_factor = self.hack_cloud_photospheric_tau / tau_cloud_at_Phot_clear
+                    self.cloud_scaling_factor = self.hack_cloud_photospheric_tau / tau_cloud_at_Phot_clear
+
+                    max_rescaling = 1e100
+                    for f in self.fsed.keys():
+                        mr = 2.*(self.fsed[f]+1.)
+                        max_rescaling = min(max_rescaling, mr)
+                    #print('cloud_scaling_factor', \
+                    #      self.cloud_scaling_factor, \
+                    #      max_rescaling, \
+                    #      self.cloud_scaling_factor/max_rescaling)
+                    self.scaling_physicality = self.cloud_scaling_factor/max_rescaling
                     
                     #print('Block 3 done')
 
@@ -1157,11 +1167,11 @@ class Radtrans:
                 if block4:
                     # Get continuum scattering opacity, without clouds:
                     self.continuum_opa_scat_emis = self.continuum_opa_scat_emis + \
-                      cloud_scaling_factor * self.hack_cloud_total_scat_aniso
+                      self.cloud_scaling_factor * self.hack_cloud_total_scat_aniso
 
                     self.line_struc_kappas = \
                       fi.mix_opas_ck(ab, self.line_struc_kappas, \
-                                         cloud_scaling_factor * self.hack_cloud_total_abs)
+                                         self.cloud_scaling_factor * self.hack_cloud_total_abs)
 
                     # Calc. cloud-free optical depth
                     self.total_tau[:,:,:1,:], self.photon_destruction_prob = \
@@ -1356,6 +1366,7 @@ class Radtrans:
         self.gray_opacity = gray_opacity
         self.geometry = geometry
         self.mu_star = np.cos(theta_star*np.pi/180.)
+        self.fsed = fsed
 
         if self.mu_star<=0.:
             self.mu_star=1e-8

@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Radtrans class &mdash; petitRADTRANS 1.3.0 documentation</title>
+  <title>Radtrans class &mdash; petitRADTRANS 2.1.0 documentation</title>
   
 
   
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                1.3
+                2.1
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Guide:</span></p>
+              <p><span class="caption-text">Guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
@@ -98,7 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="retrieval_examples.html">Retrieval Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="opa_add.html">Adding opacities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<p><span class="caption-text">Code documentation:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="code.html">Code documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Radtrans class</a></li>
@@ -195,7 +196,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="radtrans-class">
+<section id="radtrans-class">
 <h1>Radtrans class<a class="headerlink" href="#radtrans-class" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="petitRADTRANS.Radtrans">
@@ -278,7 +279,7 @@ solutions which are identical to the rebinned results of the fiducial
 </dl>
 <dl class="method">
 <dt id="petitRADTRANS.Radtrans.calc_flux">
-<code class="sig-name descname">calc_flux</code><span class="sig-paren">(</span><em class="sig-param">temp</em>, <em class="sig-param">abunds</em>, <em class="sig-param">gravity</em>, <em class="sig-param">mmw</em>, <em class="sig-param">sigma_lnorm=None</em>, <em class="sig-param">fsed=None</em>, <em class="sig-param">Kzz=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">contribution=False</em>, <em class="sig-param">gray_opacity=None</em>, <em class="sig-param">Pcloud=None</em>, <em class="sig-param">kappa_zero=None</em>, <em class="sig-param">gamma_scat=None</em>, <em class="sig-param">add_cloud_scat_as_abs=None</em>, <em class="sig-param">Tstar=None</em>, <em class="sig-param">Rstar=None</em>, <em class="sig-param">semimajoraxis=None</em>, <em class="sig-param">geometry='dayside_ave'</em>, <em class="sig-param">theta_star=0</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calc_flux</code><span class="sig-paren">(</span><em class="sig-param">temp</em>, <em class="sig-param">abunds</em>, <em class="sig-param">gravity</em>, <em class="sig-param">mmw</em>, <em class="sig-param">sigma_lnorm=None</em>, <em class="sig-param">fsed=None</em>, <em class="sig-param">Kzz=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">contribution=False</em>, <em class="sig-param">gray_opacity=None</em>, <em class="sig-param">Pcloud=None</em>, <em class="sig-param">kappa_zero=None</em>, <em class="sig-param">gamma_scat=None</em>, <em class="sig-param">add_cloud_scat_as_abs=None</em>, <em class="sig-param">Tstar=None</em>, <em class="sig-param">Rstar=None</em>, <em class="sig-param">semimajoraxis=None</em>, <em class="sig-param">geometry='dayside_ave'</em>, <em class="sig-param">theta_star=0</em>, <em class="sig-param">hack_cloud_photospheric_tau=None</em><span class="sig-paren">)</span><a class="headerlink" href="#petitRADTRANS.Radtrans.calc_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to calculate the atmosphere’s emitted flux
 (emission spectrum).</p>
 <blockquote>
@@ -653,7 +654,7 @@ order), in units of bar. Will be converted to cgs internally.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>

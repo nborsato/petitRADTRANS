@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>petitRADTRANS documentation &mdash; petitRADTRANS 1.3.0 documentation</title>
+  <title>petitRADTRANS documentation &mdash; petitRADTRANS 2.1.0 documentation</title>
   
 
   
@@ -65,7 +66,7 @@
             
             
               <div class="version">
-                1.3
+                2.1
               </div>
             
           
@@ -89,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Guide:</span></p>
+              <p><span class="caption-text">Guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="content/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/tutorial.html">Tutorial</a></li>
@@ -97,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="content/retrieval_examples.html">Retrieval Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="content/opa_add.html">Adding opacities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<p><span class="caption-text">Code documentation:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="content/code.html">Code documentation</a></li>
 </ul>
@@ -188,7 +189,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="petitradtrans-documentation">
+<section id="petitradtrans-documentation">
 <h1>petitRADTRANS documentation<a class="headerlink" href="#petitradtrans-documentation" title="Permalink to this headline">¶</a></h1>
 <p>Welcome to the <strong>petitRADTRANS</strong> (pRT) documentation. pRT is a
 Python package for calculating transmission and emission spectra
@@ -206,7 +207,7 @@ tutorial, a first code documentation, and an implemented retrieval
 example for mock JWST emission and transmission spectra.
 Also, we give a tutorial on how to include opacities that may be
 missing from our database.</p>
-<div class="section" id="news">
+<section id="news">
 <h2>News<a class="headerlink" href="#news" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
 <dt><strong>December 2020: stellar and planetary surface scattering added</strong></dt><dd><p>pRT now includes the scattering of the incoming stellar flux for irradiated planets. Also a scattering surface for terrestrial planets has been added, see <a class="reference external" href="content/notebooks/emis_scat.html">Scattering for Emission Spectra</a>. The surface albedo and emissivity are both freely tunable parameters (as a function of wavelength). Surface scattering is treated to be isotropic (that is, assuming that the surface is Lambertian).</p>
@@ -233,30 +234,28 @@ petitRADTRANS version to make use of the high-temperature
 points of the new opacity tables!</strong></p>
 </dd>
 </dl>
-</div>
-<div class="section" id="developers">
+</section>
+<section id="developers">
 <h2>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Paul Mollière</p></li>
 <li><p>Eleonora Alei</p></li>
 <li><p>Evert Nasedkin</p></li>
 </ul>
-</div>
-<div class="section" id="contributors">
+</section>
+<section id="contributors">
 <h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Karan Molaverdikhani</p></li>
 <li><p>Mantas Zilinskas</p></li>
 </ul>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Guide:</span></p>
+<p><span class="caption-text">Guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="content/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="content/installation.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="content/installation.html#download-code">Download Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="content/installation.html#download-opacity-data">Download opacity data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="content/installation.html#id1">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="content/installation.html#installation-tips">Installation tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#pre-installation-download-the-opacity-data">Pre-installation: download the opacity data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#installation-via-pip-install">Installation via pip install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="content/installation.html#compiling-prt-from-source">Compiling pRT from source</a></li>
 <li class="toctree-l2"><a class="reference internal" href="content/installation.html#testing-the-installation">Testing the installation</a></li>
 </ul>
 </li>
@@ -292,7 +291,7 @@ points of the new opacity tables!</strong></p>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<p><span class="caption-text">Code documentation:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="content/code.html">Code documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="content/code_radtrans.html">Radtrans class</a></li>
@@ -301,8 +300,8 @@ points of the new opacity tables!</strong></p>
 </li>
 </ul>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

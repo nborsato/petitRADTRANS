@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import numpy as np
 import os as os
+import sys
 
 # Natural constants
 # Everything is in cgs!
@@ -80,13 +81,16 @@ def guillot_global(P,kappa_IR,gamma,grav,T_int,T_equ):
       np.exp(-gamma * tau *3.**0.5)))**0.25
     return T
 
-# Get path to stellar spectral data
-f = open(os.path.dirname(__file__)+'/path.txt')
-lines = f.readlines()
-spec_path = os.path.dirname(__file__)+'/'+lines[1].rstrip() + \
-  '/stellar_specs'
-f.close()
-
+pathinp = os.environ.get("pRT_input_data_path")
+if pathinp == None:
+    print('Path to input data not specified!')
+    print('Please set pRT_input_data_path variable in .bashrc / .bash_profile or specify path via')
+    print('    import os')
+    print('    os.environ["pRT_input_data_path"] = "absolute/path/of/the/folder/input_data"')
+    print('before creating a Radtrans object or loading the nat_cst module.')
+    sys.exit(1)
+spec_path = pathinp + '/stellar_specs'
+    
 description = np.genfromtxt(spec_path+'/stellar_params.dat')
 logTempGrid = description[:,0]
 StarRadGrid = description[:,1]

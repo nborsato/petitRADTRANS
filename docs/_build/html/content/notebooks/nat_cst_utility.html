@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utility functions &mdash; petitRADTRANS 1.3.0 documentation</title>
+  <title>Utility functions &mdash; petitRADTRANS 2.1.0 documentation</title>
   
 
   
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                1.3
+                2.1
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Guide:</span></p>
+              <p><span class="caption-text">Guide:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
@@ -112,7 +113,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../opa_add.html">Adding opacities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<p><span class="caption-text">Code documentation:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../code.html">Code documentation</a></li>
 </ul>
@@ -403,7 +404,7 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Utility-functions">
+<section id="Utility-functions">
 <h1>Utility functions<a class="headerlink" href="#Utility-functions" title="Permalink to this headline">¶</a></h1>
 <p>The petitRADTRANS.nat_cst package contains some useful utility functions for generating spectra and observables, the use of which are shown below. It also contains useful constants, see <a class="reference external" href="../code_nat_cst.html">the nat_cst code documentation</a>. First we load the package:</p>
 <div class="nbinput nblast docutils container">
@@ -415,7 +416,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="Planck-function">
+<section id="Planck-function">
 <h2>Planck function<a class="headerlink" href="#Planck-function" title="Permalink to this headline">¶</a></h2>
 <p>The planck function <span class="math notranslate nohighlight">\(B_\nu(T)\)</span>, in units of erg/cm<span class="math notranslate nohighlight">\(^2\)</span>/s/Hz/steradian, for a given frequency array, can be generated like this:</p>
 <div class="nbinput nblast docutils container">
@@ -457,8 +458,8 @@ div.rendered_html tbody tr:hover {
 <img alt="../../_images/content_notebooks_nat_cst_utility_7_0.png" src="../../_images/content_notebooks_nat_cst_utility_7_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="PHOENIX-and-ATLAS9-stellar-model-spectra">
+</section>
+<section id="PHOENIX-and-ATLAS9-stellar-model-spectra">
 <h2>PHOENIX and ATLAS9 stellar model spectra<a class="headerlink" href="#PHOENIX-and-ATLAS9-stellar-model-spectra" title="Permalink to this headline">¶</a></h2>
 <p>Within petitRADTRANS the PHOENIX and ATLAS9 stellar spectra can be used, as described in Appendix A of <a class="reference external" href="http://adsabs.harvard.edu/abs/2012SPIE.8442E..1FV">van Boekel et al. (2012)</a>. The PHOENIX model refrence, for stellar effective temperatures &lt; 10,000 K is <a class="reference external" href="http://adsabs.harvard.edu/abs/2013A%26A...553A...6H">Husser et al. (2013)</a>. The ATLAS9 model references for effective temperatures &gt; 10,000 K are Kurucz <a class="reference external" href="http://adsabs.harvard.edu/abs/1979ApJS...40....1K">(1979</a>,
 <a class="reference external" href="http://adsabs.harvard.edu/abs/1992IAUS..149..225K">1992</a>, <a class="reference external" href="http://adsabs.harvard.edu/abs/1994KurCD..19.....K">1994)</a>.</p>
@@ -500,8 +501,8 @@ div.rendered_html tbody tr:hover {
 <img alt="../../_images/content_notebooks_nat_cst_utility_13_0.png" src="../../_images/content_notebooks_nat_cst_utility_13_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Guillot-temperature-model">
+</section>
+<section id="Guillot-temperature-model">
 <h2>Guillot temperature model<a class="headerlink" href="#Guillot-temperature-model" title="Permalink to this headline">¶</a></h2>
 <p>In petitRADTRANS, one can use analytical atmospheric P-T profile from <a class="reference external" href="http://adsabs.harvard.edu/abs/2010A%26A...520A..27G">Guillot (2010)</a>, his Equation 29: <span class="math">\begin{equation}
 T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}^4}{4}\left[\frac{2}{3}+\frac{1}{\gamma\sqrt{3}}+\left(\frac{\gamma}{\sqrt{3}}-\frac{1}{\gamma\sqrt{3}}\right)e^{-\gamma\tau\sqrt{3}}\right]
@@ -547,8 +548,8 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 <img alt="../../_images/content_notebooks_nat_cst_utility_19_0.png" src="../../_images/content_notebooks_nat_cst_utility_19_0.png" />
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

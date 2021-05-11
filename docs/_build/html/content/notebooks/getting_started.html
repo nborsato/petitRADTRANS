@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting Started &mdash; petitRADTRANS 1.3.0 documentation</title>
+  <title>Getting Started &mdash; petitRADTRANS 2.1.0 documentation</title>
   
 
   
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                1.3
+                2.1
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Guide:</span></p>
+              <p><span class="caption-text">Guide:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul class="current">
@@ -112,7 +113,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../retrieval_examples.html">Retrieval Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../opa_add.html">Adding opacities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<p><span class="caption-text">Code documentation:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../code.html">Code documentation</a></li>
 </ul>
@@ -403,9 +404,9 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Getting-Started">
+<section id="Getting-Started">
 <h1>Getting Started<a class="headerlink" href="#Getting-Started" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="Preparing-a-radiative-transfer-object">
+<section id="Preparing-a-radiative-transfer-object">
 <h2>Preparing a radiative transfer object<a class="headerlink" href="#Preparing-a-radiative-transfer-object" title="Permalink to this headline">¶</a></h2>
 <p>After installation has finished, let’s try to calculate a first spectrum! You can simply load petitRADTRANS by typing:</p>
 <div class="nbinput nblast docutils container">
@@ -468,8 +469,8 @@ cross-sections for the <span class="math notranslate nohighlight">\(\rm H_2\)</s
 </div>
 </div>
 <p>And we are done! These steps only need to be carried out once, after this we are free to play with this radiative transfer object, for example change the temperature, abundances, etc. Only if additional opacity species need to be loaded is it necessary to create a new Radtrans instance.</p>
-</div>
-<div class="section" id="Calculating-a-transmission-spectrum">
+</section>
+<section id="Calculating-a-transmission-spectrum">
 <h2>Calculating a transmission spectrum<a class="headerlink" href="#Calculating-a-transmission-spectrum" title="Permalink to this headline">¶</a></h2>
 <p>Let’s calculate a first spectrum for a hot Jupiter, first in transmission. Let’s assume an isothermal temperature profile, for now. We start by specifing the temperature array, and abundance dictionery, containing the mass fractions of the atmospheric material, at every layer, and the atmospheric mean molecular weight, at every layer, in units of amu:</p>
 <div class="nbinput nblast docutils container">
@@ -556,8 +557,8 @@ X_i = \frac{\mu_i}{\mu}n_i,
 &lt;Figure size 720x432 with 0 Axes&gt;
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Calculating-an-emission-spectrum">
+</section>
+<section id="Calculating-an-emission-spectrum">
 <h2>Calculating an emission spectrum<a class="headerlink" href="#Calculating-an-emission-spectrum" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p><strong>Scattering and petitRADTRANS:</strong> scattering is included for emission spectra in petitRADTRANS only if requested specifically when generating the Radtrans object, as it increases the runtime (see <a class="reference external" href="emis_scat.html">“Scattering for Emission Spectra”</a> for an example how to do this). We neglect the scattering here.</p>
@@ -687,8 +688,8 @@ T^4 = \frac{3T_{\rm int}^4}{4}\left(\frac{2}{3}+\tau\right) + \frac{3T_{\rm equ}
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

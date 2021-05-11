@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Adding opacities &mdash; petitRADTRANS 1.3.0 documentation</title>
+  <title>Adding opacities &mdash; petitRADTRANS 2.1.0 documentation</title>
   
 
   
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                1.3
+                2.1
               </div>
             
           
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Guide:</span></p>
+              <p><span class="caption-text">Guide:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
@@ -108,7 +109,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Code documentation:</span></p>
+<p><span class="caption-text">Code documentation:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="code.html">Code documentation</a></li>
 </ul>
@@ -199,7 +200,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="adding-opacities">
+<section id="adding-opacities">
 <h1>Adding opacities<a class="headerlink" href="#adding-opacities" title="Permalink to this headline">¶</a></h1>
 <p>petitRADTRANS has an extensive database of line opacities. However, it is very
 likely that we are missing the one atom / molecule that you want.
@@ -214,7 +215,7 @@ There are three options for adding external opacities to petitRADTRANS:</p>
 particularly nice, you can share these opacities with us. We would then
 make them available to the other petitRADTRANS users via this website, while properly
 attributing your contribution.</p>
-<div class="section" id="importing-custom-made-opacity-tables-from-the-exomol-website">
+<section id="importing-custom-made-opacity-tables-from-the-exomol-website">
 <span id="exomolprt"></span><h2>Importing custom-made opacity tables from the Exomol website<a class="headerlink" href="#importing-custom-made-opacity-tables-from-the-exomol-website" title="Permalink to this headline">¶</a></h2>
 <p>The linelists available on the <a class="reference external" href="http://www.exomol.com">Exomol website</a> were recently converted into opacity tables in the custom format of various retrieval codes, see <a class="reference external" href="https://arxiv.org/abs/2009.00687">Chubb et al. (2020)</a>. Opacity tables in the petitRADTRANS can be downloaded <a class="reference external" href="http://www.exomol.com/data/data-types/opacity/">on this page of the Exomol website</a>. These opacity grids have been calculated for temperatures ranging from 100 to 3400 K (<span class="math notranslate nohighlight">\(\Delta T = 100 \ {\rm K}\)</span> for <span class="math notranslate nohighlight">\(T \in [100-2000] \ {\rm K}\)</span> and <span class="math notranslate nohighlight">\(\Delta T = 200 \ {\rm K}\)</span> for <span class="math notranslate nohighlight">\(T \in [2000-3400] \ {\rm K}\)</span>) and 22 pressure points spaced equidistantly in log-space, from <span class="math notranslate nohighlight">\(10^{-5}\)</span> to 100 bar. Thermal and pressure broadening have also been included, see <a class="reference external" href="https://arxiv.org/abs/2009.00687">Chubb et al. (2020)</a> for more information. If you use petitRADTRANS at pressures and temperatures outside of this grid, petitRADTRANS will use the opacity at the gridpoint closest to the pressure and temperature specified in your calculation. These Exomol grids, in the hdf5 format, can simply be dropped into the opacity folder of petitRADTRANS to use them. <strong>This is arguably the easiest option to install external opacities, which we always recommend, if the species of interest is available from Exomol.</strong> Note that Exomol tables are available for the low-resolution mode of petitRADTRANS only (<span class="math notranslate nohighlight">\(\lambda/\Delta\lambda=1000\)</span>). The installation is outlined below.</p>
 <ol class="arabic simple">
@@ -225,8 +226,8 @@ Navigate <a class="reference external" href="http://www.exomol.com/data/molecule
 <p>2. Navigate to your petitRADTRANS opacity folder, which is the <code class="docutils literal notranslate"><span class="pre">path</span> <span class="pre">to</span> <span class="pre">input_data/opacities/lines/corr_k/</span></code> folder.
 Make a new folder called, for example, <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> and place the <code class="docutils literal notranslate"><span class="pre">1H2-16O__POKAZATEL__R1000_0.3-50mu.ktable.petitRADTRANS.h5</span></code> file inside.</p>
 <p>You’re done! pRT will check automatically if an <code class="docutils literal notranslate"><span class="pre">*.h5</span></code> file is in the opacity folder, so as long as you keep the <code class="docutils literal notranslate"><span class="pre">.h5</span></code> extension, the file in the <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> folder can be called whatever you like. The name of the folder, which we chose to be <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> here, can also be anything. After dropping the <code class="docutils literal notranslate"><span class="pre">.h5</span></code> file in the <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> folder, the opacity species <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> is now ready for use! Note that also the abundances must be specified for <code class="docutils literal notranslate"><span class="pre">H2O_Chubb</span></code> when using petitRADTRANS with this opacity table.</p>
-</div>
-<div class="section" id="converting-cross-section-grids-from-opacity-world">
+</section>
+<section id="converting-cross-section-grids-from-opacity-world">
 <span id="owtoprt"></span><h2>Converting cross-section grids from <a class="reference external" href="http://opacity.world/">opacity.world</a><a class="headerlink" href="#converting-cross-section-grids-from-opacity-world" title="Permalink to this headline">¶</a></h2>
 <p>Pre-computed opacities are also available from <a class="reference external" href="http://opacity.world/">opacity.world</a>,
 which have been generated using the method presented in <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0004-637X/808/2/182">Grimm &amp; Heng
@@ -361,8 +362,8 @@ files to the petitRADTRANS wavelength grid, because this was already
 done in <code class="docutils literal notranslate"><span class="pre">convert()</span></code> above!</p>
 <p>The opacities can then be installed as described in Section
 <a class="reference internal" href="#install"><span class="std std-ref">Installing the new opacity files in petitRADTRANS</span></a> below.</p>
-</div>
-<div class="section" id="from-line-lists-to-opacities-using-exocross">
+</section>
+<section id="from-line-lists-to-opacities-using-exocross">
 <span id="ectoprt"></span><h2>From line lists to opacities (using ExoCross)<a class="headerlink" href="#from-line-lists-to-opacities-using-exocross" title="Permalink to this headline">¶</a></h2>
 <p>Before we can use it, any line list needs to be converted into actual opacities.
 In this example we will show you how to do this using ExoCross, the
@@ -498,7 +499,7 @@ up calculations a lot, but is not recommended if you want to calculate
 high-resolution spectra with petitRADTRANS (because line positions
 will shift if multiple lines are combined into one on a fixed
 wavelength grid during the superline treatment).</p>
-<div class="section" id="preparing-exocross-opacities-for-petitradtrans">
+<section id="preparing-exocross-opacities-for-petitradtrans">
 <span id="extopprt"></span><h3>Preparing ExoCross opacities for petitRADTRANS<a class="headerlink" href="#preparing-exocross-opacities-for-petitradtrans" title="Permalink to this headline">¶</a></h3>
 <p>For creating opacities for use in petitRADTRANS, calculate the
 molecular opacities from Exomol with ExoCross using the settings
@@ -641,8 +642,8 @@ are all in the same folder. And that you are in this folder. Type</p>
 </div>
 <p>and all high resolution opacity tables will be generated and placed into the short_stream
 folder.</p>
-</div>
-<div class="section" id="installing-the-new-opacity-files-in-petitradtrans">
+</section>
+<section id="installing-the-new-opacity-files-in-petitradtrans">
 <span id="install"></span><h3>Installing the new opacity files in petitRADTRANS<a class="headerlink" href="#installing-the-new-opacity-files-in-petitradtrans" title="Permalink to this headline">¶</a></h3>
 <p>The new opacity files are now ready to be installed. Before that
 create a file called “molparam_id.txt” with the following content</p>
@@ -661,8 +662,8 @@ input_data/opacities/lines/line_by_line folders. Copy the contents of
 the kappa_gs_r1000 and short_stream folders to the NaH folders in the
 corr_k and line_by_line folders, respectively. The opacities are now
 <em>almost</em> installed and ready for use, just carry out this last step below (almost there…).</p>
-</div>
-<div class="section" id="using-arbitrary-but-rectangular-p-t-opacity-grids-in-petitradtrans">
+</section>
+<section id="using-arbitrary-but-rectangular-p-t-opacity-grids-in-petitradtrans">
 <h3>Using arbitrary (but rectangular) P-T opacity grids in petitRADTRANS<a class="headerlink" href="#using-arbitrary-but-rectangular-p-t-opacity-grids-in-petitradtrans" title="Permalink to this headline">¶</a></h3>
 <p>For the new opacity grid of a species that is not defined on the “classical” petitRADTRANS grid (13x10
 T-P points) and/or uses another opacity file naming convention, simply add a
@@ -683,9 +684,9 @@ the delta T or delta P spacing is allowed to vary, but for every T value all P v
 <p>In your petitRADTRANS calculations you can combine species with different P-T grids,
 for different species, petitRADTRANS will simply interpolate within the species’ respective T-P grid.
 If the atmospheric T and P leave the respective grid, it will take the opacity of that species at the values of the nearest grid boundary point.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

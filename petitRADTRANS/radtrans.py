@@ -89,7 +89,7 @@ class Radtrans:
             :math:`10^6` resolution. If not, this parameter must not be used.
  
     """
-
+    # test
     def __init__(self, line_species=[], rayleigh_species=[], cloud_species=[], \
                      continuum_opacities = [], H2H2CIA=False, H2HeCIA=False, \
                      N2N2CIA=False, CO2CO2CIA=False, O2O2CIA=False, N2O2CIA=False,\
